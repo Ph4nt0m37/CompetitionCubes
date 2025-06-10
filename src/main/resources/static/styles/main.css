@@ -1,0 +1,47 @@
+body {
+    font-family: 'Trebuchet MS', monospace
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    height: 96vh;
+    justify-content: center;
+    align-items: center;
+}
+
+#search-button {
+    border: 3px solid rgb(0,0,0);
+    border-radius: 100px;
+    font-size: 2vw;
+    padding: 0.8vw 2.5vw;
+    font: 'Trebuchet MS';
+    font-weight: bolder;
+}
+
+#search-button:not(:hover) {
+    background-color: rgb(234,234,234);
+    transition: background-color 0.2s;
+}
+
+#search-button:hover {
+    background-color: rgb(212,212,212);
+    transition: background-color 0.2s;
+}
+
+#search-button:active {
+    background-color: rgb(184,184,184);
+    font-size: 1.95vw;
+    transition: background-color 0.1s;
+}
+
+#searching-text {
+    font-size: 1.75vw;
+    visibility: hidden;
+}
+

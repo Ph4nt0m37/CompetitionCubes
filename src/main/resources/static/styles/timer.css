@@ -1,0 +1,39 @@
+body {
+    font-family: 'Trebuchet MS', monospace;
+    display: flex;
+    flex-direction: column;
+}
+
+h1 {
+    font-size: 2vw;
+    text-align: center;
+    margin: 1.5vh;
+}
+
+#scramble-div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#timer-main-div {
+    display: flex;
+    /*border: 10px solid rgb(255, 0, 0);*/
+    height: 88vh;
+    align-items: center;
+    justify-content: center;
+}
+
+.timer-div {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /*border: 10px solid black;*/
+    align-content: center;
+    text-align: center;
+}
+
+.timer {
+    font-size: 7vw;
+    /*border: 10px solid black;*/
+}
