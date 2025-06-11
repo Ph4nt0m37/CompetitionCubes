@@ -1,5 +1,6 @@
-import { roomId, userId, setScramble } from "./competition.js";
+import { roomId, userId, setScramble, matchData, setMatchData } from "./competition.js";
 import { setTimerState, setTime } from "./opptimer.js"
+import { timerEnabled } from "./timer.js";
 
 export const stompClient = new StompJs.Client({
     brokerURL: `wss://${window.location.host}/user-connect`
@@ -29,15 +30,26 @@ stompClient.onConnect = (frame)=>{
 
     stompClient.subscribe('/room/scrambles', (scrambleJson) => {
         let scrambleData = JSON.parse(scrambleJson.body)
-        if (scrambleData.roomId==roomId) {
+        if (scrambleData.roomId==roomId && matchData.currentSolver==userId) {
             setScramble(scrambleData.scramble);
         }
     });
 
+    stompClient.subscribe('/room/matches', (matchJson)=> {
+        let match = JSON.parse(matchJson);
+        setMatchData(match);
+        if (match.currentSolver!=userId) {
+            setScramble("Waiting for Opponent...");
+            timerEnabled=false;
+        }else {
+            timerEnabled=true;
+        }
+    });
+
     stompClient.publish({
-                destination: "/app/scramble/3x3",
-                body: roomId
-            });
+        destination: "/app/scramble/3x3",
+        body: roomId
+    });
 }
 
 stompClient.onDisconnect = (frame)=>{
