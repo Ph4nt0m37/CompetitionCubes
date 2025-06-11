@@ -1,6 +1,6 @@
 import { roomId, userId, setScramble, matchData, setMatchData } from "./competition.js";
 import { setTimerState, setTime } from "./opptimer.js"
-import { timerEnabled } from "./timer.js";
+import { setTimerEnabled } from "./timer.js";
 
 export const stompClient = new StompJs.Client({
     brokerURL: `wss://${window.location.host}/user-connect`
@@ -28,28 +28,33 @@ stompClient.onConnect = (frame)=>{
         }
     });
 
-    stompClient.subscribe('/room/scrambles', (scrambleJson) => {
+    /*stompClient.subscribe('/room/scrambles', (scrambleJson) => {
         let scrambleData = JSON.parse(scrambleJson.body)
         if (scrambleData.roomId==roomId && matchData.currentSolver==userId) {
             setScramble(scrambleData.scramble);
         }
-    });
+    });*/
 
     stompClient.subscribe('/room/matches', (matchJson)=> {
-        let match = JSON.parse(matchJson);
+        let match = JSON.parse(matchJson.body);
+        console.log(match);
         setMatchData(match);
         if (match.currentSolver!=userId) {
             setScramble("Waiting for Opponent...");
-            timerEnabled=false;
+            setTimerEnabled(false);
         }else {
-            timerEnabled=true;
+            setScramble(match.currentScramble);
+            setTimerEnabled(true);
         }
     });
 
-    stompClient.publish({
-        destination: "/app/scramble/3x3",
-        body: roomId
-    });
+    if (matchData.currentSolver!=userId) {
+            setScramble("Waiting for Opponent...");
+            setTimerEnabled(false);
+        }else {
+            setScramble(matchData.currentScramble);
+            setTimerEnabled(true);
+        }
 }
 
 stompClient.onDisconnect = (frame)=>{

@@ -6,7 +6,11 @@ export const timerStates = {
     STOPPED: 2
 };
 
-export let timerEnabled = true;
+let timerEnabled = true;
+
+export function setTimerEnabled(enabled) {
+    timerEnabled=enabled;
+}
 
 window.onload = ()=>{
     const userTimer = document.getElementById("user-timer");
@@ -17,9 +21,8 @@ window.onload = ()=>{
     let canStartTimer = false;
     let spaceDown = false;
     let startSpaceDown = 0;
-
-    if (timerEnabled) {
-        document.addEventListener("keydown", e=>{
+    document.addEventListener("keydown", e=>{
+        if (timerEnabled) {
             if (e.key===" ") {
                 if (timerState===timerStates.STOPPED && !spaceDown) {
                     userTimer.style.color = "rgb(0,255,0)";
@@ -46,6 +49,7 @@ window.onload = ()=>{
                         'userId':userId
                     })
                 });
+
                 stompClient.publish({
                     destination: "/app/solveData",
                     body: JSON.stringify({
@@ -64,9 +68,11 @@ window.onload = ()=>{
                     })
                 });
             }
-        });
+        }
+    });
 
-        document.addEventListener("keyup", e=>{
+    document.addEventListener("keyup", e=>{
+        if (timerEnabled) {
             if (timerState===timerStates.TIMING) {
                 timerState = timerStates.STOPPED;
                 spaceDown=false;
@@ -138,6 +144,6 @@ window.onload = ()=>{
                     }
                 }
             }
-        });
-    }
+        }
+    });
 }

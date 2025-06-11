@@ -16,26 +16,6 @@ public class MatchController {
 
     private ArrayList<Match> matches = new ArrayList<>();
 
-    public class MatchCommand {
-        private int roomId;
-        private String command;
-
-        MatchCommand() {}
-
-        MatchCommand(int roomId, String command) {
-            this.roomId=roomId;
-            this.command=command;
-        }
-
-        public String getCommand() {
-            return command;
-        }
-
-        public int getRoomId() {
-            return roomId;
-        }
-    }
-
     @MessageMapping("/find-match")
     @SendTo("/room/matches")
     public Match findMatch(int userId) {
@@ -57,7 +37,6 @@ public class MatchController {
     @MessageMapping("/update-match")
     @SendTo("/room/matches")
     public Match updateMatch(MatchCommand command) {
-        System.out.println("update match");
         Match match = null;
         for (Match currMatch:matches) {
             if (currMatch.getRoomId()==command.getRoomId()) {
@@ -68,7 +47,6 @@ public class MatchController {
         if (match==null) return null;
         
         if (command.getCommand().equals("solveFinished")) {
-            System.out.println("solve recieved");
             match.nextSolver();
         }
 
