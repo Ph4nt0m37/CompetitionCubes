@@ -14,7 +14,7 @@ import java.util.HashMap;
 @RestController
 public class MatchController {
 
-    private ArrayList<Match> matches = new ArrayList<>();
+    private static ArrayList<Match> matches = new ArrayList<>();
 
     @MessageMapping("/find-match")
     @SendTo("/room/matches")
@@ -61,5 +61,9 @@ public class MatchController {
             }
         }
         return null;
+    }
+
+    public static ArrayList<Match> getMatches() {
+        return matches;
     }
 }

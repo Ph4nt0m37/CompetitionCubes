@@ -72,12 +72,12 @@ window.onload = ()=>{
     });
 
     document.addEventListener("keyup", e=>{
-        if (timerEnabled) {
-            if (timerState===timerStates.TIMING) {
+        if (timerState===timerStates.TIMING) {
                 timerState = timerStates.STOPPED;
                 spaceDown=false;
                 return;
-            }
+        }
+        if (timerEnabled) {
             if (e.key===" ") {
                 spaceDown=false;
                 if (timerState===timerStates.STOPPED && !spaceDown) {

@@ -1,6 +1,7 @@
 package dev.pakn.competitioncubes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.worldcubeassociation.tnoodle.scrambles.Puzzle;
@@ -11,12 +12,15 @@ public class Match {
     private int roomId;
     private int currentSolver;
     private int solverIndex = 0;
+    private int currentSolve = 0;
     private String currentScramble;
+    private HashMap<Integer,ArrayList<String>> userTimes = new HashMap<>();
     private HashMap<Integer,Integer> userScores = new HashMap<>();
 
     public Match() {
         currentSolver = users[0];
         for (int user:users) userScores.put(user, 0);
+        for (int user:users) userTimes.put(user, new ArrayList<String>());
         generateNewScramble(PuzzleRegistry.THREE);
     }
 
@@ -25,6 +29,7 @@ public class Match {
         this.roomId=roomId;
         currentSolver = users[0];
         for (int user:users) userScores.put(user, 0);
+        for (int user:users) userTimes.put(user, new ArrayList<String>());
         generateNewScramble(PuzzleRegistry.THREE);
     }
 
@@ -48,6 +53,14 @@ public class Match {
         currentSolver = userId;
     }
 
+    public HashMap<Integer,ArrayList<String>> getUserTimes() {
+        return userTimes;
+    }
+
+    public HashMap<Integer,Integer> getUserScores() {
+        return userScores;
+    }
+
     public String generateNewScramble(PuzzleRegistry puzzle) {
         PuzzleRegistry puzzleRegistry = puzzle;
         Puzzle scrambler = puzzleRegistry.getScrambler();
@@ -56,11 +69,29 @@ public class Match {
     }
 
     public void nextSolver() {
-        solverIndex++;
-        solverIndex=solverIndex%users.length;
-        currentSolver = users[solverIndex];
-        if (solverIndex==0) {
-            generateNewScramble(PuzzleRegistry.THREE);
+        try {
+            solverIndex++;
+            solverIndex=solverIndex%users.length;
+            currentSolver = users[solverIndex];
+            if (solverIndex==0) {
+                double fastestTime = 10000;
+                for (int userId:users) {
+                    double userTime = TimeConversions.timeToDouble(userTimes.get(userId).get(currentSolve));
+                    if (userTime<fastestTime) {
+                        fastestTime=userTime;
+                    }
+                }
+                for (int userId:users) {
+                    double userTime = TimeConversions.timeToDouble(userTimes.get(userId).get(currentSolve));
+                    if (userTime==fastestTime) {
+                        userScores.put(userId, userScores.get(userId)+1);
+                    }
+                }
+                generateNewScramble(PuzzleRegistry.THREE);
+                currentSolve++;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

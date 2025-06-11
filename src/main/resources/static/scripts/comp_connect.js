@@ -1,4 +1,4 @@
-import { roomId, userId, setScramble, matchData, setMatchData } from "./competition.js";
+import { roomId, userId, setScramble, matchData, setMatchData, setWins } from "./competition.js";
 import { setTimerState, setTime } from "./opptimer.js"
 import { setTimerEnabled } from "./timer.js";
 
@@ -46,6 +46,7 @@ stompClient.onConnect = (frame)=>{
             setScramble(match.currentScramble);
             setTimerEnabled(true);
         }
+        setWins(match.userScores);
     });
 
     if (matchData.currentSolver!=userId) {

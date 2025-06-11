@@ -37,3 +37,23 @@ h1 {
     font-size: 7vw;
     /*border: 10px solid black;*/
 }
+
+.ao5 {
+    font-size: 2.75vw;
+    /*border: 10px solid black;*/
+}
+
+.winsText {
+    font-size: 2.75vw;
+    transition: color 2s ease-out;
+}
+
+.winsText.wonRound {
+    color: lime;
+    transition: color 0s;
+}
+
+.winsText.lostRound {
+    color: red;
+    transition: color 0s;
+}
