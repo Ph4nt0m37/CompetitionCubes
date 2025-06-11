@@ -19,7 +19,7 @@ h1 {
 #timer-main-div {
     display: flex;
     /*border: 10px solid rgb(255, 0, 0);*/
-    height: 87vh;
+    height: 88vh;
     align-items: center;
     justify-content: center;
 }

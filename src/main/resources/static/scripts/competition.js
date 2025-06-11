@@ -5,9 +5,8 @@ import { stompClient } from "./comp_connect.js";
 
 let scrambleText = document.getElementById("scramble-text");
 
-export let matchData;
-
 export let currentScramble = "";
+
 
 export function setScramble(scramble) {
     if (scramble!=="Waiting for Opponent...") {
@@ -16,14 +15,4 @@ export function setScramble(scramble) {
         currentScramble = "";
     }
     scrambleText.textContent = scramble;
-}
-
-fetch(`${window.location.origin}/get-match-info/${roomId}`).then(response=>{
-        return response.json()
-    }).then(matchJson=>{
-        setMatchData(matchJson);
-    });
-
-export function setMatchData(data) {
-    matchData=data;
 }
