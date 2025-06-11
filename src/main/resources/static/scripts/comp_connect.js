@@ -46,7 +46,7 @@ stompClient.onConnect = (frame)=>{
             setScramble(match.currentScramble);
             setTimerEnabled(true);
         }
-        setWins(match.userScores);
+        if (match.currentSolve!==0) setWins(match.userScores);
     });
 
     if (matchData.currentSolver!=userId) {

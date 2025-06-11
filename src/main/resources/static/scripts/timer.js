@@ -60,13 +60,15 @@ window.onload = ()=>{
                     })
                 });
 
-                stompClient.publish({
-                    destination: "/app/update-match",
-                    body: JSON.stringify({
-                        'roomId':roomId,
-                        'command':"solveFinished"
-                    })
-                });
+                setTimeout(() => {
+                    stompClient.publish({
+                        destination: "/app/update-match",
+                        body: JSON.stringify({
+                            'roomId':roomId,
+                            'command':"solveFinished"
+                        })
+                    });
+                }, 300);
             }
         }
     });

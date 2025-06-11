@@ -4,8 +4,14 @@ export let userId = new URLSearchParams(window.location.search).get("userId");
 import { stompClient } from "./comp_connect.js";
 
 let scrambleText = document.getElementById("scramble-text");
+
 let userWins = document.getElementById("user-wins");
 let oppWins = document.getElementById("opp-wins");
+
+let userao5 = document.getElementById("user-ao5")
+let oppao5 = document.getElementById("opp-ao5");
+
+let numWins = 0;
 
 export let matchData;
 
@@ -33,10 +39,57 @@ export function setMatchData(data) {
 export function setWins(winData) {
     for (var user in winData) {
         if (user==userId) {
-            userWins.textContent=`Wins: ${winData[user]}`;
+            let newWinCount = winData[user];
+            if (newWinCount>numWins) {
+                userWins.classList.toggle("wonRound");
+                setTimeout(() => {
+                    userWins.classList.toggle("wonRound");
+                }, 10);
+            }else {
+                userWins.classList.toggle("lostRound");
+                setTimeout(() => {
+                    userWins.classList.toggle("lostRound");
+                }, 10);
+            }
+            numWins = newWinCount;
+            userWins.textContent=`Wins: ${numWins}`;
         }else {
+            let newWinCount = winData[user];
+            if (newWinCount>Number(oppWins.textContent.substring(6))) {
+                oppWins.classList.toggle("wonRound");
+                setTimeout(() => {
+                    oppWins.classList.toggle("wonRound");
+                }, 10);
+            }else {
+                oppWins.classList.toggle("lostRound");
+                setTimeout(() => {
+                    oppWins.classList.toggle("lostRound");
+                }, 10);
+            }
             oppWins.textContent = `Wins: ${winData[user]}`;
         }  
     }
 }
+
+//moved ao5 calculation to server
+/*export function calculateAo5s(solveData) {
+    for (var user in solveData) {
+        let totalTime = 0;
+        solveData[user].forEach(time => {
+            totalTime+=timeToFloat(time);
+        });
+        let ao5=
+    }
+}
+
+function timeToFloat(time) {
+    let times = time.replace(" ","").split(":");
+    if (times.length>1) {
+        let minutes = parseFloat(times[0]);
+        let seconds = parseFloat(times[1]);
+        return (minutes*60)+seconds;
+    }else{
+        return parseFloat(times[0]);
+    }
+}*/
 

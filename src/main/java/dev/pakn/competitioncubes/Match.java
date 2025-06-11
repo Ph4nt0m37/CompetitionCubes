@@ -49,6 +49,10 @@ public class Match {
         return currentScramble;
     }
 
+    public int getCurrentSolve() {
+        return currentSolve;
+    }
+
     public void setCurrentSolver(int userId) {
         currentSolver = userId;
     }
@@ -85,6 +89,9 @@ public class Match {
                     double userTime = TimeConversions.timeToDouble(userTimes.get(userId).get(currentSolve));
                     if (userTime==fastestTime) {
                         userScores.put(userId, userScores.get(userId)+1);
+                    }
+                    if (userScores.get(userId)>=5) {
+                        System.out.println(userId+" won!");
                     }
                 }
                 generateNewScramble(PuzzleRegistry.THREE);
