@@ -31,19 +31,11 @@ export function setTimerState(ts) {
     }else if (timerState===timerStates.TIMING) {
         oppTimer.style.color="black";
         clearInterval(timerInterval);
-        let ms = 0;
-        let s = 0;
-        let min = 0;
+        let startTime = Date.now();
         timerInterval = setInterval(()=> {
-            ms+=1;
-            if (ms>=100) {
-                ms=0;
-                s++;
-            }
-            if (s>=60) {
-                s=0;
-                min++;
-            }
+            let ms = Math.floor(((Date.now()-startTime)/10)%100);
+            let s = Math.floor(((Date.now()-startTime)/1000)%60);
+            let min = Math.floor((Date.now()-startTime)/60000);
 
             if (min) {
                 oppTimer.textContent=`${min.toString()}:${s.toString().padStart(2,0)}.${(ms).toString().padStart(2,0)}`;

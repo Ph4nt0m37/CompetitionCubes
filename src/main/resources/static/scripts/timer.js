@@ -60,24 +60,22 @@ window.onload = ()=>{
                     })
                 });
 
-                setTimeout(() => {
-                    stompClient.publish({
-                        destination: "/app/update-match",
-                        body: JSON.stringify({
-                            'roomId':roomId,
-                            'command':"solveFinished"
-                        })
-                    });
-                }, 300);
+                stompClient.publish({
+                    destination: "/app/update-match",
+                    body: JSON.stringify({
+                        'roomId':roomId,
+                        'command':"solveFinished"
+                    })
+                });
             }
         }
     });
 
     document.addEventListener("keyup", e=>{
         if (timerState===timerStates.TIMING) {
-                timerState = timerStates.STOPPED;
-                spaceDown=false;
-                return;
+            timerState = timerStates.STOPPED;
+            spaceDown=false;
+            return;
         }
         if (timerEnabled) {
             if (e.key===" ") {
@@ -123,19 +121,12 @@ window.onload = ()=>{
                                 'userId':userId
                             })
                         });
-                        let ms = 0;
-                        let s = 0;
-                        let min = 0;
+
+                        let startTime = Date.now();
                         timerInterval = setInterval(()=> {
-                            ms+=1;
-                            if (ms>=100) {
-                                ms=0;
-                                s++;
-                            }
-                            if (s>=60) {
-                                s=0;
-                                min++;
-                            }
+                            let ms = Math.floor(((Date.now()-startTime)/10)%100);
+                            let s = Math.floor(((Date.now()-startTime)/1000)%60);
+                            let min = Math.floor((Date.now()-startTime)/60000);
 
                             if (min) {
                                 userTimer.textContent=`${min.toString()}:${s.toString().padStart(2,0)}.${(ms).toString().padStart(2,0)}`;

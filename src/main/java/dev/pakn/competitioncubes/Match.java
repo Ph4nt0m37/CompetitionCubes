@@ -53,6 +53,10 @@ public class Match {
         return currentSolve;
     }
 
+    public int getSolverIndex() {
+        return solverIndex;
+    }
+
     public void setCurrentSolver(int userId) {
         currentSolver = userId;
     }
