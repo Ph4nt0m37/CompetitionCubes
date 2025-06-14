@@ -1,7 +1,7 @@
 //export let roomId = Math.floor(Math.random()*100000)
 export let roomId = new URLSearchParams(window.location.search).get("roomId");
 export let userId = new URLSearchParams(window.location.search).get("userId");
-import { stompClient } from "./comp_connect.js";
+import { setTimerEnabled } from "./timer.js";
 
 let scrambleText = document.getElementById("scramble-text");
 
@@ -25,6 +25,7 @@ export function setScramble(scramble) {
     }
     scrambleText.textContent = scramble;
 }
+
 
 fetch(`${window.location.origin}/get-match-info/${roomId}`).then(response=>{
         return response.json()
@@ -68,6 +69,24 @@ export function setWins(winData) {
             }
             oppWins.textContent = `Wins: ${winData[user]}`;
         }  
+    }
+}
+
+export function endMatch(winner) {
+    setTimerEnabled(false);
+    scrambleText.textContent = `${winner} has won the match!`;
+    scrambleText.style.color = "lime";
+}
+
+export function setAo5s(ao5Json) {
+    for (var user in ao5Json) {
+        if (ao5Json[user]) {
+            if (user==userId) {
+                userao5.textContent = `ao5: ${ao5Json[user]}`;
+            }else {
+                oppao5.textContent = `ao5: ${ao5Json[user]}`;
+            }
+        }
     }
 }
 

@@ -11,4 +11,14 @@ public class TimeConversions {
             return Double.parseDouble(times[0]);
         }
     }
+
+    public static String doubleToTime(double doub) {
+        int minutes = (int)(doub/60);
+        double seconds = doub-(minutes*60);
+        if (minutes>0) {
+            return String.valueOf(minutes)+":"+String.format("%2s",String.valueOf(seconds)).replace(' ', '0');
+        }else {
+            return String.valueOf(seconds);
+        }
+    }
 }

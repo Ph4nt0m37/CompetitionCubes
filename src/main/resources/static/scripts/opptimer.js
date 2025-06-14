@@ -1,11 +1,13 @@
 import { timerStates } from "./timer.js";
 
-const oppTimer = document.getElementById("opp-timer");
-let timerState = timerStates.STOPPED;
+let oppTimer = null;
+let timerState = null;
 
 let timerInterval = null;
 
 export function setTimerState(ts) {
+    oppTimer = document.getElementById("opp-timer");
+    timerState = timerStates.STOPPED;
     timerState = ts;
     if (timerState===timerStates.STOPPED) {
         oppTimer.style.color="black";

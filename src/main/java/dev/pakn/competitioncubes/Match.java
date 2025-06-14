@@ -15,7 +15,10 @@ public class Match {
     private int currentSolve = 0;
     private String currentScramble;
     private HashMap<Integer,ArrayList<String>> userTimes = new HashMap<>();
+    private HashMap<Integer,String> userAo5s = new HashMap<>();
     private HashMap<Integer,Integer> userScores = new HashMap<>();
+
+    private int winner = -1;
 
     public Match() {
         currentSolver = users[0];
@@ -57,6 +60,10 @@ public class Match {
         return solverIndex;
     }
 
+    public int getWinner() {
+        return winner;
+    }
+
     public void setCurrentSolver(int userId) {
         currentSolver = userId;
     }
@@ -69,6 +76,10 @@ public class Match {
         return userScores;
     }
 
+    public HashMap<Integer,String> getUserAo5s() {
+        return userAo5s;
+    }
+
     public String generateNewScramble(PuzzleRegistry puzzle) {
         PuzzleRegistry puzzleRegistry = puzzle;
         Puzzle scrambler = puzzleRegistry.getScrambler();
@@ -76,11 +87,16 @@ public class Match {
         return currentScramble;
     }
 
-    public void nextSolver() {
+    public boolean nextSolver() {
         try {
             solverIndex++;
             solverIndex=solverIndex%users.length;
             currentSolver = users[solverIndex];
+            for (int user:users) {
+                if (userTimes.get(user).size()>4) {
+                    calculateAo5(user);
+                }
+            }
             if (solverIndex==0) {
                 double fastestTime = 10000;
                 for (int userId:users) {
@@ -95,14 +111,26 @@ public class Match {
                         userScores.put(userId, userScores.get(userId)+1);
                     }
                     if (userScores.get(userId)>=5) {
-                        System.out.println(userId+" won!");
+                        winner = userId;
+                        return true;
                     }
                 }
                 generateNewScramble(PuzzleRegistry.THREE);
                 currentSolve++;
             }
+            return false;
         }catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
+    }
+
+    public void calculateAo5(int user) {
+        int timeTotal = 0;
+        ArrayList<String> solveTimes = userTimes.get(user);
+        for (int i = solveTimes.size()-5; i<solveTimes.size(); i++) {
+            timeTotal+=TimeConversions.timeToDouble(solveTimes.get(i));
+        }
+        userAo5s.put(user, TimeConversions.doubleToTime(timeTotal/5.0));
     }
 }

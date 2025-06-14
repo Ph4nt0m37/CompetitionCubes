@@ -1,4 +1,4 @@
-import { roomId, userId, setScramble, matchData, setMatchData, setWins } from "./competition.js";
+import { roomId, userId, setScramble, matchData, setMatchData, setWins, endMatch, setAo5s } from "./competition.js";
 import { setTimerState, setTime } from "./opptimer.js"
 import { setTimerEnabled } from "./timer.js";
 
@@ -39,6 +39,17 @@ stompClient.onConnect = (frame)=>{
         let match = JSON.parse(matchJson.body);
         console.log(match);
         setMatchData(match);
+        setAo5s(match.userAo5s);
+
+        if (match.currentSolve!==0 && match.solverIndex==0) {
+            setWins(match.userScores);
+        } 
+
+        if (match.winner>0) {
+            endMatch(match.winner);
+            return;
+        }
+
         if (match.currentSolver!=userId) {
             setScramble("Waiting for Opponent...");
             setTimerEnabled(false);
@@ -46,8 +57,12 @@ stompClient.onConnect = (frame)=>{
             setScramble(match.currentScramble);
             setTimerEnabled(true);
         }
-        console.log(match.currentSolve);
-        if (match.currentSolve!==0 && match.solverIndex==0) setWins(match.userScores);
+    });
+    
+    fetch(`${window.location.origin}/get-match-info/${roomId}`).then(response=>{
+        return response.json()
+    }).then(matchJson=>{
+        setMatchData(matchJson);
     });
 
     if (matchData.currentSolver!=userId) {
