@@ -2,6 +2,7 @@ export let userId = Math.floor(Math.random()*100000);
 
 const searchButton = document.getElementById("search-button");
 const searchText = document.getElementById("searching-text");
+const signInButton = document.getElementById("sign-in-button");
 let searchInt = null;
 
 //client stuff
@@ -69,6 +70,11 @@ searchButton.addEventListener("click",()=>{
         cancelMatchSearch();
     }
 
+});
+
+//sign in stuff
+signInButton.addEventListener("click",()=>{
+    window.location.replace(`${window.location.origin}/wca-auth`);
 });
 
 function startMatchSearch() {

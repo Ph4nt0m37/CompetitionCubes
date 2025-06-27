@@ -10,7 +10,7 @@ button {
 .main {
     display: flex;
     flex-direction: column;
-    height: 96vh;
+    height: 94vh;
     justify-content: center;
     align-items: center;
 }
@@ -43,5 +43,33 @@ button {
 #searching-text {
     font-size: 1.75vw;
     visibility: hidden;
+}
+
+header {
+    display: flex;
+    justify-content: end;
+}
+
+#sign-in-button {
+    border: 3px solid black;
+    border-radius: 100vh;
+    padding: 0.8vh 1.25vw;
+    font-size: 1.25vw;
+    font-weight: bolder;
+}
+
+#sign-in-button:hover {
+    background-color: rgb(212,212,212);
+    transition: background-color 0.2s;
+}
+
+#sign-in-button:not(:hover) {
+    background-color: rgb(234,234,234);
+    transition: background-color 0.2s;
+}
+
+#sign-in-button:active {
+    background-color: rgb(184,184,184);
+    transition: background-color 0.1s;
 }
 
