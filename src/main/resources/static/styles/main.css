@@ -1,5 +1,8 @@
-body {
-    font-family: 'Trebuchet MS', monospace
+html, body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: #f0f0f0;
+    color: #333;
 }
 
 button {
@@ -10,66 +13,72 @@ button {
 .main {
     display: flex;
     flex-direction: column;
-    height: 94vh;
+    height: calc(100vh - 85px);
     justify-content: center;
     align-items: center;
+    text-align: center;
 }
 
 #search-button {
-    border: 3px solid rgb(0,0,0);
-    border-radius: 100px;
-    font-size: 2vw;
-    padding: 0.8vw 2.5vw;
-    font: 'Trebuchet MS';
-    font-weight: bolder;
-}
-
-#search-button:not(:hover) {
-    background-color: rgb(234,234,234);
-    transition: background-color 0.2s;
+    border: none;
+    color: white;
+    border-radius: 17.5px;
+    font-size: 2rem;
+    padding: 10px 20px;
+    font-weight: bold;
+    background-color: #2ecc71;
+    padding: 15px 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 #search-button:hover {
-    background-color: rgb(212,212,212);
-    transition: background-color 0.2s;
+    background-color: #29b866;
 }
 
 #search-button:active {
-    background-color: rgb(184,184,184);
-    font-size: 1.95vw;
-    transition: background-color 0.1s;
+    transform: scale(0.97);
 }
 
 #searching-text {
-    font-size: 1.75vw;
+    font-size: 1.3rem;
     visibility: hidden;
+    color: #555;
+    margin-top: 20px;
 }
 
 header {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 #sign-in-button {
-    border: 3px solid black;
-    border-radius: 100vh;
-    padding: 0.8vh 1.25vw;
-    font-size: 1.25vw;
-    font-weight: bolder;
+    border: none;
+    background-color: #3498db;
+    color: white;
+    border-radius: 17.5px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
 #sign-in-button:hover {
-    background-color: rgb(212,212,212);
-    transition: background-color 0.2s;
-}
-
-#sign-in-button:not(:hover) {
-    background-color: rgb(234,234,234);
-    transition: background-color 0.2s;
+    background-color: #2980b9;
 }
 
 #sign-in-button:active {
-    background-color: rgb(184,184,184);
-    transition: background-color 0.1s;
+    transform: scale(0.97);
+}
+
+button {
+    font-family: inherit;
+    outline: none;
+    border: none;
 }
 

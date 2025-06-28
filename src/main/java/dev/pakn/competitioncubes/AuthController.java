@@ -25,7 +25,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class AuthController {
@@ -40,13 +42,13 @@ public class AuthController {
     public RedirectView wcaAuthRedirect(HttpServletRequest request) {
         String authURL = "https://www.worldcubeassociation.org/oauth/authorize?client_id=" + appId
         + "&redirect_uri=" + request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/wca-auth/callback"
-        + "&response_type=code&scope=public+profile";
+        + "&response_type=code&scope=public";
 
         return new RedirectView(authURL);
     }
 
     @GetMapping("/wca-auth/callback")
-    public boolean wcaAuthCallback(@RequestParam("code") String code, HttpServletRequest request) throws MalformedURLException, IOException, InterruptedException {
+    public boolean wcaAuthCallback(@RequestParam("code") String code, HttpServletRequest request, HttpServletResponse response) throws MalformedURLException, IOException, InterruptedException {
         //getting token through a post request
         String redirectUri = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()+"/wca-auth/callback";
 
@@ -57,8 +59,27 @@ public class AuthController {
         params.put("code", code);
         params.put("redirect_uri", redirectUri);
 
-        String tokenJsonString = WebRequests.sendPostRequest("https://www.worldcubeassociation.org/oauth/token", params, redirectUri);
+        try {
+        String tokenJsonString = WebRequests.sendPostRequest("https://www.worldcubeassociation.org/oauth/token", params);
         JSONObject tokenJson = new JSONObject(tokenJsonString);
+
+        //saving access token as cookie to remember log in
+        String accessToken = tokenJson.getString("access_token");
+        Cookie tokenCookie = new Cookie("wca_access_token",accessToken);
+        tokenCookie.setSecure(true);
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setPath("/");
+        tokenCookie.setMaxAge(7200);
+        response.addCookie(tokenCookie);
+
+        //getting me data, including wca id
+        String meJsonString = WebRequests.sendGetRequest("https://www.worldcubeassociation.org/api/v0/me", accessToken);
+        System.out.println(meJsonString);
+        JSONObject meJson = new JSONObject(meJsonString);
+        //String userWcaId = 
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
         
 
         return true;

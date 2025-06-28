@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class User {
     private int userId;
+    private String wcaId;
     private String username;
     private int elo;
     private ArrayList<Match> last10Matches = new ArrayList<>();
@@ -55,5 +56,13 @@ public class User {
 
     public int getUserId() {
         return userId;
+    }
+
+    public boolean saveUserData() {
+        return true;
+    }
+
+    public boolean loadUserData() {
+        return true;
     }
 }
