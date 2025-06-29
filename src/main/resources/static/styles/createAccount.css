@@ -58,7 +58,7 @@ label {
     border-color: #0073bf;
 }
 
-#continue-button {
+#create-button {
     margin-top: 60px;
     margin-bottom: 30px;
     border: none;
@@ -72,10 +72,10 @@ label {
     transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
-#continue-button:hover {
+#create-button:hover {
     background-color: #2980b9;
 }
 
-#continue-button:active {
+#create-button:active {
     transform: scale(0.97);
 }

@@ -14,15 +14,15 @@ public class LinkMappings {
     }
 
     @RequestMapping("/")
-    public String mainPage(@CookieValue(value="wca_access_token", required = false) String accessToken) {
-        if (accessToken!=null) {
+    public String mainPage(@CookieValue(value="user_secret", required = false) String userSecret) {
+        if (userSecret!=null) {
             //auto login here!
-            System.out.println("auto log in found");
+            User user = DBController.getUserBySecret(userSecret);
         }
         return "main.html";
     }
 
-    @RequestMapping("/auth/callback")
+    @RequestMapping("/create-account")
     public String createAccountPage() {
         return "createAccount.html";
     }
