@@ -2,6 +2,7 @@ package dev.pakn.competitioncubes;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ public class LinkMappings {
         if (userSecret!=null) {
             //auto login here!
             User user = DBController.getUserBySecret(userSecret);
+            return "main-logged-in.html";
         }
         return "main.html";
     }
@@ -25,5 +27,14 @@ public class LinkMappings {
     @RequestMapping("/create-account")
     public String createAccountPage() {
         return "createAccount.html";
+    }
+
+    @RequestMapping("/user/{userId}")
+    public String userPage(@PathVariable int userId) {
+        if (DBController.userExists(userId)) {
+            return "forward:/profile.html";
+        }else{
+            return "forward:/error.html";
+        }
     }
 }

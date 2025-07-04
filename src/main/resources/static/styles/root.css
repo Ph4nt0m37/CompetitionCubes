@@ -1,0 +1,22 @@
+:root {
+    --main-bg-color: #ececec;
+    --header-color: #f5f5f5;
+    --popup-color: #f7f7f7;
+    --h1-color: #36535e;
+    --h2-color: #414141;
+    --green-button: #2ecc71;
+    --green-button-hover: #29b866;
+    --blue-button: #3498db;
+    --blue-button-hover: #2980b9;
+    --card-color: #cccccc;
+}
+
+h1 {
+    color: var(--h1-color);
+    font-size: 3rem;
+}
+
+h2 {
+    font-size: 1.75rem;
+    color: var(--h2-color);
+}

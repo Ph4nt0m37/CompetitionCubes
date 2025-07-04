@@ -1,7 +1,7 @@
 html, body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
-    background-color: #f0f0f0;
+    background-color: var(--main-bg-color);
 }
 
 #main {
@@ -12,19 +12,19 @@ html, body {
     margin: 60px auto;
     padding: 30px;
     max-width: 500px;
-    background-color: #fafafa;
+    background-color: var(--main-bg-color);
     border-radius: 20px;
     box-shadow: 0 4px 12px rgb(0,0,0,0.15);
 }
 
 h1 {
     font-size: 2rem;
-    color: #36535e;
+    color: var(--h1-color);
 }
 
 h2 {
     font-size: 1.2rem;
-    color: #414141;
+    color: var(--h2-color);
     margin-bottom: 30px;
 }
 
@@ -62,7 +62,7 @@ label {
     margin-top: 60px;
     margin-bottom: 30px;
     border: none;
-    background-color: #3498db;
+    background-color: var(--blue-button);
     color: white;
     border-radius: 10px;
     font-size: 1.2rem;
@@ -73,7 +73,7 @@ label {
 }
 
 #create-button:hover {
-    background-color: #2980b9;
+    background-color: var(--blue-button-hover);
 }
 
 #create-button:active {

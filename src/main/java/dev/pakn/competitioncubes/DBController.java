@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -70,22 +72,52 @@ public class DBController {
         }
     }
 
+    @GetMapping("/api/get-user-data")
+    public User getUserBySecretRequest(@CookieValue(value="user_secret", required = false) String userSecret) {
+        return getUserBySecret(userSecret);
+    }
+
+    @GetMapping("/api/get-user-data-by-id/{userId}")
+    public User getUserByUserIDRequest(@PathVariable int userId) {
+        return getUserByID(userId);
+    }
+
     public static User getUserBySecret(String userSecret) {
         try {
             //connect to DB 
             Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
 
-            //checking for userSecret
-            String findUserSecretQuery = "SELECT wcaid FROM users WHERE usersecret=?";
-            PreparedStatement userSecretStatement = conn.prepareStatement(findUserSecretQuery);
-            userSecretStatement.setString(1, userSecret);
-
             //getting resultset
-            ResultSet usersFound = userSecretStatement.executeQuery();
+            ResultSet usersFound = getUserDataBySecret(userSecret);
             
             if (usersFound.next()) {
                 System.out.println("WCA ID: "+usersFound.getString("wcaid"));
                 int userId = usersFound.getInt("userid");
+                String wcaId = usersFound.getString("wcaid");
+                String username = usersFound.getString("username");
+                int userElo = usersFound.getInt("elo");
+                conn.close();
+                return new User(userId,username,userElo,null);
+            }else {
+                conn.close();
+                return null;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static User getUserByID(int userId) {
+        try {
+            //connect to DB 
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+
+            //getting resultset
+            ResultSet usersFound = getUserDataById(userId);
+            
+            if (usersFound.next()) {
+                System.out.println("WCA ID: "+usersFound.getString("wcaid"));
                 String wcaId = usersFound.getString("wcaid");
                 String username = usersFound.getString("username");
                 int userElo = usersFound.getInt("elo");
@@ -107,7 +139,7 @@ public class DBController {
             Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
 
             //checking for userSecret
-            String findUserSecretQuery = "SELECT wcaid FROM users WHERE usersecret=?";
+            String findUserSecretQuery = "SELECT * FROM users WHERE usersecret=?";
             PreparedStatement userSecretStatement = conn.prepareStatement(findUserSecretQuery);
             userSecretStatement.setString(1, userSecret);
 
@@ -116,6 +148,112 @@ public class DBController {
 
             conn.close();
             return usersFound.next();
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean userExists(int userId) {
+        try {
+            //connect to DB 
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+
+            //checking for userSecret
+            String findUserSecretQuery = "SELECT * FROM users WHERE userid=?";
+            PreparedStatement userSecretStatement = conn.prepareStatement(findUserSecretQuery);
+            userSecretStatement.setInt(1, userId);
+
+            //getting resultset
+            ResultSet usersFound = userSecretStatement.executeQuery();
+
+            conn.close();
+            return usersFound.next();
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static ResultSet getUserDataBySecret(String userSecret) {
+        try {
+            //connect to DB 
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+
+            //checking for userSecret
+            String findUserSecretQuery = "SELECT * FROM users WHERE usersecret=?";
+            PreparedStatement userSecretStatement = conn.prepareStatement(findUserSecretQuery);
+            userSecretStatement.setString(1, userSecret);
+
+            //getting resultset
+            ResultSet usersFound = userSecretStatement.executeQuery();
+
+            conn.close();
+            return usersFound;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static ResultSet getUserDataByWCAId(String wcaId) {
+        try {
+            //connect to DB 
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+
+            //checking for userSecret
+            String findUserSecretQuery = "SELECT * FROM users WHERE wcaid=?";
+            PreparedStatement userSecretStatement = conn.prepareStatement(findUserSecretQuery);
+            userSecretStatement.setString(1, wcaId);
+
+            //getting resultset
+            ResultSet usersFound = userSecretStatement.executeQuery();
+
+            conn.close();
+            return usersFound;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static ResultSet getUserDataById(int userId) {
+        try {
+            //connect to DB 
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+
+            //checking for userId
+            String findUserSecretQuery = "SELECT * FROM users WHERE userId=?";
+            PreparedStatement userSecretStatement = conn.prepareStatement(findUserSecretQuery);
+            userSecretStatement.setInt(1, userId);
+
+            //getting resultset
+            ResultSet usersFound = userSecretStatement.executeQuery();
+
+            conn.close();
+            return usersFound;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static boolean setUserSecretByWCAId(String wcaId, String newSecret) {
+        try {
+            //connect to DB 
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+
+            //checking for userSecret
+            String findUserSecretQuery = "UPDATE users SET usersecret=? WHERE wcaid=?";
+            PreparedStatement userSecretStatement = conn.prepareStatement(findUserSecretQuery);
+            userSecretStatement.setString(1, newSecret);
+            userSecretStatement.setString(2, wcaId);
+
+            //getting resultset
+            int rowsChanged = userSecretStatement.executeUpdate();
+
+            conn.close();
+            return true;
         }catch (Exception e) {
             e.printStackTrace();
             return false;

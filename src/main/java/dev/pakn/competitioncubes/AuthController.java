@@ -51,6 +51,8 @@ public class AuthController {
 
     @GetMapping("/wca-auth/callback")
     public RedirectView wcaAuthCallback(@RequestParam("code") String code, HttpServletRequest request, HttpServletResponse response) throws MalformedURLException, IOException, InterruptedException {
+        String finalRedirectURL = "/create-account";
+        
         //getting token through a post request
         String redirectUri = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()+"/wca-auth/callback";
 
@@ -65,30 +67,36 @@ public class AuthController {
             String tokenJsonString = WebRequests.sendPostRequest("https://www.worldcubeassociation.org/oauth/token", params);
             JSONObject tokenJson = new JSONObject(tokenJsonString);
 
-            //saving access token as cookie for account creation
             String accessToken = tokenJson.getString("access_token");
-            Cookie tokenCookie = new Cookie("wca_access_token",accessToken);
-            tokenCookie.setSecure(true);
-            tokenCookie.setHttpOnly(true);
-            tokenCookie.setPath("/");
-            tokenCookie.setMaxAge(3600);
-            response.addCookie(tokenCookie);
 
             SecureRandom secureRandom = new SecureRandom();
-            byte[] tokenBytes = new byte[32]; // 256 bits = plenty of entropy
+            byte[] tokenBytes = new byte[32]; // 256 bits = plenty of entropy (fr fr)
             secureRandom.nextBytes(tokenBytes);
             String userSecret = Base64.getUrlEncoder().withoutPadding().encodeToString(tokenBytes);
             Cookie secretCookie = new Cookie("user_secret", userSecret);
             secretCookie.setSecure(true);
             secretCookie.setHttpOnly(true);
+            secretCookie.setMaxAge(604800);
             secretCookie.setPath("/");
             response.addCookie(secretCookie);
+
+            String userWcaId = AuthController.getWCAId(accessToken);
+            if (userWcaId!=null && DBController.getUserDataByWCAId(userWcaId).next()) {
+                DBController.setUserSecretByWCAId(userWcaId, userSecret);
+                finalRedirectURL="/";
+            }else {
+                //saving access token as cookie for account creation
+                Cookie tokenCookie = new Cookie("wca_access_token",accessToken);
+                tokenCookie.setSecure(true);
+                tokenCookie.setHttpOnly(true);
+                tokenCookie.setPath("/");
+                tokenCookie.setMaxAge(3600);
+                response.addCookie(tokenCookie);
+            }
         
         }catch (Exception e) {
             e.printStackTrace();
         }
-
-        String finalRedirectURL = "/create-account";
 
         return new RedirectView(finalRedirectURL);
     }

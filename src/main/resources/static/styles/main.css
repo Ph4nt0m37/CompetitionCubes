@@ -1,7 +1,7 @@
 html, body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
-    background-color: #f0f0f0;
+    background-color: var(--main-bg-color);
     color: #333;
 }
 
@@ -19,46 +19,22 @@ button {
     text-align: center;
 }
 
-#search-button {
-    border: none;
-    color: white;
-    border-radius: 17.5px;
+h1 {
+    color: var(--h1-color);
     font-size: 2rem;
-    padding: 10px 20px;
-    font-weight: bold;
-    background-color: #2ecc71;
-    padding: 15px 30px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-#search-button:hover {
-    background-color: #29b866;
-}
-
-#search-button:active {
-    transform: scale(0.97);
-}
-
-#searching-text {
-    font-size: 1.3rem;
-    visibility: hidden;
-    color: #555;
-    margin-top: 20px;
 }
 
 header {
     display: flex;
     justify-content: flex-end;
-    background-color: #ffffff;
+    background-color: var(--header-color);
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 #sign-in-button {
     border: none;
-    background-color: #3498db;
+    background-color: var(--blue-button);
     color: white;
     border-radius: 17.5px;
     padding: 12px 20px;
@@ -69,7 +45,7 @@ header {
 }
 
 #sign-in-button:hover {
-    background-color: #2980b9;
+    background-color: var(--blue-button-hover);
 }
 
 #sign-in-button:active {
@@ -81,4 +57,3 @@ button {
     outline: none;
     border: none;
 }
-

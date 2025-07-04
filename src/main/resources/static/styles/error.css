@@ -1,0 +1,25 @@
+html body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: var(--main-bg-color);
+}
+
+h1 {
+    font-size: 5rem;
+}
+
+h2 {
+    font-size: 2.25rem;
+    margin: 5px;
+}
+
+h3 {
+    font-size: 1.5rem;
+    margin: 75px;
+    color:rgb(18, 13, 29);
+}
