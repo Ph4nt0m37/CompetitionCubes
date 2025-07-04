@@ -10,7 +10,12 @@ html body {
 }
 
 h1 {
+    margin: 5px;
     font-size: 5rem;
+}
+
+#error-joke {
+    margin-bottom: 70px;
 }
 
 h2 {
