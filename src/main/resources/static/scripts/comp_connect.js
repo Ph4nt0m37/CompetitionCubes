@@ -1,5 +1,5 @@
 import { roomId, userId, setScramble, matchData, setMatchData, setWins, endMatch, setAo5s } from "./competition.js";
-import { setTimerState, setTime } from "./opptimer.js"
+import { setTimerState, setTime, setEarlyTime, setPenalty, clearPenalty } from "./opptimer.js"
 import { setTimerEnabled } from "./timer.js";
 
 export const stompClient = new StompJs.Client({
@@ -14,6 +14,7 @@ stompClient.onConnect = (frame)=>{
         let solve = JSON.parse(solveJSON.body)
         if (solve.roomId==roomId && solve.userId!=userId) {
             setTime(solve.time);
+            if (solve.penalty!=="OK") setPenalty(solve.penalty);
             stompClient.publish({
                 destination: "/app/scramble/3x3",
                 body: roomId
@@ -21,7 +22,7 @@ stompClient.onConnect = (frame)=>{
         }
     });
 
-    stompClient.subscribe('/room/solve-completed', (solveJSON) => {
+    stompClient.subscribe('/room/solveCompleted', (solveJSON) => {
         let solve = JSON.parse(solveJSON.body)
         if (solve.roomId==roomId && solve.userId!=userId) {
             setEarlyTime(solve.time);
@@ -32,6 +33,7 @@ stompClient.onConnect = (frame)=>{
         let timerState = JSON.parse(timerStateJSON.body)
         if (timerState.roomId==roomId && timerState.userId!=userId) {
             setTimerState(timerState.state);
+            clearPenalty();
         }
     });
 
@@ -50,12 +52,14 @@ stompClient.onConnect = (frame)=>{
 
         if (match.currentSolve!==0 && match.solverIndex==0) {
             setWins(match.userScores);
-        } 
+        }
 
-        if (match.winner>0) {
+        console.log(match.winner);
+
+        /*if (match.winner>0) {
             endMatch(match.winner);
             return;
-        }
+        }*/
 
         if (match.currentSolver!=userId) {
             setScramble("Waiting for Opponent...");

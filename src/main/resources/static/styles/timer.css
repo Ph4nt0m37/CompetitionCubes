@@ -23,14 +23,14 @@ h1 {
 
 #scramble-text {
     color: var(--timer-color);
-    font-size: 5vh;
+    font-size: 3vw;
     margin: 15px;
 }
 
 #timer-main-div {
     display: flex;
     /*border: 10px solid rgb(255, 0, 0);*/
-    height: 87vh;
+    height: 85vh;
     align-items: center;
     justify-content: center;
 }
@@ -124,7 +124,7 @@ button {
     transform: scale(0.97);
 }
 
-#penalty-text {
+.penalty-text {
     color: var(--timer-color);
     margin: -1vh;
     font-size: 2.75vw;

@@ -6,6 +6,12 @@ export const timerStates = {
     STOPPED: 2
 };
 
+const Penalty = {
+    OK: 0,
+    PLUS_2: 1,
+    DNF: 2
+}
+
 let timerEnabled = true;
 
 export function setTimerEnabled(enabled) {
@@ -32,36 +38,61 @@ window.onload = ()=>{
     let rawTime = 356400000; //99 hours
     let time = "99:00.00";
 
+    let currentPenalty = Penalty.OK;
+
     okButton.addEventListener("click",()=>{
         if (timerState===timerStates.STOPPED) {
+            penaltiesDiv.style.display="none";
             penaltyText.style.display="none";
-            publishSolveData("ok");
+            penaltyText.style.color="#242424";
+            publishSolveData("OK");
         }
     });
 
     plusTwoButton.addEventListener("click",()=>{
         if (timerState===timerStates.STOPPED) {
+            penaltiesDiv.style.display="none";
             penaltyText.style.display="block";
-            penaltyText.textContent="+2";
-            rawTime+=2000;
-            let ms = Math.floor(((rawTime)/10)%100);
-            let s = Math.floor(((rawTime)/1000)%60);
-            let min = Math.floor((rawTime)/60000);
+            penaltyText.style.color="#d7e233";
+            if (currentPenalty!=Penalty.PLUS_2) {
+                penaltyText.textContent="+2";
+                rawTime+=2000;
+                let ms = Math.floor(((rawTime)/10)%100);
+                let s = Math.floor(((rawTime)/1000)%60);
+                let min = Math.floor((rawTime)/60000);
 
-            if (min) {
-                time = `${min.toString()}:${s.toString().padStart(2,0)}.${(ms).toString().padStart(2,0)}`;;
-            } else {
-                time = `${s.toString()}.${(ms).toString().padStart(2,0)}`;
+                if (min) {
+                    time = `${min.toString()}:${s.toString().padStart(2,0)}.${(ms).toString().padStart(2,0)}`;;
+                } else {
+                    time = `${s.toString()}.${(ms).toString().padStart(2,0)}`;
+                }
+                userTimer.textContent = time;
+                publishSolveData("+2");
+            }else {
+                penaltyText.textContent="+4";
+                rawTime+=4000;
+                let ms = Math.floor(((rawTime)/10)%100);
+                let s = Math.floor(((rawTime)/1000)%60);
+                let min = Math.floor((rawTime)/60000);
+
+                if (min) {
+                    time = `${min.toString()}:${s.toString().padStart(2,0)}.${(ms).toString().padStart(2,0)}`;;
+                } else {
+                    time = `${s.toString()}.${(ms).toString().padStart(2,0)}`;
+                }
+                userTimer.textContent = time;
+                publishSolveData("+4");
             }
-            publishSolveData("+2");
         }
     });
 
     dnfButton.addEventListener("click",()=>{
         if (timerState===timerStates.STOPPED) {
+            penaltiesDiv.style.display="none";
             penaltyText.style.display="block";
             penaltyText.textContent="DNF";
-            publishSolveData("dnf");
+            penaltyText.style.color="#e23333";
+            publishSolveData("DNF");
         }
     });
 
@@ -100,13 +131,18 @@ window.onload = ()=>{
                     })
                 });
 
-                stompClient.publish({
-                    destination: "/app/solveCompleted",
-                    body: JSON.stringify({
-                        'roomId':roomId,
-                        'time':time,
-                    })
-                });
+                if (currentPenalty!=Penalty.DNF) {
+                    stompClient.publish({
+                        destination: "/app/solveCompleted",
+                        body: JSON.stringify({
+                            'roomId':roomId,
+                            'time':time,
+                            'userId':userId
+                        })
+                    });
+                }else {
+                    publishSolveData("DNF");
+                }
                 setTimerEnabled(false);
             }
         }
@@ -115,7 +151,7 @@ window.onload = ()=>{
     document.addEventListener("keyup", e=>{
         if (timerState===timerStates.TIMING) {
             timerState = timerStates.STOPPED;
-            penaltiesDiv.style.display="flex";
+            if (currentPenalty!=Penalty.DNF) penaltiesDiv.style.display="flex";
             spaceDown=false;
             return;
         }
@@ -124,6 +160,8 @@ window.onload = ()=>{
                 spaceDown=false;
                 if (timerState===timerStates.STOPPED && !spaceDown) {
                     timerState=timerStates.INSPECTION;
+                    penaltyText.style.display="none";
+                    penaltyText.style.color="#242424";
                     userTimer.style.color = "rgb(255,0,0)";
                     stompClient.publish({
                         destination: "/app/switchTimer",
@@ -141,8 +179,16 @@ window.onload = ()=>{
                             userTimer.textContent=inspectionTime.toString();
                         }else if (inspectionTime<1 && inspectionTime>-2) {
                             userTimer.textContent="+2";
+                            penaltyText.style.display="block";
+                            penaltyText.textContent="+2";
+                            penaltyText.style.color="#d7e233";
+                            currentPenalty=Penalty.PLUS_2;
                         }else {
                             userTimer.textContent="DNF";
+                            penaltyText.style.display="block";
+                            penaltyText.textContent="DNF";
+                            penaltyText.style.color="#e23333";
+                            currentPenalty=Penalty.DNF;
                             clearInterval(timerInterval);
                         }
                     },1000);

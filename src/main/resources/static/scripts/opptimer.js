@@ -1,13 +1,13 @@
 import { timerStates } from "./timer.js";
 import { setScramble } from "./competition.js";
 
-let oppTimer = null;
+let oppTimer = document.getElementById("opp-timer");
+let oppPenaltyText = document.getElementById("penalty-text-opp");
 let timerState = null;
 
 let timerInterval = null;
 
 export function setTimerState(ts) {
-    oppTimer = document.getElementById("opp-timer");
     timerState = timerStates.STOPPED;
     timerState = ts;
     if (timerState===timerStates.STOPPED) {
@@ -56,4 +56,19 @@ export function setTime(time) {
 export function setEarlyTime(time) {
     oppTimer.textContent=time;
     setScramble("Waiting for Opponent to confirm solve...");
+}
+
+export function setPenalty(penalty) {
+    oppPenaltyText.style.display="block";
+    oppPenaltyText.textContent = penalty;
+    if (penalty==="+2") {
+        oppPenaltyText.style.color="#d7e233";
+    }else if (penalty==="DNF") {
+        oppPenaltyText.style.color="#e23333";
+    }
+}
+
+export function clearPenalty() {
+    oppPenaltyText.style.display="none";
+    oppPenaltyText.style.color="#242424";
 }

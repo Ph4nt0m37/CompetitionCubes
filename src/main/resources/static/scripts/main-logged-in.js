@@ -1,5 +1,6 @@
 export let user = null;
 export let userId = null;
+//export let userId = Math.floor(Math.random()*100000);
 
 const searchButton = document.getElementById("search-button");
 const searchText = document.getElementById("searching-text");

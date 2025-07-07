@@ -2,6 +2,7 @@ package dev.pakn.competitioncubes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.worldcubeassociation.tnoodle.scrambles.Puzzle;
@@ -17,13 +18,15 @@ public class Match {
     private HashMap<Integer,ArrayList<String>> userTimes = new HashMap<>();
     private HashMap<Integer,String> userAo5s = new HashMap<>();
     private HashMap<Integer,Integer> userScores = new HashMap<>();
+    private HashMap<Integer,ArrayList<Penalty>> userPenalties = new HashMap<>();
 
-    private int winner = -1;
+    private User winner = null;
 
     public Match() {
         currentSolver = users[0];
         for (int user:users) userScores.put(user, 0);
         for (int user:users) userTimes.put(user, new ArrayList<String>());
+        for (int user:users) userPenalties.put(user, new ArrayList<Penalty>());
         generateNewScramble(PuzzleRegistry.THREE);
     }
 
@@ -33,6 +36,7 @@ public class Match {
         currentSolver = users[0];
         for (int user:users) userScores.put(user, 0);
         for (int user:users) userTimes.put(user, new ArrayList<String>());
+        for (int user:users) userPenalties.put(user, new ArrayList<Penalty>());
         generateNewScramble(PuzzleRegistry.THREE);
     }
 
@@ -60,7 +64,7 @@ public class Match {
         return solverIndex;
     }
 
-    public int getWinner() {
+    public User getWinner() {
         return winner;
     }
 
@@ -78,6 +82,10 @@ public class Match {
 
     public HashMap<Integer,String> getUserAo5s() {
         return userAo5s;
+    }
+
+    public HashMap<Integer,ArrayList<Penalty>> getUserPenalties() {
+        return userPenalties;
     }
 
     public String generateNewScramble(PuzzleRegistry puzzle) {
@@ -98,20 +106,22 @@ public class Match {
                 }
             }
             if (solverIndex==0) {
-                double fastestTime = 10000;
+                double fastestTime = Integer.MAX_VALUE;
                 for (int userId:users) {
                     double userTime = TimeConversions.timeToDouble(userTimes.get(userId).get(currentSolve));
+                    if (userPenalties.get(userId).get(currentSolve)==Penalty.DNF) userTime=Integer.MAX_VALUE;
                     if (userTime<fastestTime) {
                         fastestTime=userTime;
                     }
                 }
                 for (int userId:users) {
                     double userTime = TimeConversions.timeToDouble(userTimes.get(userId).get(currentSolve));
+                    if (userPenalties.get(userId).get(currentSolve)==Penalty.DNF) userTime=Integer.MAX_VALUE;
                     if (userTime==fastestTime) {
                         userScores.put(userId, userScores.get(userId)+1);
                     }
                     if (userScores.get(userId)>=5) {
-                        winner = userId;
+                        winner = DBController.getUserByID(userId);
                         return true;
                     }
                 }
@@ -126,11 +136,29 @@ public class Match {
     }
 
     public void calculateAo5(int user) {
-        int timeTotal = 0;
+        double timeTotal = 0;
         ArrayList<String> solveTimes = userTimes.get(user);
+        ArrayList<Double> solveTimesDouble = new ArrayList<>();
+        ArrayList<Penalty> penalties = userPenalties.get(user);
+        //getting the last 5 solves ONLY.
         for (int i = solveTimes.size()-5; i<solveTimes.size(); i++) {
-            timeTotal+=TimeConversions.timeToDouble(solveTimes.get(i));
+            if (penalties.get(i)==Penalty.DNF) {
+                solveTimesDouble.add((double) Integer.MAX_VALUE);
+            }else {
+                solveTimesDouble.add(TimeConversions.timeToDouble(solveTimes.get(i)));
+            }
         }
-        userAo5s.put(user, TimeConversions.doubleToTime(timeTotal/5.0));
+        //removing biggest and smallest
+        solveTimesDouble.remove(Collections.max(solveTimesDouble));
+        solveTimesDouble.remove(Collections.min(solveTimesDouble));
+        for (double time:solveTimesDouble) {
+            if ((int) time==Integer.MAX_VALUE) {
+                userAo5s.put(user, "DNF");
+                return;
+            }else {
+                timeTotal+=time;
+            }
+        }
+        userAo5s.put(user, TimeConversions.doubleToTime((Math.round((timeTotal/3.0)*100))/100.0));
     }
 }

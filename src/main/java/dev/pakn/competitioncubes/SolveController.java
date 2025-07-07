@@ -20,12 +20,18 @@ public class SolveController {
             if (currMatch.getRoomId()==data.getRoomId()) {
                 ArrayList<String> times = currMatch.getUserTimes().get(data.getUserId());
                 times.add(data.getTime());
+                ArrayList<Penalty> currentPenalties = currMatch.getUserPenalties().get(data.getUserId());
+                Penalty penalty = Penalty.OK;
+                if (data.getPenalty().equals("+2")) penalty=Penalty.PLUS_2;
+                if (data.getPenalty().equals("+4")) penalty=Penalty.PLUS_4;
+                if (data.getPenalty().equalsIgnoreCase("DNF")) penalty=Penalty.DNF;
+                currentPenalties.add(penalty);
             }
         }
         return data;
     }
 
-    @MessageMapping("/solve-completed")
+    @MessageMapping("/solveCompleted")
     @SendTo("/room/solveCompleted")
     public EarlySolveData sendSolveCompleted(EarlySolveData data) {
         return data;
