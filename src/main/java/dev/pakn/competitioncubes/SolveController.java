@@ -25,6 +25,12 @@ public class SolveController {
         return data;
     }
 
+    @MessageMapping("/solve-completed")
+    @SendTo("/room/solveCompleted")
+    public EarlySolveData sendSolveCompleted(EarlySolveData data) {
+        return data;
+    }
+
     @MessageMapping("/switchTimer")
     @SendTo("/room/switchTimer")
     public TimerState sendStart(TimerState state) {

@@ -2,6 +2,11 @@ body {
     font-family: 'Trebuchet MS', monospace;
     display: flex;
     flex-direction: column;
+    background-color: var(--main-bg-color);
+}
+
+:root {
+    --timer-color: #242424;
 }
 
 h1 {
@@ -14,6 +19,12 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+#scramble-text {
+    color: var(--timer-color);
+    font-size: 5vh;
+    margin: 15px;
 }
 
 #timer-main-div {
@@ -36,16 +47,19 @@ h1 {
 .timer {
     font-size: 7vw;
     /*border: 10px solid black;*/
+    color: var(--timer-color);
 }
 
 .ao5 {
     font-size: 2.75vw;
     /*border: 10px solid black;*/
+    color: var(--timer-color);
 }
 
 .winsText {
     font-size: 2.75vw;
     transition: color 2s ease-out;
+    color: var(--timer-color);
 }
 
 .winsText.wonRound {
@@ -56,4 +70,67 @@ h1 {
 .winsText.lostRound {
     color: red;
     transition: color 0s;
+}
+
+#penalties-div {
+    display: none;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+button {
+    border-radius: 1.2vw;
+    border: none;
+    font-weight: bold;
+    font-size: 2.25vw;
+    cursor: pointer;
+    padding: 6px 10px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+#ok-button {
+    background-color: var(--green-button);
+}
+
+#ok-button:hover {
+    background-color: var(--green-button-hover);
+}
+
+#ok-button:active {
+    transform: scale(0.97);
+}
+
+#plus-2-button {
+    background-color: var(--warning-color);
+}
+
+#dnf-button {
+    background-color: var(--error-color);
+}
+
+#plus-2-button:hover {
+    background-color: #c2cb2e;
+}
+
+#dnf-button:hover {
+    background-color: #cb2e2e;
+}
+
+#plus-2-button:active {
+    transform: scale(0.97);
+}
+
+#dnf-button:active {
+    transform: scale(0.97);
+}
+
+#penalty-text {
+    color: var(--timer-color);
+    margin: -1vh;
+    font-size: 2.75vw;
+    display: none;
+}
+
+.placeholder {
+    visibility: hidden;
 }

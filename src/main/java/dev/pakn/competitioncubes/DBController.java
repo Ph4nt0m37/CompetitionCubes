@@ -91,7 +91,6 @@ public class DBController {
             ResultSet usersFound = getUserDataBySecret(userSecret);
             
             if (usersFound.next()) {
-                System.out.println("WCA ID: "+usersFound.getString("wcaid"));
                 int userId = usersFound.getInt("userid");
                 String wcaId = usersFound.getString("wcaid");
                 String username = usersFound.getString("username");
@@ -117,7 +116,6 @@ public class DBController {
             ResultSet usersFound = getUserDataById(userId);
             
             if (usersFound.next()) {
-                System.out.println("WCA ID: "+usersFound.getString("wcaid"));
                 String wcaId = usersFound.getString("wcaid");
                 String username = usersFound.getString("username");
                 int userElo = usersFound.getInt("elo");

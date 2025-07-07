@@ -6,22 +6,25 @@ public class SolveData {
     private int roomId;
     private String time;
     private String scramble;
+    private String penalty;
     private int userId;
 
     public SolveData() {}
 
-    public SolveData(int id, String time, int userId) {
+    public SolveData(int id, String time, String penalty, int userId) {
         roomId = id;
         this.time=time;
         this.scramble="";
+        this.penalty = penalty;
         this.userId=userId;
     }
 
 
-    public SolveData(int id, String time, String scramble, int userId) {
+    public SolveData(int id, String time, String penalty, String scramble, int userId) {
         roomId = id;
         this.time=time;
         this.scramble=scramble;
+        this.penalty = penalty;
         this.userId=userId;
     }
 
@@ -39,5 +42,9 @@ public class SolveData {
 
     public int getUserId() {
         return userId;
+    }
+
+    public String getPenalty() {
+        return penalty;
     }
 }

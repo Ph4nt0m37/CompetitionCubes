@@ -18,7 +18,7 @@ export let matchData;
 export let currentScramble = "";
 
 export function setScramble(scramble) {
-    if (scramble!=="Waiting for Opponent...") {
+    if (scramble!=="Waiting for Opponent..." && scramble!=="Waiting for Opponent to confirm solve...") {
         currentScramble = scramble;
     }else{
         currentScramble = "";

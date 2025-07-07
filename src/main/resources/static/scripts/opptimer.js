@@ -1,4 +1,5 @@
 import { timerStates } from "./timer.js";
+import { setScramble } from "./competition.js";
 
 let oppTimer = null;
 let timerState = null;
@@ -50,4 +51,9 @@ export function setTimerState(ts) {
 
 export function setTime(time) {
     oppTimer.textContent=time;
+}
+
+export function setEarlyTime(time) {
+    oppTimer.textContent=time;
+    setScramble("Waiting for Opponent to confirm solve...");
 }

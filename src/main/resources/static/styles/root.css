@@ -9,6 +9,8 @@
     --blue-button: #3498db;
     --blue-button-hover: #2980b9;
     --card-color: #cccccc;
+    --warning-color: #d7e233;
+    --error-color: #e23333;
 }
 
 h1 {

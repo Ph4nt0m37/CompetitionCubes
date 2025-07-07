@@ -21,6 +21,13 @@ stompClient.onConnect = (frame)=>{
         }
     });
 
+    stompClient.subscribe('/room/solve-completed', (solveJSON) => {
+        let solve = JSON.parse(solveJSON.body)
+        if (solve.roomId==roomId && solve.userId!=userId) {
+            setEarlyTime(solve.time);
+        }
+    });
+
     stompClient.subscribe('/room/switchTimer', (timerStateJSON) => {
         let timerState = JSON.parse(timerStateJSON.body)
         if (timerState.roomId==roomId && timerState.userId!=userId) {

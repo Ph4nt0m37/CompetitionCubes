@@ -14,6 +14,12 @@ export function setTimerEnabled(enabled) {
 
 window.onload = ()=>{
     const userTimer = document.getElementById("user-timer");
+    const okButton = document.getElementById("ok-button");
+
+    const penaltiesDiv = document.getElementById("penalties-div");
+    const plusTwoButton = document.getElementById("plus-2-button");
+    const dnfButton = document.getElementById("dnf-button");
+    const penaltyText = document.getElementById("penalty-text");
     let timerState = timerStates.STOPPED;
 
     let timerInterval = null;
@@ -21,6 +27,45 @@ window.onload = ()=>{
     let canStartTimer = false;
     let spaceDown = false;
     let startSpaceDown = 0;
+
+    let startTime = Date.now();
+    let rawTime = 356400000; //99 hours
+    let time = "99:00.00";
+
+    okButton.addEventListener("click",()=>{
+        if (timerState===timerStates.STOPPED) {
+            penaltyText.style.display="none";
+            publishSolveData("ok");
+        }
+    });
+
+    plusTwoButton.addEventListener("click",()=>{
+        if (timerState===timerStates.STOPPED) {
+            penaltyText.style.display="block";
+            penaltyText.textContent="+2";
+            rawTime+=2000;
+            let ms = Math.floor(((rawTime)/10)%100);
+            let s = Math.floor(((rawTime)/1000)%60);
+            let min = Math.floor((rawTime)/60000);
+
+            if (min) {
+                time = `${min.toString()}:${s.toString().padStart(2,0)}.${(ms).toString().padStart(2,0)}`;;
+            } else {
+                time = `${s.toString()}.${(ms).toString().padStart(2,0)}`;
+            }
+            publishSolveData("+2");
+        }
+    });
+
+    dnfButton.addEventListener("click",()=>{
+        if (timerState===timerStates.STOPPED) {
+            penaltyText.style.display="block";
+            penaltyText.textContent="DNF";
+            publishSolveData("dnf");
+        }
+    });
+
+
     document.addEventListener("keydown", e=>{
         if (timerEnabled) {
             if (e.key===" ") {
@@ -41,6 +86,11 @@ window.onload = ()=>{
             if (timerState===timerStates.TIMING) {
                 clearInterval(timerInterval);
                 userTimer.style.color="black";
+
+                rawTime = Date.now()-startTime;
+                time = calculateTime();
+                userTimer.textContent = time;
+                
                 stompClient.publish({
                     destination: "/app/switchTimer",
                     body: JSON.stringify({
@@ -51,25 +101,13 @@ window.onload = ()=>{
                 });
 
                 stompClient.publish({
-                    destination: "/app/solveData",
+                    destination: "/app/solveCompleted",
                     body: JSON.stringify({
                         'roomId':roomId,
-                        'time':userTimer.textContent,
-                        'scramble': currentScramble,
-                        'userId': userId
+                        'time':time,
                     })
                 });
-
-                setTimeout(() => {
-                    setTimerEnabled(false);
-                    stompClient.publish({
-                        destination: "/app/update-match",
-                        body: JSON.stringify({
-                            'roomId':roomId,
-                            'command':"solveFinished"
-                        })
-                    });
-                }, 100);
+                setTimerEnabled(false);
             }
         }
     });
@@ -77,6 +115,7 @@ window.onload = ()=>{
     document.addEventListener("keyup", e=>{
         if (timerState===timerStates.TIMING) {
             timerState = timerStates.STOPPED;
+            penaltiesDiv.style.display="flex";
             spaceDown=false;
             return;
         }
@@ -125,21 +164,52 @@ window.onload = ()=>{
                             })
                         });
 
-                        let startTime = Date.now();
+                        startTime = Date.now();
                         timerInterval = setInterval(()=> {
-                            let ms = Math.floor(((Date.now()-startTime)/10)%100);
-                            let s = Math.floor(((Date.now()-startTime)/1000)%60);
-                            let min = Math.floor((Date.now()-startTime)/60000);
-
-                            if (min) {
-                                userTimer.textContent=`${min.toString()}:${s.toString().padStart(2,0)}.${(ms).toString().padStart(2,0)}`;
-                            } else {
-                                userTimer.textContent=`${s.toString()}.${(ms).toString().padStart(2,0)}`;
-                            }
+                            userTimer.textContent=calculateTime();
                         },10);
                     }
                 }
             }
         }
     });
+
+    function calculateTime() {
+        let currentTime = Date.now();
+        let ms = Math.floor(((currentTime-startTime)/10)%100);
+        let s = Math.floor(((currentTime-startTime)/1000)%60);
+        let min = Math.floor((currentTime-startTime)/60000);
+
+        let time = null;
+
+        if (min) {
+            time = `${min.toString()}:${s.toString().padStart(2,0)}.${(ms).toString().padStart(2,0)}`;;
+        } else {
+            time = `${s.toString()}.${(ms).toString().padStart(2,0)}`;
+        }
+
+        return time;
+    }
+
+    function publishSolveData(penalty) {
+        stompClient.publish({
+            destination: "/app/solveData",
+            body: JSON.stringify({
+                'roomId':roomId,
+                'time':time,
+                'penalty':penalty,
+                'scramble': currentScramble,
+                'userId': userId
+            })
+        });
+        setTimeout(() => {
+            stompClient.publish({
+                destination: "/app/update-match",
+                body: JSON.stringify({
+                    'roomId':roomId,
+                    'command':"solveFinished"
+                })
+            });
+        }, 100);
+    }
 }
