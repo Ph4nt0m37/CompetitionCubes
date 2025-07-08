@@ -59,7 +59,7 @@ public class User {
     }
 
     public boolean saveUserData() {
-        return true;
+        return DBController.saveUserData(this);
     }
 
     public boolean loadUserData() {

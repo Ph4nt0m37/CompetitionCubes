@@ -122,6 +122,15 @@ public class Match {
                     }
                     if (userScores.get(userId)>=5) {
                         winner = DBController.getUserByID(userId);
+                        winner.setElo(winner.getElo()+10);
+                        winner.saveUserData();
+                        for (int loserUserId:users) {
+                            if (loserUserId!=userId) {
+                                User loser = DBController.getUserByID(loserUserId);
+                                loser.setElo(loser.getElo()-10);
+                                loser.saveUserData();
+                            }
+                        }
                         return true;
                     }
                 }

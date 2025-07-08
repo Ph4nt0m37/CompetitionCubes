@@ -257,4 +257,30 @@ public class DBController {
             return false;
         }
     }
+
+
+
+    public static boolean saveUserData(User user) {
+        try {
+            //connect to DB
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        
+            //creating sql query
+            String sqlQuery = "UPDATE users SET username=?, elo=? WHERE userid=?";
+            PreparedStatement statement = conn.prepareStatement(sqlQuery);
+            statement.setString(1, user.getUsername());
+            statement.setInt(2, user.getElo());
+            statement.setInt(3, user.getUserId());
+
+            //sending sql query
+            statement.executeUpdate();
+
+            conn.close();
+            return true;
+        }catch (Exception e) {
+            System.out.println("Failed to connect to db!");
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

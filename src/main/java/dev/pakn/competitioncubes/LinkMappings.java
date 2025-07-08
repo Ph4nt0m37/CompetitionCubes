@@ -19,8 +19,10 @@ public class LinkMappings {
         if (userSecret!=null) {
             //auto login here!
             User user = DBController.getUserBySecret(userSecret);
+            System.out.println("exists");
             return "main-logged-in.html";
         }
+        System.out.println("not found");
         return "main.html";
     }
 

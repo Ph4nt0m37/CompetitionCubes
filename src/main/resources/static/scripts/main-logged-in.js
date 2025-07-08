@@ -38,7 +38,8 @@ profileButton.addEventListener("click",()=>{
 });
 
 profileDropdownLink.addEventListener("click",()=>{
-    window.location.replace(`/user/${userId}`)
+    profileDropdownContent.style.visibility="hidden";
+    window.location.href=`/user/${userId}`;
 });
 
 

@@ -54,14 +54,14 @@ stompClient.onConnect = (frame)=>{
             setWins(match.userScores);
         }
 
-        console.log(match.winner);
+        console.log(match.winner)
 
-        /*if (match.winner>0) {
-            endMatch(match.winner);
+        if (match.winner && match.winner['username']) {
+            endMatch(match.winner['username']);
             return;
-        }*/
+        }
 
-        if (match.currentSolver!=userId) {
+        if (!match.winner && match.currentSolver!=userId) {
             setScramble("Waiting for Opponent...");
             setTimerEnabled(false);
         }else {
