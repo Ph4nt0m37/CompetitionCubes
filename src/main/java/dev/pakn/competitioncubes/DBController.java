@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,11 +37,25 @@ public class DBController {
     private static String staticDbPassword;
     private static String staticDbURL;
 
+    private static HashMap<Integer, User> userList = new HashMap<>();
+
     @PostConstruct
     public void init() {
         staticDbURL=dbURL;
         staticDbUsername=dbUsername;
         staticDbPassword=dbPassword;
+
+        try {
+            ResultSet userResultSet = getAllUsers();
+            while (userResultSet.next()) {
+                int userId = userResultSet.getInt("userid");
+                String username = userResultSet.getString("username");
+                int userElo = userResultSet.getInt("elo");
+                userList.put(userId, new User(userId,username,userElo,null));
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     @PostMapping("/api/create-user")
@@ -79,7 +94,7 @@ public class DBController {
 
     @GetMapping("/api/get-user-data-by-id/{userId}")
     public User getUserByUserIDRequest(@PathVariable int userId) {
-        return getUserByID(userId);
+        return userList.get(userId);
     }
 
     public static User getUserBySecret(String userSecret) {
@@ -282,5 +297,29 @@ public class DBController {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public ResultSet getAllUsers() {
+        try {
+            //connect to DB 
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+
+            //checking for userId
+            String findUsersQuery = "SELECT * FROM users";
+            PreparedStatement usersQueryStatement = conn.prepareStatement(findUsersQuery);
+
+            //getting resultset
+            ResultSet usersFound = usersQueryStatement.executeQuery();
+
+            conn.close();
+            return usersFound;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static HashMap<Integer, User> getUsers() {
+        return userList;
     }
 }

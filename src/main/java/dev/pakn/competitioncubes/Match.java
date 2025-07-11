@@ -21,6 +21,7 @@ public class Match {
     private HashMap<Integer,ArrayList<Penalty>> userPenalties = new HashMap<>();
 
     private User winner = null;
+    private int eloChange = 0;
 
     public Match() {
         currentSolver = users[0];
@@ -88,6 +89,10 @@ public class Match {
         return userPenalties;
     }
 
+    public int getEloChange() {
+        return eloChange;
+    }
+
     public String generateNewScramble(PuzzleRegistry puzzle) {
         PuzzleRegistry puzzleRegistry = puzzle;
         Puzzle scrambler = puzzleRegistry.getScrambler();
@@ -121,16 +126,25 @@ public class Match {
                         userScores.put(userId, userScores.get(userId)+1);
                     }
                     if (userScores.get(userId)>=5) {
-                        winner = DBController.getUserByID(userId);
-                        winner.setElo(winner.getElo()+10);
-                        winner.saveUserData();
+                        eloChange = 15;
+                        winner = DBController.getUsers().get(userId);
                         for (int loserUserId:users) {
                             if (loserUserId!=userId) {
-                                User loser = DBController.getUserByID(loserUserId);
-                                loser.setElo(loser.getElo()-10);
+                                User loser = DBController.getUsers().get(userId);
+                                if (Math.abs(winner.getElo()-loser.getElo())>75) {
+                                    if (winner.getElo()<loser.getElo()) {
+                                        eloChange=(Math.abs(winner.getElo()-loser.getElo())/4)*(loser.getElo()/winner.getElo());
+                                    }else {
+                                        eloChange=(int)((Math.abs(winner.getElo()-loser.getElo())/4)*(loser.getElo()/Math.pow(winner.getElo(),1.325)));
+                                    }
+                                    eloChange=Math.abs(Math.max(5,Math.min(100, eloChange)));
+                                }
+                                loser.setElo(loser.getElo()-eloChange);
                                 loser.saveUserData();
                             }
                         }
+                        winner.setElo(winner.getElo()+eloChange);
+                        winner.saveUserData();
                         return true;
                     }
                 }

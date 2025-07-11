@@ -17,19 +17,21 @@ public class MatchController {
     private static ArrayList<Match> matches = new ArrayList<>();
 
     @MessageMapping("/find-match")
-    @SendTo("/room/matches")
+    @SendTo("/room/found-match")
     public Match findMatch(int userId) {
         //cloning waitlist because we want to ignore userId and if we don't clone it we will accidentally remove userId from actual waitlist
         ArrayList<Integer> waitList = (ArrayList<Integer>) CompController.getWaitingList().clone();
         waitList.remove((Integer) userId);
-        if (!waitList.isEmpty()) {
-            //find match and actually remove user from waitlist
-            int opponentId = waitList.get(0);
-            CompController.getWaitingList().remove((Integer) userId);
-            CompController.getWaitingList().remove((Integer) opponentId);
-            Match match = new Match(new int[]{userId,opponentId},(int)(Math.random()*9999999));
-            matches.add(match);
-            return match;
+        User user = DBController.getUsers().get(userId);
+        for (int oppId:waitList) {
+            User oppUser = DBController.getUsers().get(oppId);
+            if (Math.abs(user.getElo()-oppUser.getElo())<100) {
+                CompController.getWaitingList().remove((Integer) userId);
+                CompController.getWaitingList().remove((Integer) oppId);
+                Match match = new Match(new int[]{userId,oppId},(int)(Math.random()*9999999));
+                matches.add(match);
+                return match;
+            }
         }
         return new Match(null,-1);
     }

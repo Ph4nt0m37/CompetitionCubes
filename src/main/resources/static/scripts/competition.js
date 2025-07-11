@@ -2,6 +2,7 @@
 export let roomId = new URLSearchParams(window.location.search).get("roomId");
 export let userId = new URLSearchParams(window.location.search).get("userId");
 import { setTimerEnabled } from "./timer.js";
+import { startMatchSearch, cancelMatchSearch } from "./comp_connect.js";
 
 let scrambleText = document.getElementById("scramble-text");
 
@@ -11,19 +12,34 @@ let oppWins = document.getElementById("opp-wins");
 let userao5 = document.getElementById("user-ao5")
 let oppao5 = document.getElementById("opp-ao5");
 
+const usernameText = document.getElementById("username");
+const oppUsernameText = document.getElementById("opp-username");
+
+const searchButton = document.getElementById("search-button");
+
+let footerDiv = document.getElementById("footer-div");
 let numWins = 0;
 
 export let matchData;
 
 export let currentScramble = "";
 
+let oppId = null;
+
+let matchWinner = null;
+
+let userElo = -1;
+let oppElo = -1;
+
 export function setScramble(scramble) {
-    if (scramble!=="Waiting for Opponent..." && scramble!=="Waiting for Opponent to confirm solve...") {
-        currentScramble = scramble;
-    }else{
-        currentScramble = "";
+    if (!matchWinner) {
+        if (scramble!=="Waiting for Opponent..." && scramble!=="Waiting for Opponent to confirm solve...") {
+            currentScramble = scramble;
+        }else{
+            currentScramble = "";
+        }
+        scrambleText.textContent = scramble;
     }
-    scrambleText.textContent = scramble;
 }
 
 
@@ -31,6 +47,29 @@ fetch(`${window.location.origin}/get-match-info/${roomId}`).then(response=>{
         return response.json()
     }).then(matchJson=>{
         setMatchData(matchJson);
+        if (matchJson.users[0]==userId) {
+            oppId = matchJson.users[1];
+        }else if (matchJson.users[1]==userId) {
+            oppId = matchJson.users[0];
+        }
+        //getting elos
+        fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
+            return response.json();
+            }).then(function(data) {
+                userElo=data.elo;
+                usernameText.textContent=data.username;
+            }).catch(function(err) {
+                console.log('Failed to fetch!', err);
+            });
+
+        fetch(`/api/get-user-data-by-id/${oppId}`).then((response)=> {
+            return response.json();
+            }).then(function(data) {
+                oppElo=data.elo;
+                oppUsernameText.textContent=data.username;
+            }).catch(function(err) {
+                console.log('Failed to fetch!', err);
+            });
     });
 
 export function setMatchData(data) {
@@ -72,10 +111,25 @@ export function setWins(winData) {
     }
 }
 
-export function endMatch(winner) {
+export function endMatch(matchData) {
     setTimerEnabled(false);
+    let winner = matchData.winner['username'];
+    let eloChange = matchData.eloChange;
     scrambleText.textContent = `${winner} has won the match!`;
     scrambleText.style.color = "lime";
+    footerDiv.style.display="flex";
+    footerDiv.classList.add("fade-in-element");
+    let eloChangeText = document.getElementById("elo-change-text");
+    let oppEloChangeText = document.getElementById("opp-elo-change-text");
+    matchWinner=matchData.winner;
+    if (matchData.winner['userId']==userId) {
+        eloChangeText.innerHTML=`ELO: ${userElo}<span style="color:rgb(0,255,0)">>></span>${userElo+eloChange}`;
+        oppEloChangeText.innerHTML=`ELO: ${oppElo}<span style="color:rgb(255,0,0)">>></span>${oppElo-eloChange}`;
+    }else {
+        eloChangeText.innerHTML=`ELO: ${userElo}<span style="color:rgb(255,0,0)">>></span>${userElo-eloChange}`;
+        oppEloChangeText.innerHTML=`ELO: ${oppElo}<span style="color:rgb(0,255,0)">>></span>${oppElo+eloChange}`;
+    }
+
 }
 
 export function setAo5s(ao5Json) {
@@ -89,6 +143,18 @@ export function setAo5s(ao5Json) {
         }
     }
 }
+
+//search button
+searchButton.addEventListener("click",()=>{
+    if (searchButton.textContent==="Next Match") {
+        searchButton.textContent = "Cancel Search";
+        startMatchSearch();
+    }else {
+        searchButton.textContent = "Next Match";
+        cancelMatchSearch();
+    }
+
+});
 
 //moved ao5 calculation to server
 /*export function calculateAo5s(solveData) {

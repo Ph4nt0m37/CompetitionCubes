@@ -42,17 +42,17 @@ profileDropdownLink.addEventListener("click",()=>{
     window.location.href=`/user/${userId}`;
 });
 
-
-//on website loading stuff
-fetch(`/api/get-user-data`).then((response)=> {
-    return response.json();
-    }).then(function(data) {
-        user=data;
-        userId=user.userId;
-    }).catch(function(err) {
-        console.log('Failed to fetch!', err);
-    });
-
+onload = (event)=>{
+    //on website loading stuff
+    fetch(`/api/get-user-data`).then((response)=> {
+        return response.json();
+        }).then(function(data) {
+            user=data;
+            userId=user.userId;
+        }).catch(function(err) {
+            console.log('Failed to fetch!', err);
+        });
+}
 
 
 
@@ -63,7 +63,7 @@ const stompClient = new StompJs.Client({
 
 stompClient.onConnect = (frame)=>{
     console.log("connected: "+ frame);
-    stompClient.subscribe('/room/matches', (matchJSON) => {
+    stompClient.subscribe('/room/found-match', (matchJSON) => {
         let match = JSON.parse(matchJSON.body)
         let users = match.users;
         let roomId = match.roomId;
