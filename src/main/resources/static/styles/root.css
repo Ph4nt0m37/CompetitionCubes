@@ -8,6 +8,8 @@
     --green-button-hover: #29b866;
     --blue-button: #3498db;
     --blue-button-hover: #2980b9;
+    --neutral-button: #e0e0e0;
+    --neutral-button-hover: #cacaca;
     --card-color: #cccccc;
     --warning-color: #d7e233;
     --error-color: #e23333;
@@ -22,4 +24,10 @@ h1 {
 h2 {
     font-size: 1.75rem;
     color: var(--h2-color);
+}
+
+p {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #0d1127;
 }

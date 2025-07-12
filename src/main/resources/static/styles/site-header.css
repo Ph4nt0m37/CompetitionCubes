@@ -1,0 +1,94 @@
+button {
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    border: none;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    background-color: var(--header-color);
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+#header-logo {
+
+}
+
+#header-buttons-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    margin: -20px 0;
+}
+
+.header-button {
+    height: 100%;
+    background-color: var(--header-color);
+    padding: 0px 15px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--h2-color)
+}
+
+.header-button:hover {
+    background-color: var(--neutral-button);
+}
+
+#profile-button {
+    border: none;
+    background-color: var(--blue-button);
+    color: white;
+    border-radius: 5px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+#profile-button:hover {
+    background-color: var(--blue-button-hover);
+}
+
+#profile-button:active {
+    transform: scale(0.97);
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    max-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    justify-content: center;
+    align-items: center;
+    background-color: var(--popup-color);
+    border: none;
+    border-radius: 0 0 5px 5px;
+    width: 100%;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: var(--h2-color);
+    padding: 12px 16px;
+    font-size: 1rem;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.dropdown-content a:hover {
+    background-color: #dedede;
+}

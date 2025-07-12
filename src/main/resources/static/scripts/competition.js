@@ -1,6 +1,7 @@
 //export let roomId = Math.floor(Math.random()*100000)
 export let roomId = new URLSearchParams(window.location.search).get("roomId");
-export let userId = new URLSearchParams(window.location.search).get("userId");
+export let userId = sessionStorage.getItem("userId");
+sessionStorage.removeItem("userId");
 import { setTimerEnabled } from "./timer.js";
 import { startMatchSearch, cancelMatchSearch } from "./comp_connect.js";
 

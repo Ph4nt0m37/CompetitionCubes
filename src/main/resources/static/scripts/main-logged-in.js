@@ -8,6 +8,9 @@ const profileButton = document.getElementById("profile-button");
 const profileDropdown = document.getElementById("profile-dropdown")
 const profileDropdownContent = document.getElementById("profile-dropdown-content");
 
+//header links
+const leaderboardButton = document.getElementById("leaderboard-button");
+
 //dropdown links
 const profileDropdownLink = document.getElementById("profile-dropdown-link");
 
@@ -40,6 +43,10 @@ profileButton.addEventListener("click",()=>{
 profileDropdownLink.addEventListener("click",()=>{
     profileDropdownContent.style.visibility="hidden";
     window.location.href=`/user/${userId}`;
+});
+
+leaderboardButton.addEventListener("click",()=>{
+    window.location.href=`/rankings`;
 });
 
 onload = (event)=>{
@@ -79,7 +86,8 @@ stompClient.onConnect = (frame)=>{
             }).catch(error=>{
                 //do nothing!
             });
-            window.location.replace(`${window.location.origin}/competition?roomId=${roomId}&userId=${userId}`);
+            sessionStorage.setItem("userId",userId);
+            window.location.replace(`${window.location.origin}/competition?roomId=${roomId}`);
         }
     });
 }

@@ -4,12 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/root.css">
+    <link rel="stylesheet" href="styles/site-header.css">
     <link rel="stylesheet" href="styles/main-logged-in.css">
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
     <title>Speedcubing Ranked</title>
 </head>
 <body>
     <header id="header">
+        <div id="header-logo">
+            --Logo--
+        </div>
+        <div id="header-buttons-div">
+            <button class="header-button">TBA</button>
+            <button class="header-button" id="leaderboard-button">Leaderboard</button>
+            <button class="header-button">TBA</button>
+        </div>
         <div class="dropdown" id="profile-dropdown">
             <button type="button" id="profile-button">Profile</button>
             <div id="profile-dropdown-content" class="dropdown-content">

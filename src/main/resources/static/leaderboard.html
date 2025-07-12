@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/root.css">
+    <link rel="stylesheet" href="styles/site-header.css">
+    <link rel="stylesheet" href="styles/leaderboard.css">
+    <link rel="stylesheet" href="https://cdn.cubing.net/v0/css/@cubing/icons/css">
+    <title>Leaderboard | Competition Cubes</title>
+</head>
+<body>
+    <header id="header">
+        <div id="header-logo">
+            --Logo--
+        </div>
+        <div id="header-buttons-div">
+            <button class="header-button">TBA</button>
+            <button class="header-button" id="leaderboard-button">Leaderboard</button>
+            <button class="header-button">TBA</button>
+        </div>
+        <div class="dropdown" id="profile-dropdown">
+            <button type="button" id="profile-button">Profile</button>
+            <div id="profile-dropdown-content" class="dropdown-content">
+                <a id="profile-dropdown-link">Profile</a>
+                <a>TBD</a>
+                <a>TBD</a>
+            </div>
+        </div>
+    </header>
+
+    <div id="main">
+        <h1>Rankings</h1>
+        <div id="options-box">
+            <div id="events-box">
+                <button class="event-button" id="3x3-button"><span class="cubing-icon event-333"></span></button>
+            </div>
+        </div>
+        <div id="leaderboard-div">
+            <div class="user-entry" id="leaderboard-key">
+                <p class="leaderboard-key rank-text">#</p>
+                <p class="leaderboard-key username-text">Username</p>
+                <p class="leaderboard-key elo-text">ELO</p>
+            </div>
+            <div class="user-entry" id="user-entry-template">
+                <p class="rank-text">1</p>
+                <p class="username-text">Loading...</p>
+                <p class="elo-text">0</p>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="module" src="scripts/leaderboard.js"></script>
+</html>

@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.JSONObject;
@@ -321,5 +322,47 @@ public class DBController {
 
     public static HashMap<Integer, User> getUsers() {
         return userList;
+    }
+
+    @GetMapping("/api/get-sorted-users-by-elo")
+    public ArrayList<User> getUserBySecretRequest() {
+        return getSortedUsersByEloList();
+    }
+
+    private static ResultSet getSortedUsersByEloDB() {
+        try {
+            //connect to DB 
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+
+            //checking for userId
+            String findUsersQuery = "SELECT * FROM users ORDER BY elo DESC;";
+            PreparedStatement usersQueryStatement = conn.prepareStatement(findUsersQuery);
+
+            //getting resultset
+            ResultSet usersFound = usersQueryStatement.executeQuery();
+
+            conn.close();
+            return usersFound;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static ArrayList<User> getSortedUsersByEloList() {
+        ArrayList<User> eloSortedUsers = new ArrayList<>();
+        ResultSet sortedUsersDB = getSortedUsersByEloDB();
+        try {
+            while (sortedUsersDB.next()) {
+                int userId = sortedUsersDB.getInt("userid");
+                String username = sortedUsersDB.getString("username");
+                int userElo = sortedUsersDB.getInt("elo");
+                eloSortedUsers.add(new User(userId,username,userElo,null));
+            }
+            return eloSortedUsers;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
