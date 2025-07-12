@@ -29,7 +29,7 @@ public class CompController {
     private void removeFromWaitingList(@RequestBody String userIdJSON) {
         int userId = new JSONObject(userIdJSON).getInt("userId");
         System.out.println("removed "+userId+" from waiting list");
-        waitingList.remove(userId);
+        waitingList.remove((Integer) userId);
     }
 
     public static ArrayList<Integer> getWaitingList() {

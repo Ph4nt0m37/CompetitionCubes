@@ -61,8 +61,6 @@ onload = (event)=>{
         });
 }
 
-
-
 //client stuff
 const stompClient = new StompJs.Client({
     brokerURL: `wss://${window.location.host}/user-connect`
