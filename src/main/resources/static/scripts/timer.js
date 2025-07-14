@@ -98,6 +98,7 @@ window.onload = ()=>{
 
 
     document.addEventListener("keydown", e=>{
+        console.log(timerEnabled);
         if (timerEnabled) {
             if (e.key===" ") {
                 if (timerState===timerStates.STOPPED && !spaceDown) {

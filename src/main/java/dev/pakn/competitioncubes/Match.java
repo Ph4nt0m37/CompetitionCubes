@@ -129,8 +129,8 @@ public class Match {
                         eloChange = 15;
                         winner = DBController.getUsers().get(userId);
                         for (int loserUserId:users) {
-                            if (loserUserId!=userId) {
-                                User loser = DBController.getUsers().get(userId);
+                            if (loserUserId!=winner.getUserId()) {
+                                User loser = DBController.getUsers().get(loserUserId);
                                 if (Math.abs(winner.getElo()-loser.getElo())>75) {
                                     if (winner.getElo()<loser.getElo()) {
                                         eloChange=(Math.abs(winner.getElo()-loser.getElo())/4)*(loser.getElo()/winner.getElo());
@@ -143,7 +143,9 @@ public class Match {
                                 loser.saveUserData();
                             }
                         }
+                        System.out.println("winner should be: "+(winner.getElo()+eloChange));
                         winner.setElo(winner.getElo()+eloChange);
+                        System.out.println("winner: "+winner.getElo());
                         winner.saveUserData();
                         return true;
                     }

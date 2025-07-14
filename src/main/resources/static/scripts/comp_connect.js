@@ -10,9 +10,9 @@ stompClient.activate();
 
 stompClient.onConnect = (frame)=>{
     console.log("connected: "+ frame);
-    stompClient.subscribe('/room/solves', (solveJSON) => {
+    stompClient.subscribe(`/room/solves/${roomId}`, (solveJSON) => {
         let solve = JSON.parse(solveJSON.body)
-        if (solve.roomId==roomId && solve.userId!=userId) {
+        if (solve.userId!=userId) {
             setTime(solve.time);
             if (solve.penalty!=="OK") setPenalty(solve.penalty);
             stompClient.publish({
@@ -22,14 +22,14 @@ stompClient.onConnect = (frame)=>{
         }
     });
 
-    stompClient.subscribe('/room/solveCompleted', (solveJSON) => {
+    stompClient.subscribe(`/room/solveCompleted/${roomId}`, (solveJSON) => {
         let solve = JSON.parse(solveJSON.body)
-        if (solve.roomId==roomId && solve.userId!=userId) {
+        if (solve.userId!=userId) {
             setEarlyTime(solve.time);
         }
     });
 
-    stompClient.subscribe('/room/switchTimer', (timerStateJSON) => {
+    stompClient.subscribe(`/room/switchTimer/${roomId}`, (timerStateJSON) => {
         let timerState = JSON.parse(timerStateJSON.body)
         if (timerState.roomId==roomId && timerState.userId!=userId) {
             setTimerState(timerState.state);
@@ -44,9 +44,8 @@ stompClient.onConnect = (frame)=>{
         }
     });*/
 
-    stompClient.subscribe('/room/matches', (matchJson)=> {
+    stompClient.subscribe(`/room/matches/${roomId}`, (matchJson)=> {
         let match = JSON.parse(matchJson.body);
-        console.log("aaaaa");
         console.log(match);
         setMatchData(match);
         setAo5s(match.userAo5s);

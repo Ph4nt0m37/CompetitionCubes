@@ -1,8 +1,10 @@
 package dev.pakn.competitioncubes;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +15,9 @@ import java.util.HashMap;
 
 @RestController
 public class MatchController {
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     private static ArrayList<Match> matches = new ArrayList<>();
 
@@ -28,6 +33,7 @@ public class MatchController {
             if (Math.abs(user.getElo()-oppUser.getElo())<100) {
                 CompController.getWaitingList().remove((Integer) userId);
                 CompController.getWaitingList().remove((Integer) oppId);
+                System.out.println("match found between "+userId+" and "+oppId);
                 Match match = new Match(new int[]{userId,oppId},(int)(Math.random()*9999999));
                 matches.add(match);
                 return match;
@@ -37,8 +43,7 @@ public class MatchController {
     }
 
     @MessageMapping("/update-match")
-    @SendTo("/room/matches")
-    public Match updateMatch(MatchCommand command) {
+    public void updateMatch(MatchCommand command) {
         Match match = null;
         for (Match currMatch:matches) {
             if (currMatch.getRoomId()==command.getRoomId()) {
@@ -46,13 +51,13 @@ public class MatchController {
             }
         }
 
-        if (match==null) return null;
+        if (match==null) return;
         
         if (command.getCommand().equals("solveFinished")) {
             match.nextSolver();
         }
 
-        return match;
+        simpMessagingTemplate.convertAndSend("/room/matches/"+command.getRoomId(),match);
     }
 
     @GetMapping("/get-match-info/{roomId}")

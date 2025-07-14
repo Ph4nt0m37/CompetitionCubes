@@ -41,11 +41,13 @@ profileButton.addEventListener("click",()=>{
 });
 
 profileDropdownLink.addEventListener("click",()=>{
+    cancelMatchSearch();
     profileDropdownContent.style.visibility="hidden";
     window.location.href=`/user/${userId}`;
 });
 
 leaderboardButton.addEventListener("click",()=>{
+    cancelMatchSearch();
     window.location.href=`/rankings`;
 });
 
