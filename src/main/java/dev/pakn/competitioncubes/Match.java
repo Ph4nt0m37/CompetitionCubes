@@ -11,6 +11,7 @@ import org.worldcubeassociation.tnoodle.scrambles.PuzzleRegistry;
 public class Match {
     private int[] users;
     private int roomId;
+    private Event event;
     private int currentSolver;
     private int solverIndex = 0;
     private int currentSolve = 0;
@@ -131,21 +132,19 @@ public class Match {
                         for (int loserUserId:users) {
                             if (loserUserId!=winner.getUserId()) {
                                 User loser = DBController.getUsers().get(loserUserId);
-                                if (Math.abs(winner.getElo()-loser.getElo())>75) {
-                                    if (winner.getElo()<loser.getElo()) {
-                                        eloChange=(Math.abs(winner.getElo()-loser.getElo())/4)*(loser.getElo()/winner.getElo());
+                                if (Math.abs(winner.getElo(event)-loser.getElo(event))>75) {
+                                    if (winner.getElo(event)<loser.getElo(event)) {
+                                        eloChange=(Math.abs(winner.getElo(event)-loser.getElo(event))/4)*(loser.getElo(event)/winner.getElo(event));
                                     }else {
-                                        eloChange=(int)((Math.abs(winner.getElo()-loser.getElo())/4)*(loser.getElo()/Math.pow(winner.getElo(),1.325)));
+                                        eloChange=(int)((Math.abs(winner.getElo(event)-loser.getElo(event))/4)*(loser.getElo(event)/Math.pow(winner.getElo(event),1.325)));
                                     }
                                     eloChange=Math.abs(Math.max(5,Math.min(100, eloChange)));
                                 }
-                                loser.setElo(loser.getElo()-eloChange);
+                                loser.setElo(event, loser.getElo(event)-eloChange);
                                 loser.saveUserData();
                             }
                         }
-                        System.out.println("winner should be: "+(winner.getElo()+eloChange));
-                        winner.setElo(winner.getElo()+eloChange);
-                        System.out.println("winner: "+winner.getElo());
+                        winner.setElo(event, winner.getElo(event)+eloChange);
                         winner.saveUserData();
                         return true;
                     }

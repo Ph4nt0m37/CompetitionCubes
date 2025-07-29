@@ -3,14 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/styles/root.css">
-    <link rel="stylesheet" href="/styles/profile.css">
+    <link rel="stylesheet" href="styles/root.css">
+    <link rel="stylesheet" href="styles/site-header.css">
+    <link rel="stylesheet" href="styles/profile.css">
+    <link rel="stylesheet" href="https://cdn.cubing.net/v0/css/@cubing/icons/css">
     <title>User Profile | Competition Cubes</title>
 </head>
 <body>
+    <header id="header">
+        <div id="header-logo">
+            --Logo--
+        </div>
+        <div id="header-buttons-div">
+            <button class="header-button">TBA</button>
+            <button class="header-button" id="leaderboard-button">Leaderboard</button>
+            <button class="header-button">TBA</button>
+        </div>
+        <div class="dropdown" id="profile-dropdown">
+            <button type="button" id="profile-button">Profile</button>
+            <div id="profile-dropdown-content" class="dropdown-content">
+                <a id="profile-dropdown-link">Profile</a>
+                <a>TBD</a>
+                <a>TBD</a>
+            </div>
+        </div>
+    </header>
+
+
     <div class="main-div">
-        <h1 id="username-text">User Name</h1>
-        <h2 id="elo-text">ELO: N/A</h2>
+        <div id="leaderboard-div">
+            <h1 id="username-text">User Name</h1>
+            <div class="stats-div">
+                <div class="stats-box">
+                    <h3>Badges</h3>
+                    <div id="badges-div">
+                        <div class="badge" id="owner-badge">Owner</div>
+                        <div class="badge" id="diamond-badge">Top 1</div>
+                        <div class="badge" id="gold-badge">Top 10</div>
+                        <div class="badge" id="silver-badge">Top 50</div>
+                        <div class="badge" id="bronze-badge">Top 100</div>
+                        <div class="badge" id="tester-badge">Tester</div>
+                        <div class="badge" id="early-tester-badge">Early Tester</div>
+                    </div>
+                </div>
+                <div class="stats-box">
+                    <h3>Statistics</h3>
+                    <div id="user-stats-div">
+                        <h5 class="statistics-text">Matches Played: 0</h5>
+                        <h5 class="statistics-text">Matches Won: 0</h5>
+                        <h5 class="statistics-text">Matches Lost: 0</h5>
+                        <h5 class="statistics-text">Win-Loss %: 0%</h5>
+                    </div>
+                </div>
+                <div class="stats-box">
+                    <h3>Something here</h3>
+                    <div id="badges-div">
+                        <div class="badge">something here</div>
+                    </div>
+                </div>
+            </div>
+            <h2>Rankings</h2>
+            <div class="rankings-div">
+                <div class="event-entry" id="rankings-key">
+                    <p class="rankings-key event-text">Event</p>
+                    <p class="rankings-key rank-text">Rank</p>
+                    <p class="rankings-key elo-text">ELO</p>
+                    <p class="rankings-key single-text">Single</p>
+                    <p class="rankings-key avg-text">Average</p>
+                </div>
+                <div class="event-entry" id="event-entry-template">
+                    <p class="event-entry-text event-text">3x3</p>
+                    <p class="event-entry-text rank-text">0</p>
+                    <p class="event-entry-text elo-text">100</p>
+                    <p class="event-entry-text single-text">0</p>
+                    <p class="event-entry-text avg-text">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 </body>
 <script type="module" src="/scripts/profile.js"></script>

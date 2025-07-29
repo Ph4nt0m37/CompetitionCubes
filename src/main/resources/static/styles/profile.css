@@ -10,3 +10,155 @@ html, body {
     flex-direction: column;
     align-items: center;
 }
+
+::-webkit-scrollbar {
+  width: 0px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--defecit-color);
+  border-radius: 10px;
+  width: 0px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+#leaderboard-div {
+    display: flex;
+    flex-direction: column;
+    min-width: 50rem;
+    padding: 8px 20px;
+    margin: 20px;
+    background-color: var(--popup-color);
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgb(0,0,0,0.1);
+    align-items: center;
+}
+
+.stats-div {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+}
+
+.stats-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#badges-div {
+    display: flex;
+    flex-direction: column;
+    height: 8.65rem;
+    overflow-y: auto;
+    background-color: var(--defecit-color);
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.badge {
+    background-color: #999999;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 20px;
+    min-width: 150px;
+    text-align: center;
+    font-weight: 500;
+}
+
+#user-stats-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.statistics-text {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 5px;
+}
+
+.rankings-div {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.event-entry {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+}
+
+.event-entry-text {
+  flex-basis: 0;
+  flex-grow: 1;
+  padding: 15px 0;
+  margin: 0px;
+  border-bottom: 3px solid #bebebe;
+}
+
+.event-entry-text.event-text {
+  border-right: 3px solid #bebebe;
+}
+
+#rankings-key {
+  border-bottom: 3px solid #bebebe;
+  flex-direction: row;
+  margin: 0px 0px;
+  text-align: center;
+}
+
+.rankings-key {
+  font-weight: bold;
+  flex-basis: 0;
+  flex-grow: 1;
+}
+
+
+/* Badges */
+#owner-badge {
+  background: rgb(0, 119, 230);
+  background: linear-gradient(0deg,rgb(0, 119, 230) 0%, rgb(89, 162, 247) 100%); 
+}
+
+#tester-badge {
+  background: #a2ff80;
+  background: linear-gradient(90deg,rgba(162, 255, 128, 1) 0%, rgba(22, 204, 80, 1) 100%);
+}
+
+#early-tester-badge {
+  background: #6fd14b;
+  background: linear-gradient(90deg,rgba(111, 209, 75, 1) 0%, rgb(13, 104, 1) 100%);
+}
+
+#diamond-badge {
+  background: #8bf6f7;
+  background: linear-gradient(90deg,rgba(139, 246, 247, 1) 0%, rgba(36, 163, 227, 1) 100%);
+}
+
+#gold-badge {
+  background: #ecf00e;
+  background: linear-gradient(90deg,rgba(236, 240, 14, 1) 0%, rgba(214, 186, 4, 1) 100%);
+}
+
+#silver-badge {
+  background: #D1D1D1;
+  background: linear-gradient(90deg,rgba(209, 209, 209, 1) 0%, rgb(124, 124, 124) 100%);
+}
+
+#bronze-badge {
+  background: #d6ae5c;
+  background: linear-gradient(90deg,rgba(214, 174, 92, 1) 0%, rgba(138, 100, 18, 1) 100%);
+}

@@ -11,13 +11,15 @@ import java.util.*;
 @RestController
 public class CompController {
 
-    private static ArrayList<Integer> waitingList = new ArrayList<>();
+    private static ArrayList<WaitlistRequest> waitingList = new ArrayList<>();
 
     @PostMapping("/waiting-list")
     private void addToWaitingList(@RequestBody String userIdJSON) {
-        int userId = new JSONObject(userIdJSON).getInt("userId");
+        JSONObject requestJson = new JSONObject(userIdJSON);
+        int userId = requestJson.getInt("userId");
+        String event = requestJson.getString("event");
         System.out.println("added "+userId+" to waiting list");
-        waitingList.add(userId);
+        waitingList.add(new WaitlistRequest(userId, event));
     }
 
     @GetMapping("/waiting-list/{userId}")
@@ -26,13 +28,19 @@ public class CompController {
     }
 
     @DeleteMapping("/waiting-list")
-    private void removeFromWaitingList(@RequestBody String userIdJSON) {
+    private void removeFromWaitingListReq(@RequestBody String userIdJSON) {
         int userId = new JSONObject(userIdJSON).getInt("userId");
         System.out.println("removed "+userId+" from waiting list");
-        waitingList.remove((Integer) userId);
+        removeFromWaitingList(userId);
     }
 
-    public static ArrayList<Integer> getWaitingList() {
+    public static void removeFromWaitingList(int userId) {
+        for (int i=0;i<waitingList.size();i++) {
+            if (waitingList.get(i).getUserId()==userId) waitingList.remove(i);
+        }
+    }
+
+    public static ArrayList<WaitlistRequest> getWaitingList() {
         return waitingList;
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -40,19 +41,26 @@ public class DBController {
 
     private static HashMap<Integer, User> userList = new HashMap<>();
 
+    private static HashMap<Event, String> eventDBNames = new HashMap<>();
+    public static HashMap<String, Event> stringToEventMap = new HashMap<>();
+
     @PostConstruct
     public void init() {
         staticDbURL=dbURL;
         staticDbUsername=dbUsername;
         staticDbPassword=dbPassword;
 
+        eventDBNames.put(Event.THREE_BY_THREE, "threestats");
+        stringToEventMap.put("3x3", Event.THREE_BY_THREE);
+
         try {
+            //connect to DB 
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
             ResultSet userResultSet = getAllUsers();
             while (userResultSet.next()) {
                 int userId = userResultSet.getInt("userid");
                 String username = userResultSet.getString("username");
-                int userElo = userResultSet.getInt("elo");
-                userList.put(userId, new User(userId,username,userElo,null));
+                userList.put(userId, new User(userId,username,getElosByUserId(userId,conn),null));
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -60,7 +68,7 @@ public class DBController {
     }
     
     @PostMapping("/api/create-user")
-    public void createUser(@RequestBody String userDataJSON, @CookieValue(value="wca_access_token", required = false) String accessToken, @CookieValue(value="user_secret", required = false) String userSecret) {
+    public boolean createUser(@RequestBody String userDataJSON, @CookieValue(value="wca_access_token", required = false) String accessToken, @CookieValue(value="user_secret", required = false) String userSecret) {
         try {
             //connect to DB
             Connection conn = DriverManager.getConnection(dbURL, dbUsername, dbPassword);
@@ -70,21 +78,45 @@ public class DBController {
                 String username = new JSONObject(userDataJSON).getString("username");
             
                 //creating sql query
-                String sqlQuery = "INSERT INTO users (wcaid, username, elo, usersecret) VALUES (?, ?, ?, ?);";
+                String sqlQuery = "INSERT INTO users (wcaid, username, usersecret) VALUES (?, ?, ?);";
                 PreparedStatement statement = conn.prepareStatement(sqlQuery);
                 statement.setString(1, userWcaId);
                 statement.setString(2, username);
-                statement.setInt(3, 100);
-                statement.setString(4, userSecret);
+                statement.setString(3, userSecret);
 
                 //sending sql query
                 statement.executeUpdate();
+
+                String userIdQuery = "SELECT userid FROM users WHERE usersecret=?";
+                PreparedStatement userIdStatement = conn.prepareStatement(userIdQuery);
+                userIdStatement.setString(1, userSecret);
+                ResultSet userIdSet = userIdStatement.executeQuery();
+                int userId = -1;
+                if (userIdSet.next()){
+                    userId = userIdSet.getInt(1);
+                }else {
+                    throw new Exception("User not found!");
+                }
+
+                for (String eventDB:eventDBNames.values()) {
+                    String eventSqlQuery = "INSERT INTO "+eventDB+" (userid, elo) VALUES (?, ?);";
+                    PreparedStatement eventStatement = conn.prepareStatement(eventSqlQuery);
+                    eventStatement.setInt(1, userId);
+                    eventStatement.setInt(2, 100);
+
+                    //sending sql query
+                    eventStatement.executeUpdate();
+                }
+                conn.close();
+                return true;
             }
 
             conn.close();
+            return false;
         }catch (Exception e) {
             System.out.println("Failed to connect to db!");
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -110,9 +142,9 @@ public class DBController {
                 int userId = usersFound.getInt("userid");
                 String wcaId = usersFound.getString("wcaid");
                 String username = usersFound.getString("username");
-                int userElo = usersFound.getInt("elo");
+                HashMap<Event, Integer> userElos = getElosByUserId(userId, conn);
                 conn.close();
-                return new User(userId,username,userElo,null);
+                return new User(userId,username,userElos,null);
             }else {
                 conn.close();
                 return null;
@@ -123,20 +155,16 @@ public class DBController {
         }
     }
 
-    public static User getUserByID(int userId) {
+    public static User getUserByID(int userId, Connection conn) {
         try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
-
             //getting resultset
-            ResultSet usersFound = getUserDataById(userId);
+            ResultSet usersFound = getUserDataById(userId, conn);
             
             if (usersFound.next()) {
                 String wcaId = usersFound.getString("wcaid");
                 String username = usersFound.getString("username");
-                int userElo = usersFound.getInt("elo");
-                conn.close();
-                return new User(userId,username,userElo,null);
+                HashMap<Event, Integer> userElos = getElosByUserId(userId, conn);
+                return new User(userId,username,userElos,null);
             }else {
                 conn.close();
                 return null;
@@ -231,11 +259,8 @@ public class DBController {
         }
     }
 
-    public static ResultSet getUserDataById(int userId) {
+    public static ResultSet getUserDataById(int userId, Connection conn) {
         try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
-
             //checking for userId
             String findUserSecretQuery = "SELECT * FROM users WHERE userId=?";
             PreparedStatement userSecretStatement = conn.prepareStatement(findUserSecretQuery);
@@ -244,7 +269,6 @@ public class DBController {
             //getting resultset
             ResultSet usersFound = userSecretStatement.executeQuery();
 
-            conn.close();
             return usersFound;
         }catch (Exception e) {
             e.printStackTrace();
@@ -274,6 +298,29 @@ public class DBController {
         }
     }
 
+    public static HashMap<Event, Integer> getElosByUserId(int userId, Connection conn) {
+        try {
+            //creating elo map
+            HashMap<Event, Integer> userElos = new HashMap<>();
+
+            for (Event event:eventDBNames.keySet()) {
+                //checking for userId
+                String findUsersQuery = "SELECT elo FROM "+eventDBNames.get(event)+" WHERE userid=?";
+                PreparedStatement usersQueryStatement = conn.prepareStatement(findUsersQuery);
+                usersQueryStatement.setInt(1, userId);
+
+                //getting resultset
+                ResultSet usersFound = usersQueryStatement.executeQuery();
+                usersFound.next();
+                userElos.put(event, usersFound.getInt(1));
+            }
+            return userElos;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
 
     public static boolean saveUserData(User user) {
@@ -282,11 +329,33 @@ public class DBController {
             Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
         
             //creating sql query
-            String sqlQuery = "UPDATE users SET username=?, elo=? WHERE userid=?";
+            String sqlQuery = "UPDATE users SET username=? WHERE userid=?";
             PreparedStatement statement = conn.prepareStatement(sqlQuery);
             statement.setString(1, user.getUsername());
-            statement.setInt(2, user.getElo());
-            statement.setInt(3, user.getUserId());
+            statement.setInt(2, user.getUserId());
+
+            //sending sql query
+            statement.executeUpdate();
+
+            conn.close();
+            return true;
+        }catch (Exception e) {
+            System.out.println("Failed to connect to db!");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean saveEloForEvent(int userId, Event event, int newElo) {
+        try {
+            //connect to DB
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        
+            //creating sql query
+            String sqlQuery = "UPDATE "+eventDBNames.get(event)+" SET elo=? WHERE userid=?";
+            PreparedStatement statement = conn.prepareStatement(sqlQuery);
+            statement.setInt(1, newElo);
+            statement.setInt(2, userId);
 
             //sending sql query
             statement.executeUpdate();
@@ -324,18 +393,18 @@ public class DBController {
         return userList;
     }
 
-    @GetMapping("/api/get-sorted-users-by-elo")
-    public ArrayList<User> getUserBySecretRequest() {
-        return getSortedUsersByEloList();
+    @GetMapping("/api/get-sorted-users-by-elo/{event}")
+    public ArrayList<LeaderboardEntry> getEloSortedListRequest(@PathVariable String event) {
+        return getSortedUsersByEloList(stringToEventMap.get(event));
     }
 
-    private static ResultSet getSortedUsersByEloDB() {
+    private static ResultSet getSortedUsersByEloDB(Event event) {
         try {
             //connect to DB 
             Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
 
             //checking for userId
-            String findUsersQuery = "SELECT * FROM users ORDER BY elo DESC;";
+            String findUsersQuery = "SELECT * FROM "+eventDBNames.get(event)+" ORDER BY elo DESC;";
             PreparedStatement usersQueryStatement = conn.prepareStatement(findUsersQuery);
 
             //getting resultset
@@ -349,16 +418,21 @@ public class DBController {
         }
     }
 
-    public static ArrayList<User> getSortedUsersByEloList() {
-        ArrayList<User> eloSortedUsers = new ArrayList<>();
-        ResultSet sortedUsersDB = getSortedUsersByEloDB();
+    public static ArrayList<LeaderboardEntry> getSortedUsersByEloList(Event event) {
         try {
-            while (sortedUsersDB.next()) {
+            ArrayList<LeaderboardEntry> eloSortedUsers = new ArrayList<>();
+            ResultSet sortedUsersDB = getSortedUsersByEloDB(event);
+            int usersFound = 0;
+            //connect to DB 
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+            while (sortedUsersDB.next() && usersFound<=100) {
                 int userId = sortedUsersDB.getInt("userid");
-                String username = sortedUsersDB.getString("username");
+                String username = getUserByID(userId,conn).getUsername();
                 int userElo = sortedUsersDB.getInt("elo");
-                eloSortedUsers.add(new User(userId,username,userElo,null));
+                eloSortedUsers.add(new LeaderboardEntry(userId, username, event, userElo));
+                usersFound++;
             }
+            conn.close();
             return eloSortedUsers;
         }catch (Exception e) {
             e.printStackTrace();

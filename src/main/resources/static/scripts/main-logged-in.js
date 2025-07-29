@@ -131,7 +131,8 @@ function startMatchSearch() {
     fetch(`${window.location.origin}/waiting-list`, {
         method: "POST",
         body: JSON.stringify({
-            userId: userId
+            'userId': userId,
+            'event':'3x3'
         }),
         headers: {
             "Content-type": "application/json; charset=UTF-8"
@@ -147,7 +148,10 @@ function startMatchSearch() {
         if (dotCount===3) {
             stompClient.publish({
                 destination: "/app/find-match",
-                body: userId
+                body: JSON.stringify({
+                    'userId':userId,
+                    'event':'3x3'
+                })
             });
         }
 

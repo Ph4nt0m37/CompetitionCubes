@@ -11,9 +11,9 @@ createButton.addEventListener("click",()=>{
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             }
-        });
+        }).then((response) => response.json())
+        .then((json) => window.location.replace("/"));
     }else {
         console.log("textbox empty!");
     }
-    window.location.replace("/")
 });

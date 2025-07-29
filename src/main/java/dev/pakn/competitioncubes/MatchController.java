@@ -23,18 +23,23 @@ public class MatchController {
 
     @MessageMapping("/find-match")
     @SendTo("/room/found-match")
-    public Match findMatch(int userId) {
+    public Match findMatch(WaitlistRequest waitlistRequest) {
         //cloning waitlist because we want to ignore userId and if we don't clone it we will accidentally remove userId from actual waitlist
-        ArrayList<Integer> waitList = (ArrayList<Integer>) CompController.getWaitingList().clone();
-        waitList.remove((Integer) userId);
-        User user = DBController.getUsers().get(userId);
-        for (int oppId:waitList) {
-            User oppUser = DBController.getUsers().get(oppId);
-            if (Math.abs(user.getElo()-oppUser.getElo())<100) {
-                CompController.getWaitingList().remove((Integer) userId);
-                CompController.getWaitingList().remove((Integer) oppId);
-                System.out.println("match found between "+userId+" and "+oppId);
-                Match match = new Match(new int[]{userId,oppId},(int)(Math.random()*9999999));
+        ArrayList<WaitlistRequest> waitList = (ArrayList<WaitlistRequest>) CompController.getWaitingList().clone();
+        for (int i=0;i<waitList.size();i++) {
+            if (waitList.get(i).getUserId()==waitlistRequest.getUserId()) waitList.remove(i);
+        }
+        User user = DBController.getUsers().get(waitlistRequest.getUserId());
+        for (WaitlistRequest oppReq:waitList) {
+            User oppUser = DBController.getUsers().get(oppReq.getUserId());
+            int oppId = oppReq.getUserId();
+            Event event = DBController.stringToEventMap.get(waitlistRequest.getEvent());
+            if (oppReq.getEvent()==waitlistRequest.getEvent() && Math.abs(user.getElo(event)-oppUser.getElo(event))<100) {
+                //fix
+                CompController.removeFromWaitingList(waitlistRequest.getUserId());
+                CompController.removeFromWaitingList(oppId);
+                System.out.println("match found between "+waitlistRequest.getUserId()+" and "+oppId);
+                Match match = new Match(new int[]{waitlistRequest.getUserId(),oppId},(int)(Math.random()*9999999));
                 matches.add(match);
                 return match;
             }

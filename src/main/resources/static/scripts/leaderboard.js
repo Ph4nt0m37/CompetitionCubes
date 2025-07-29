@@ -5,7 +5,7 @@ const threeCubeButton = document.getElementById("3x3-button");
 threeCubeButton.style.backgroundColor="#2ecc71";
 
 let eloSortedUsers = null;
-fetch(`/api/get-sorted-users-by-elo`).then((response)=> {
+fetch(`/api/get-sorted-users-by-elo/3x3`).then((response)=> {
         return response.json();
         }).then(function(data) {
             eloSortedUsers=data;

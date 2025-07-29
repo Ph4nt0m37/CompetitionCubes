@@ -1,29 +1,29 @@
 package dev.pakn.competitioncubes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class User {
     private int userId;
     private String wcaId;
     private String username;
-    private int elo;
+    private HashMap<Event, Integer> elos = new HashMap<>();
     private ArrayList<Match> last10Matches = new ArrayList<>();
 
     User(String username) {
         this.username = username;
-        this.elo = 0;
     }
 
-    User(String username, int elo) {
+    User(String username, HashMap<Event, Integer> elos) {
         this.username = username;
-        this.elo = elo;
+        this.elos = elos;
     }
 
     //should only be used when loading from database
-    User(int userId, String username, int elo, ArrayList<Match> last10Matches) {
+    User(int userId, String username, HashMap<Event, Integer> elos, ArrayList<Match> last10Matches) {
         this.userId = userId;
         this.username = username;
-        this.elo = elo;
+        this.elos = elos;
         this.last10Matches = last10Matches;
     }
 
@@ -35,12 +35,12 @@ public class User {
         this.username = newUsername;
     }
 
-    public int getElo() {
-        return elo;
+    public int getElo(Event event) {
+        return elos.get(event);
     }
 
-    public void setElo(int newElo) {
-        this.elo = newElo;
+    public void setElo(Event event, int newElo) {
+        this.elos.put(event,newElo);
     }
 
     public ArrayList<Match> getLast10Matches() {
