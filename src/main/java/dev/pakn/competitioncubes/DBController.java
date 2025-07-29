@@ -60,7 +60,8 @@ public class DBController {
             while (userResultSet.next()) {
                 int userId = userResultSet.getInt("userid");
                 String username = userResultSet.getString("username");
-                userList.put(userId, new User(userId,username,getElosByUserId(userId,conn),null));
+                Integer[] badgesArray = (Integer[]) userResultSet.getArray("badges").getArray();
+                userList.put(userId, new User(userId,username,getElosByUserId(userId,conn),badgesArray,null));
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -78,11 +79,12 @@ public class DBController {
                 String username = new JSONObject(userDataJSON).getString("username");
             
                 //creating sql query
-                String sqlQuery = "INSERT INTO users (wcaid, username, usersecret) VALUES (?, ?, ?);";
+                String sqlQuery = "INSERT INTO users (wcaid, username, usersecret, badges) VALUES (?, ?, ?, ?);";
                 PreparedStatement statement = conn.prepareStatement(sqlQuery);
                 statement.setString(1, userWcaId);
                 statement.setString(2, username);
                 statement.setString(3, userSecret);
+                statement.setArray(4, conn.createArrayOf("INT", new Integer[0]));
 
                 //sending sql query
                 statement.executeUpdate();
@@ -143,8 +145,9 @@ public class DBController {
                 String wcaId = usersFound.getString("wcaid");
                 String username = usersFound.getString("username");
                 HashMap<Event, Integer> userElos = getElosByUserId(userId, conn);
+                Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
                 conn.close();
-                return new User(userId,username,userElos,null);
+                return new User(userId,username,userElos,badgesArray,null);
             }else {
                 conn.close();
                 return null;
@@ -164,7 +167,8 @@ public class DBController {
                 String wcaId = usersFound.getString("wcaid");
                 String username = usersFound.getString("username");
                 HashMap<Event, Integer> userElos = getElosByUserId(userId, conn);
-                return new User(userId,username,userElos,null);
+                Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
+                return new User(userId,username,userElos,badgesArray,null);
             }else {
                 conn.close();
                 return null;
@@ -395,7 +399,37 @@ public class DBController {
 
     @GetMapping("/api/get-sorted-users-by-elo/{event}")
     public ArrayList<LeaderboardEntry> getEloSortedListRequest(@PathVariable String event) {
-        return getSortedUsersByEloList(stringToEventMap.get(event));
+        return getSortedUsersByEloList(stringToEventMap.get(event),100);
+    }
+
+    @GetMapping("/api/get-user-ranks/{userId}")
+    public static HashMap<Event, Integer> getUserRank(@PathVariable int userId) {
+        try {
+            //connect to DB 
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+            HashMap<Event, Integer> userRanks = new HashMap<>();
+            //for (Event event: Event.values()) {
+            Event event = Event.THREE_BY_THREE;
+                ArrayList<LeaderboardEntry> users = getSortedUsersByEloList(event,conn);
+                for (int i=1;i<=users.size();i++) {
+                    LeaderboardEntry entry = users.get(i-1);
+                    int entryUserId = entry.getUserId();
+                    if (entryUserId==userId) {
+                        int rank = i+1;
+                        int dbRankCheckIndex = i-1;
+                        while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getElo()<=entry.getElo()) {
+                            dbRankCheckIndex--;
+                            rank=dbRankCheckIndex+2;
+                        }
+                        userRanks.put(event, rank);
+                    }
+                }
+            //}
+            return userRanks;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private static ResultSet getSortedUsersByEloDB(Event event) {
@@ -418,19 +452,37 @@ public class DBController {
         }
     }
 
-    public static ArrayList<LeaderboardEntry> getSortedUsersByEloList(Event event) {
+    public static ArrayList<LeaderboardEntry> getSortedUsersByEloList(Event event, int resultLimit) {
         try {
             ArrayList<LeaderboardEntry> eloSortedUsers = new ArrayList<>();
             ResultSet sortedUsersDB = getSortedUsersByEloDB(event);
             int usersFound = 0;
             //connect to DB 
             Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
-            while (sortedUsersDB.next() && usersFound<=100) {
+            while (sortedUsersDB.next() && usersFound<=resultLimit) {
                 int userId = sortedUsersDB.getInt("userid");
                 String username = getUserByID(userId,conn).getUsername();
                 int userElo = sortedUsersDB.getInt("elo");
                 eloSortedUsers.add(new LeaderboardEntry(userId, username, event, userElo));
                 usersFound++;
+            }
+            conn.close();
+            return eloSortedUsers;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static ArrayList<LeaderboardEntry> getSortedUsersByEloList(Event event, Connection conn) {
+        try {
+            ArrayList<LeaderboardEntry> eloSortedUsers = new ArrayList<>();
+            ResultSet sortedUsersDB = getSortedUsersByEloDB(event);
+            while (sortedUsersDB.next()) {
+                int userId = sortedUsersDB.getInt("userid");
+                String username = getUserByID(userId,conn).getUsername();
+                int userElo = sortedUsersDB.getInt("elo");
+                eloSortedUsers.add(new LeaderboardEntry(userId, username, event, userElo));
             }
             conn.close();
             return eloSortedUsers;

@@ -23,7 +23,7 @@ fetch(`/api/get-sorted-users-by-elo/3x3`).then((response)=> {
                 //editing rank
                 userEntry.children[0].textContent=String(userRank);
                 //editing username
-                userEntry.children[1].textContent=eloSortedUsers[i]['username'];
+                userEntry.children[1].innerHTML=`<a href=/user/${eloSortedUsers[i]['userId']}>${eloSortedUsers[i]['username']}</a>`;
                 //editing elo
                 userEntry.children[2].textContent=String(userElo);
                 //adding userEntry

@@ -64,6 +64,7 @@ html, body {
     background-color: var(--defecit-color);
     border-radius: 10px;
     padding: 5px;
+    min-width: 150px;
 }
 
 .badge {
@@ -88,7 +89,7 @@ html, body {
   margin: 5px;
 }
 
-.rankings-div {
+#rankings-div {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -126,39 +127,47 @@ html, body {
   flex-grow: 1;
 }
 
+.badge-template {
+  display: none;
+}
+
+#event-entry-template {
+  display: none;
+}
+
 
 /* Badges */
-#owner-badge {
+.owner-badge {
   background: rgb(0, 119, 230);
   background: linear-gradient(0deg,rgb(0, 119, 230) 0%, rgb(89, 162, 247) 100%); 
 }
 
-#tester-badge {
+.tester-badge {
   background: #a2ff80;
   background: linear-gradient(90deg,rgba(162, 255, 128, 1) 0%, rgba(22, 204, 80, 1) 100%);
 }
 
-#early-tester-badge {
+.early-tester-badge {
   background: #6fd14b;
   background: linear-gradient(90deg,rgba(111, 209, 75, 1) 0%, rgb(13, 104, 1) 100%);
 }
 
-#diamond-badge {
+.diamond-badge {
   background: #8bf6f7;
   background: linear-gradient(90deg,rgba(139, 246, 247, 1) 0%, rgba(36, 163, 227, 1) 100%);
 }
 
-#gold-badge {
+.gold-badge {
   background: #ecf00e;
   background: linear-gradient(90deg,rgba(236, 240, 14, 1) 0%, rgba(214, 186, 4, 1) 100%);
 }
 
-#silver-badge {
+.silver-badge {
   background: #D1D1D1;
   background: linear-gradient(90deg,rgba(209, 209, 209, 1) 0%, rgb(124, 124, 124) 100%);
 }
 
-#bronze-badge {
+.bronze-badge {
   background: #d6ae5c;
   background: linear-gradient(90deg,rgba(214, 174, 92, 1) 0%, rgba(138, 100, 18, 1) 100%);
 }

@@ -1,6 +1,7 @@
 package dev.pakn.competitioncubes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class User {
@@ -8,22 +9,25 @@ public class User {
     private String wcaId;
     private String username;
     private HashMap<Event, Integer> elos = new HashMap<>();
+    private ArrayList<Integer> badges = new ArrayList<>();
     private ArrayList<Match> last10Matches = new ArrayList<>();
 
     User(String username) {
         this.username = username;
     }
 
-    User(String username, HashMap<Event, Integer> elos) {
+    User(String username, HashMap<Event, Integer> elos, Integer[] badgesArray) {
         this.username = username;
         this.elos = elos;
+        this.badges = new ArrayList<>(Arrays.asList(badgesArray));
     }
 
     //should only be used when loading from database
-    User(int userId, String username, HashMap<Event, Integer> elos, ArrayList<Match> last10Matches) {
+    User(int userId, String username, HashMap<Event, Integer> elos, Integer[] badgesArray, ArrayList<Match> last10Matches) {
         this.userId = userId;
         this.username = username;
         this.elos = elos;
+        this.badges = new ArrayList<>(Arrays.asList(badgesArray));
         this.last10Matches = last10Matches;
     }
 
@@ -33,6 +37,10 @@ public class User {
 
     public void setUsername(String newUsername) {
         this.username = newUsername;
+    }
+
+    public HashMap<Event, Integer> getElos() {
+        return elos;
     }
 
     public int getElo(Event event) {
@@ -56,6 +64,10 @@ public class User {
 
     public int getUserId() {
         return userId;
+    }
+
+    public ArrayList<Integer> getBadges() {
+        return badges;
     }
 
     public boolean saveUserData() {
