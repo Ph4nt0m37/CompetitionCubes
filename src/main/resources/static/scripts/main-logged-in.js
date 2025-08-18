@@ -13,6 +13,7 @@ const leaderboardButton = document.getElementById("leaderboard-button");
 
 //dropdown links
 const profileDropdownLink = document.getElementById("profile-dropdown-link");
+const signOutDropdownLink = document.getElementById("sign-out-dropdown-link");
 
 
 let searchInt = null;
@@ -44,6 +45,15 @@ profileDropdownLink.addEventListener("click",()=>{
     cancelMatchSearch();
     profileDropdownContent.style.visibility="hidden";
     window.location.href=`/user/${userId}`;
+});
+
+signOutDropdownLink.addEventListener("click",()=>{
+    cancelMatchSearch();
+    fetch('/wca-auth/sign-out', {
+        method: 'DELETE'
+    }).then(() => {
+        location.reload();
+    });
 });
 
 leaderboardButton.addEventListener("click",()=>{

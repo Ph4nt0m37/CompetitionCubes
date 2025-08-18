@@ -34,17 +34,17 @@ public class MatchController {
             User oppUser = DBController.getUsers().get(oppReq.getUserId());
             int oppId = oppReq.getUserId();
             Event event = DBController.stringToEventMap.get(waitlistRequest.getEvent());
-            if (oppReq.getEvent()==waitlistRequest.getEvent() && Math.abs(user.getElo(event)-oppUser.getElo(event))<100) {
+            if (oppReq.getEvent().equals(waitlistRequest.getEvent()) && Math.abs(user.getElo(event)-oppUser.getElo(event))<100) {
                 //fix
                 CompController.removeFromWaitingList(waitlistRequest.getUserId());
                 CompController.removeFromWaitingList(oppId);
                 System.out.println("match found between "+waitlistRequest.getUserId()+" and "+oppId);
-                Match match = new Match(new int[]{waitlistRequest.getUserId(),oppId},(int)(Math.random()*9999999));
+                Match match = new Match(event,new int[]{waitlistRequest.getUserId(),oppId},(int)(Math.random()*9999999));
                 matches.add(match);
                 return match;
             }
         }
-        return new Match(null,-1);
+        return new Match(null,null,-1);
     }
 
     @MessageMapping("/update-match")
@@ -60,6 +60,9 @@ public class MatchController {
         
         if (command.getCommand().equals("solveFinished")) {
             match.nextSolver();
+        }
+        if (match.getWinner()!=null) {
+            BadgeController.calculateAndGrantBadges(match);
         }
 
         simpMessagingTemplate.convertAndSend("/room/matches/"+command.getRoomId(),match);

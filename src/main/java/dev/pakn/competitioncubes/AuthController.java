@@ -23,9 +23,12 @@ import java.util.StringJoiner;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.WebUtils;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -104,6 +107,17 @@ public class AuthController {
         }
 
         return new RedirectView(finalRedirectURL);
+    }
+
+    @DeleteMapping("/wca-auth/sign-out")
+    public void wcaSignOut(HttpServletRequest request, HttpServletResponse response) {
+        Cookie userSecretCookie = WebUtils.getCookie(request, "user_secret");
+        userSecretCookie.setMaxAge(0);
+        userSecretCookie.setSecure(true);
+        userSecretCookie.setHttpOnly(true);
+        userSecretCookie.setPath("/");
+
+        response.addCookie(userSecretCookie);
     }
 
     public static String getWCAId(String accessToken) {

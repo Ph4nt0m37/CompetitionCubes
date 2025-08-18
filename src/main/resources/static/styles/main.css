@@ -24,34 +24,6 @@ h1 {
     font-size: 2rem;
 }
 
-header {
-    display: flex;
-    justify-content: flex-end;
-    background-color: var(--header-color);
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-#sign-in-button {
-    border: none;
-    background-color: var(--blue-button);
-    color: white;
-    border-radius: 17.5px;
-    padding: 12px 20px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease;
-}
-
-#sign-in-button:hover {
-    background-color: var(--blue-button-hover);
-}
-
-#sign-in-button:active {
-    transform: scale(0.97);
-}
-
 button {
     font-family: inherit;
     outline: none;

@@ -34,7 +34,7 @@ let oppElo = -1;
 
 export function setScramble(scramble) {
     if (!matchWinner) {
-        if (scramble!=="Waiting for Opponent..." && scramble!=="Waiting for Opponent to confirm solve...") {
+        if (scramble!=="Waiting for Opponent to solve..." && scramble!=="Waiting for Opponent to confirm solve...") {
             currentScramble = scramble;
         }else{
             currentScramble = "";
@@ -57,7 +57,7 @@ fetch(`${window.location.origin}/get-match-info/${roomId}`).then(response=>{
         fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
             return response.json();
             }).then(function(data) {
-                userElo=data.elo;
+                userElo=data.elos[matchData.event];
                 usernameText.textContent=data.username;
             }).catch(function(err) {
                 console.log('Failed to fetch!', err);
@@ -66,7 +66,7 @@ fetch(`${window.location.origin}/get-match-info/${roomId}`).then(response=>{
         fetch(`/api/get-user-data-by-id/${oppId}`).then((response)=> {
             return response.json();
             }).then(function(data) {
-                oppElo=data.elo;
+                oppElo=data.elos[matchData.event];
                 oppUsernameText.textContent=data.username;
             }).catch(function(err) {
                 console.log('Failed to fetch!', err);

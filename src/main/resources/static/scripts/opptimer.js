@@ -61,7 +61,7 @@ export function setEarlyTime(time) {
 export function setPenalty(penalty) {
     oppPenaltyText.style.display="block";
     oppPenaltyText.textContent = penalty;
-    if (penalty==="+2") {
+    if (penalty==="+2" || penalty==="+4") {
         oppPenaltyText.style.color="#d7e233";
     }else if (penalty==="DNF") {
         oppPenaltyText.style.color="#e23333";

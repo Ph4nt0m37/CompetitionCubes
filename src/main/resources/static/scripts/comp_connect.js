@@ -62,7 +62,7 @@ stompClient.onConnect = (frame)=>{
         }
 
         if (!match.winner && match.currentSolver!=userId) {
-            setScramble("Waiting for Opponent...");
+            setScramble("Waiting for Opponent to solve...");
             setTimerEnabled(false);
         }else {
             setScramble(match.currentScramble);
@@ -101,7 +101,7 @@ stompClient.onConnect = (frame)=>{
     });
 
     if (matchData.currentSolver!=userId) {
-        setScramble("Waiting for Opponent...");
+        setScramble("Waiting for Opponent to solve...");
         setTimerEnabled(false);
     }else {
         setScramble(matchData.currentScramble);

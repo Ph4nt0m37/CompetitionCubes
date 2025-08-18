@@ -63,7 +63,27 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
                 document.getElementsByClassName("rank-text")[i+2].textContent = String(ranks[EVENTS[i]]);
             }
         });
-        console.log(data);
+        updateUserStatistics(user);
     }).catch(function(err) {
         console.log('Failed to fetch!', err);
     });
+
+function updateUserStatistics(user) {
+    const matchesPlayedText = document.getElementById("matches-played-text");
+    const matchesWonText = document.getElementById("matches-won-text");
+    const matchesLostText = document.getElementById("matches-lost-text");
+    const winLossText = document.getElementById("win-loss-text");
+
+    const matchesWon = user.matchesWon;
+    const matchesLost = user.matchesLost;
+    const matchesPlayed = matchesWon+matchesLost;
+
+    matchesPlayedText.textContent=`Matches Played: ${matchesPlayed}`;
+    matchesWonText.textContent=`Matches Won: ${matchesWon}`;
+    matchesLostText.textContent=`Matches Lost: ${matchesLost}`;
+    if (matchesPlayed>0) {
+        winLossText.textContent=`Win-Loss %: ${(matchesWon/(matchesPlayed))*100}%`;
+    }else {
+        winLossText.textContent=`Win-Loss %: N/A`;
+    }
+}

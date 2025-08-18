@@ -30,7 +30,12 @@ public class LinkMappings {
     }
 
     @RequestMapping("/")
-    public String mainPage(@CookieValue(value="user_secret", required = false) String userSecret) {
+    public String mainPage(@CookieValue(value="user_secret", required = false) String userSecret, HttpServletResponse response) {
+        //prevent browser caching
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+        response.setHeader("Pragma", "no-cache"); // For HTTP/1.0
+        response.setDateHeader("Expires", 0); // For proxies
+
         if (userSecret!=null) {
             //auto login here!
             User user = DBController.getUserBySecret(userSecret);

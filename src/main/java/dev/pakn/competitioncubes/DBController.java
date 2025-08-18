@@ -60,8 +60,10 @@ public class DBController {
             while (userResultSet.next()) {
                 int userId = userResultSet.getInt("userid");
                 String username = userResultSet.getString("username");
+                int matchesWon = userResultSet.getInt("matcheswon");
+                int matchesLost = userResultSet.getInt("matcheslost");
                 Integer[] badgesArray = (Integer[]) userResultSet.getArray("badges").getArray();
-                userList.put(userId, new User(userId,username,getElosByUserId(userId,conn),badgesArray,null));
+                userList.put(userId, new User(userId,username,getElosByUserId(userId,conn),badgesArray,matchesWon,matchesLost,null));
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -79,12 +81,14 @@ public class DBController {
                 String username = new JSONObject(userDataJSON).getString("username");
             
                 //creating sql query
-                String sqlQuery = "INSERT INTO users (wcaid, username, usersecret, badges) VALUES (?, ?, ?, ?);";
+                String sqlQuery = "INSERT INTO users (wcaid, username, usersecret, matcheswon, matcheslost, badges) VALUES (?, ?, ?, ?, ?, ?);";
                 PreparedStatement statement = conn.prepareStatement(sqlQuery);
                 statement.setString(1, userWcaId);
                 statement.setString(2, username);
                 statement.setString(3, userSecret);
-                statement.setArray(4, conn.createArrayOf("INT", new Integer[0]));
+                statement.setInt(4, 0);
+                statement.setInt(5, 0);
+                statement.setArray(6, conn.createArrayOf("INT", new Integer[0]));
 
                 //sending sql query
                 statement.executeUpdate();
@@ -109,6 +113,10 @@ public class DBController {
                     //sending sql query
                     eventStatement.executeUpdate();
                 }
+
+                //adding user to userList
+                userList.put(userId, new User(userId,username,getElosByUserId(userId,conn),new Integer[0],0,0,null));
+
                 conn.close();
                 return true;
             }
@@ -144,10 +152,12 @@ public class DBController {
                 int userId = usersFound.getInt("userid");
                 String wcaId = usersFound.getString("wcaid");
                 String username = usersFound.getString("username");
+                int matchesWon = usersFound.getInt("matcheswon");
+                int matchesLost = usersFound.getInt("matcheslost");
                 HashMap<Event, Integer> userElos = getElosByUserId(userId, conn);
                 Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
                 conn.close();
-                return new User(userId,username,userElos,badgesArray,null);
+                return new User(userId,username,userElos,badgesArray,matchesWon,matchesLost,null);
             }else {
                 conn.close();
                 return null;
@@ -158,6 +168,7 @@ public class DBController {
         }
     }
 
+    //in theory useless since we have userList but I don't want to delete it because im scared smth will break
     public static User getUserByID(int userId, Connection conn) {
         try {
             //getting resultset
@@ -166,9 +177,11 @@ public class DBController {
             if (usersFound.next()) {
                 String wcaId = usersFound.getString("wcaid");
                 String username = usersFound.getString("username");
+                int matchesWon = usersFound.getInt("matcheswon");
+                int matchesLost = usersFound.getInt("matcheslost");
                 HashMap<Event, Integer> userElos = getElosByUserId(userId, conn);
                 Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
-                return new User(userId,username,userElos,badgesArray,null);
+                return new User(userId,username,userElos,badgesArray,matchesWon,matchesLost,null);
             }else {
                 conn.close();
                 return null;
@@ -177,6 +190,10 @@ public class DBController {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static User getUserByIDList(int userId) {
+        return userList.get((Integer) userId);
     }
 
     public static boolean userExists(String userSecret) {
@@ -333,10 +350,12 @@ public class DBController {
             Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
         
             //creating sql query
-            String sqlQuery = "UPDATE users SET username=? WHERE userid=?";
+            String sqlQuery = "UPDATE users SET username=?,matcheswon=?,matcheslost=? WHERE userid=?";
             PreparedStatement statement = conn.prepareStatement(sqlQuery);
             statement.setString(1, user.getUsername());
-            statement.setInt(2, user.getUserId());
+            statement.setInt(2, user.getMatchesWon());
+            statement.setInt(3, user.getMatchesLost());
+            statement.setInt(4, user.getUserId());
 
             //sending sql query
             statement.executeUpdate();
@@ -403,7 +422,7 @@ public class DBController {
     }
 
     @GetMapping("/api/get-user-ranks/{userId}")
-    public static HashMap<Event, Integer> getUserRank(@PathVariable int userId) {
+    public static HashMap<Event, Integer> getUserRanks(@PathVariable int userId) {
         try {
             //connect to DB 
             Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
@@ -422,6 +441,7 @@ public class DBController {
                             rank=dbRankCheckIndex+2;
                         }
                         userRanks.put(event, rank);
+                        break;
                     }
                 }
             //}
@@ -430,6 +450,33 @@ public class DBController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static int getUserRank(int userId, Event event) {
+        try {
+            //connect to DB 
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+            int userRank = -1;
+            ArrayList<LeaderboardEntry> users = getSortedUsersByEloList(event,conn);
+            for (int i=1;i<=users.size();i++) {
+                LeaderboardEntry entry = users.get(i-1);
+                int entryUserId = entry.getUserId();
+                if (entryUserId==userId) {
+                    int rank = i+1;
+                    int dbRankCheckIndex = i-1;
+                    while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getElo()<=entry.getElo()) {
+                        dbRankCheckIndex--;
+                        rank=dbRankCheckIndex+2;
+                    }
+                    userRank = rank;
+                    break;
+                }
+            }
+            return userRank;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     private static ResultSet getSortedUsersByEloDB(Event event) {

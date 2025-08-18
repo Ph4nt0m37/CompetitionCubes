@@ -4,8 +4,14 @@ const userEntryTemplate = document.getElementById("user-entry-template");
 const threeCubeButton = document.getElementById("3x3-button");
 threeCubeButton.style.backgroundColor="#2ecc71";
 
+const eventMap = {
+    "3x3":"THREE_BY_THREE"
+};
+
+let selectedEvent = threeCubeButton.getAttribute("event");
+
 let eloSortedUsers = null;
-fetch(`/api/get-sorted-users-by-elo/3x3`).then((response)=> {
+fetch(`/api/get-sorted-users-by-elo/${selectedEvent}`).then((response)=> {
         return response.json();
         }).then(function(data) {
             eloSortedUsers=data;

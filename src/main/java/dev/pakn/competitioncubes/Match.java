@@ -29,17 +29,19 @@ public class Match {
         for (int user:users) userScores.put(user, 0);
         for (int user:users) userTimes.put(user, new ArrayList<String>());
         for (int user:users) userPenalties.put(user, new ArrayList<Penalty>());
-        generateNewScramble(PuzzleRegistry.THREE);
+        event=Event.THREE_BY_THREE;
+        generateNewScramble(EventToPuzzle.eventToPuzzle(event));
     }
 
-    public Match(int[] users, int roomId) {
+    public Match(Event event, int[] users, int roomId) {
         this.users=users;
         this.roomId=roomId;
+        this.event=event;
         currentSolver = users[0];
         for (int user:users) userScores.put(user, 0);
         for (int user:users) userTimes.put(user, new ArrayList<String>());
         for (int user:users) userPenalties.put(user, new ArrayList<Penalty>());
-        generateNewScramble(PuzzleRegistry.THREE);
+        generateNewScramble(EventToPuzzle.eventToPuzzle(event));
     }
 
     public int[] getUsers() {
@@ -68,6 +70,10 @@ public class Match {
 
     public User getWinner() {
         return winner;
+    }
+
+    public Event getEvent() {
+        return event;
     }
 
     public void setCurrentSolver(int userId) {
@@ -140,12 +146,18 @@ public class Match {
                                     }
                                     eloChange=Math.abs(Math.max(5,Math.min(100, eloChange)));
                                 }
-                                loser.setElo(event, loser.getElo(event)-eloChange);
+                                int loserNewElo = loser.getElo(event)-eloChange;
+                                loser.setElo(event, loserNewElo);
+                                loser.addLoss();
                                 loser.saveUserData();
+                                DBController.saveEloForEvent(loserUserId, event, loserNewElo);
                             }
                         }
-                        winner.setElo(event, winner.getElo(event)+eloChange);
+                        int winnerNewElo = winner.getElo(event)+eloChange;
+                        winner.setElo(event, winnerNewElo);
+                        winner.addWin();
                         winner.saveUserData();
+                        DBController.saveEloForEvent(userId, event, winnerNewElo);
                         return true;
                     }
                 }
