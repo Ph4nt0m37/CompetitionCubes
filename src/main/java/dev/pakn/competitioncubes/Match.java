@@ -109,12 +109,21 @@ public class Match {
 
     public boolean nextSolver() {
         try {
+            User currentSolverUser = DBController.getUsers().get(currentSolver);
+            double currentSolveTime = TimeConversions.timeToDouble(userTimes.get(currentSolver).get(currentSolve));
+            if (currentSolveTime<currentSolverUser.getSingle(event)) {
+                currentSolverUser.setSingle(event, currentSolveTime);
+            }
             solverIndex++;
             solverIndex=solverIndex%users.length;
             currentSolver = users[solverIndex];
-            for (int user:users) {
-                if (userTimes.get(user).size()>4) {
-                    calculateAo5(user);
+            for (int userId:users) {
+                if (userTimes.get(userId).size()>4) {
+                    double ao5 = calculateAo5(userId);
+                    User user = DBController.getUsers().get(userId);
+                    if (ao5>0 && ao5<user.getAverage(event)) {
+                        user.setAverage(event, ao5);
+                    }
                 }
             }
             if (solverIndex==0) {
@@ -150,14 +159,14 @@ public class Match {
                                 loser.setElo(event, loserNewElo);
                                 loser.addLoss();
                                 loser.saveUserData();
-                                DBController.saveEloForEvent(loserUserId, event, loserNewElo);
+                                DBController.saveDataForEvent(loserUserId, event, loserNewElo, loser.getSingle(event), loser.getAverage(event));
                             }
                         }
                         int winnerNewElo = winner.getElo(event)+eloChange;
                         winner.setElo(event, winnerNewElo);
                         winner.addWin();
                         winner.saveUserData();
-                        DBController.saveEloForEvent(userId, event, winnerNewElo);
+                        DBController.saveDataForEvent(userId, event, winnerNewElo, winner.getSingle(event), winner.getAverage(event));
                         return true;
                     }
                 }
@@ -171,7 +180,7 @@ public class Match {
         }
     }
 
-    public void calculateAo5(int user) {
+    public double calculateAo5(int user) {
         double timeTotal = 0;
         ArrayList<String> solveTimes = userTimes.get(user);
         ArrayList<Double> solveTimesDouble = new ArrayList<>();
@@ -190,11 +199,13 @@ public class Match {
         for (double time:solveTimesDouble) {
             if ((int) time==Integer.MAX_VALUE) {
                 userAo5s.put(user, "DNF");
-                return;
+                return -1;
             }else {
                 timeTotal+=time;
             }
         }
-        userAo5s.put(user, TimeConversions.doubleToTime((Math.round((timeTotal/3.0)*100))/100.0));
+        double averageDouble = (Math.round((timeTotal/3.0)*100))/100.0;
+        userAo5s.put(user, TimeConversions.doubleToTime(averageDouble));
+        return averageDouble;
     }
 }

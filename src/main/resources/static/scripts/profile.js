@@ -61,6 +61,18 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
                 document.getElementsByClassName("event-text")[i+2].textContent = eventsToText[EVENTS[i]];
                 document.getElementsByClassName("elo-text")[i+2].textContent = user.elos[EVENTS[i]];
                 document.getElementsByClassName("rank-text")[i+2].textContent = String(ranks[EVENTS[i]]);
+                const single = user.singles[EVENTS[i]];
+                if (single===-1) {
+                    document.getElementsByClassName("single-text")[i+2].textContent = "N/A";
+                }else{
+                    document.getElementsByClassName("single-text")[i+2].textContent = single;
+                }
+                const average = user.averages[EVENTS[i]];
+                if (average===-1) {
+                    document.getElementsByClassName("avg-text")[i+2].textContent = "N/A";
+                }else{
+                    document.getElementsByClassName("avg-text")[i+2].textContent = user.averages[EVENTS[i]];
+                }
             }
         });
         updateUserStatistics(user);

@@ -12,6 +12,8 @@ public class User {
     private int matchesWon;
     private int matchesLost;
     private HashMap<Event, Integer> elos = new HashMap<>();
+    private HashMap<Event, Double> pbSingles = new HashMap<>();
+    private HashMap<Event, Double> pbAverages = new HashMap<>();
     private ArrayList<Integer> badges = new ArrayList<>();
     private ArrayList<Match> last10Matches = new ArrayList<>();
 
@@ -19,19 +21,23 @@ public class User {
         this.username = username;
     }
 
-    User(String username, HashMap<Event, Integer> elos, Integer[] badgesArray, int matchesWon, int matchesLost) {
+    User(String username, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost) {
         this.username = username;
         this.elos = elos;
+        this.pbSingles = pbSingles;
+        this.pbAverages = pbAverages;
         this.badges = new ArrayList<>(Arrays.asList(badgesArray));
         this.matchesWon=matchesWon;
         this.matchesLost=matchesLost;
     }
 
     //should only be used when loading from database
-    User(int userId, String username, HashMap<Event, Integer> elos, Integer[] badgesArray, int matchesWon, int matchesLost, ArrayList<Match> last10Matches) {
+    User(int userId, String username, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost, ArrayList<Match> last10Matches) {
         this.userId = userId;
         this.username = username;
         this.elos = elos;
+        this.pbSingles = pbSingles;
+        this.pbAverages = pbAverages;
         this.badges = new ArrayList<>(Arrays.asList(badgesArray));
         this.matchesWon=matchesWon;
         this.matchesLost=matchesLost;
@@ -50,13 +56,36 @@ public class User {
         return elos;
     }
 
+    public HashMap<Event, Double> getSingles() {
+        return pbSingles;
+    }
+
+    public HashMap<Event, Double> getAverages() {
+        return pbAverages;
+    }
+
     public int getElo(Event event) {
-        System.out.println("event: "+event+"elo: "+elos.get(event));
         return elos.get(event);
     }
 
     public void setElo(Event event, int newElo) {
         this.elos.put(event,newElo);
+    }
+
+    public double getSingle(Event event) {
+        return pbSingles.get(event);
+    }
+
+    public void setSingle(Event event, double newSingle) {
+        this.pbSingles.put(event,newSingle);
+    }
+
+    public double getAverage(Event event) {
+        return pbAverages.get(event);
+    }
+
+    public void setAverage(Event event, double newAverage) {
+        this.pbAverages.put(event,newAverage);
     }
 
     public ArrayList<Match> getLast10Matches() {

@@ -63,7 +63,7 @@ public class DBController {
                 int matchesWon = userResultSet.getInt("matcheswon");
                 int matchesLost = userResultSet.getInt("matcheslost");
                 Integer[] badgesArray = (Integer[]) userResultSet.getArray("badges").getArray();
-                userList.put(userId, new User(userId,username,getElosByUserId(userId,conn),badgesArray,matchesWon,matchesLost,null));
+                userList.put(userId, new User(userId,username,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null));
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -105,17 +105,19 @@ public class DBController {
                 }
 
                 for (String eventDB:eventDBNames.values()) {
-                    String eventSqlQuery = "INSERT INTO "+eventDB+" (userid, elo) VALUES (?, ?);";
+                    String eventSqlQuery = "INSERT INTO "+eventDB+" (userid, elo, single, average) VALUES (?, ?, ?, ?);";
                     PreparedStatement eventStatement = conn.prepareStatement(eventSqlQuery);
                     eventStatement.setInt(1, userId);
                     eventStatement.setInt(2, 100);
+                    eventStatement.setDouble(3, -1);
+                    eventStatement.setDouble(4, -1);
 
                     //sending sql query
                     eventStatement.executeUpdate();
                 }
 
                 //adding user to userList
-                userList.put(userId, new User(userId,username,getElosByUserId(userId,conn),new Integer[0],0,0,null));
+                userList.put(userId, new User(userId,username,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),new Integer[0],0,0,null));
 
                 conn.close();
                 return true;
@@ -155,9 +157,11 @@ public class DBController {
                 int matchesWon = usersFound.getInt("matcheswon");
                 int matchesLost = usersFound.getInt("matcheslost");
                 HashMap<Event, Integer> userElos = getElosByUserId(userId, conn);
+                HashMap<Event, Double> userSingles = getSinglesByUserId(userId, conn);
+                HashMap<Event, Double> userAverages = getAveragesByUserId(userId, conn);
                 Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
                 conn.close();
-                return new User(userId,username,userElos,badgesArray,matchesWon,matchesLost,null);
+                return new User(userId,username,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null);
             }else {
                 conn.close();
                 return null;
@@ -180,8 +184,10 @@ public class DBController {
                 int matchesWon = usersFound.getInt("matcheswon");
                 int matchesLost = usersFound.getInt("matcheslost");
                 HashMap<Event, Integer> userElos = getElosByUserId(userId, conn);
+                HashMap<Event, Double> userSingles = getSinglesByUserId(userId, conn);
+                HashMap<Event, Double> userAverages = getAveragesByUserId(userId, conn);
                 Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
-                return new User(userId,username,userElos,badgesArray,matchesWon,matchesLost,null);
+                return new User(userId,username,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null);
             }else {
                 conn.close();
                 return null;
@@ -342,6 +348,52 @@ public class DBController {
         }
     }
 
+    public static HashMap<Event, Double> getSinglesByUserId(int userId, Connection conn) {
+        try {
+            //creating elo map
+            HashMap<Event, Double> userSingles = new HashMap<>();
+
+            for (Event event:eventDBNames.keySet()) {
+                //checking for userId
+                String findUsersQuery = "SELECT single FROM "+eventDBNames.get(event)+" WHERE userid=?";
+                PreparedStatement usersQueryStatement = conn.prepareStatement(findUsersQuery);
+                usersQueryStatement.setInt(1, userId);
+
+                //getting resultset
+                ResultSet usersFound = usersQueryStatement.executeQuery();
+                usersFound.next();
+                userSingles.put(event, usersFound.getDouble(1));
+            }
+            return userSingles;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static HashMap<Event, Double> getAveragesByUserId(int userId, Connection conn) {
+        try {
+            //creating elo map
+            HashMap<Event, Double> userAverages = new HashMap<>();
+
+            for (Event event:eventDBNames.keySet()) {
+                //checking for userId
+                String findUsersQuery = "SELECT average FROM "+eventDBNames.get(event)+" WHERE userid=?";
+                PreparedStatement usersQueryStatement = conn.prepareStatement(findUsersQuery);
+                usersQueryStatement.setInt(1, userId);
+
+                //getting resultset
+                ResultSet usersFound = usersQueryStatement.executeQuery();
+                usersFound.next();
+                userAverages.put(event, usersFound.getDouble(1));
+            }
+            return userAverages;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
 
     public static boolean saveUserData(User user) {
@@ -369,16 +421,18 @@ public class DBController {
         }
     }
 
-    public static boolean saveEloForEvent(int userId, Event event, int newElo) {
+    public static boolean saveDataForEvent(int userId, Event event, int newElo, double newSingle, double newAverage) {
         try {
             //connect to DB
             Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
         
             //creating sql query
-            String sqlQuery = "UPDATE "+eventDBNames.get(event)+" SET elo=? WHERE userid=?";
+            String sqlQuery = "UPDATE "+eventDBNames.get(event)+" SET elo=?, single=?, average=? WHERE userid=?";
             PreparedStatement statement = conn.prepareStatement(sqlQuery);
             statement.setInt(1, newElo);
-            statement.setInt(2, userId);
+            statement.setDouble(2, newSingle);
+            statement.setDouble(3, newAverage);
+            statement.setInt(4, userId);
 
             //sending sql query
             statement.executeUpdate();
