@@ -22,6 +22,30 @@ html, body {
     box-shadow: 0 4px 12px rgb(0,0,0,0.1);
 }
 
+
+#sorting-options-box {
+    margin-top: 15px;
+}
+
+.sorting-button {
+    padding: 5px 12px;
+    margin: 3px;
+    font-size: 1rem;
+    font-weight: 500;
+    border: 2px solid #bebebe;
+    border-radius: 5px;
+    background-color: var(--popup-color);
+    transition: background-color 0.125s ease, transform 0.1s ease;
+}
+
+.sorting-button:hover {
+    background-color: var(--neutral-button);
+}
+
+.sorting-button:active {
+    background-color: var(--green-button);
+}
+
 .event-button {
     padding: 10px 12px;
     font-size: 1.5rem;
