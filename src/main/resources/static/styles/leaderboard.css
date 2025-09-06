@@ -43,7 +43,7 @@ html, body {
 }
 
 .sorting-button:active {
-    background-color: var(--green-button);
+    background-color: var(--bright-green-button)
 }
 
 .event-button {
@@ -60,7 +60,7 @@ html, body {
 }
 
 .event-button:active {
-    background-color: var(--green-button);
+    background-color: var(--bright-green-button);
 }
 
 #leaderboard-div {

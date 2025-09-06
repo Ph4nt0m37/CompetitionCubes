@@ -2,10 +2,10 @@ const leaderboardDiv = document.getElementById("leaderboard-div");
 const userEntryTemplate = document.getElementById("user-entry-template");
 
 const threeCubeButton = document.getElementById("3x3-button");
-threeCubeButton.style.backgroundColor="#2ecc71";
+threeCubeButton.style.backgroundColor="#3df188";
 
 const eloButton = document.getElementById("elo-button");
-eloButton.style.backgroundColor="#2ecc71";
+eloButton.style.backgroundColor="#3df188";
 
 const singleButton = document.getElementById("single-button");
 const averageButton = document.getElementById("avg-button");
@@ -31,7 +31,7 @@ sortByElo(selectedEvent);
 eloButton.addEventListener("click",()=>{
     if (currentSortingMethod!=sortingMethodMap.ELO) {
         clearOptionsColors();
-        eloButton.style.backgroundColor="#2ecc71";
+        eloButton.style.backgroundColor="#3df188";
         sortByElo(selectedEvent);
         currentSortingMethod = sortingMethodMap.ELO;
     }
@@ -40,7 +40,7 @@ eloButton.addEventListener("click",()=>{
 singleButton.addEventListener("click",()=>{
     if (currentSortingMethod!=sortingMethodMap.SINGLE) {
         clearOptionsColors();
-        singleButton.style.backgroundColor="#2ecc71";
+        singleButton.style.backgroundColor="#3df188";
         sortBySingle(selectedEvent);
         currentSortingMethod = sortingMethodMap.SINGLE;
     }
@@ -49,7 +49,7 @@ singleButton.addEventListener("click",()=>{
 averageButton.addEventListener("click",()=>{
     if (currentSortingMethod!=sortingMethodMap.AVERAGE) {
         clearOptionsColors();
-        averageButton.style.backgroundColor="#2ecc71";
+        averageButton.style.backgroundColor="#3df188";
         sortByAverage(selectedEvent);
         currentSortingMethod = sortingMethodMap.AVERAGE;
     }

@@ -52,7 +52,9 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
         fetch(`/api/get-user-ranks/${userId}`).then((response)=> {
             return response.json();
         }).then(function(ranks) {
-            for (let i=0;i<EVENTS.length;i++) {
+            // v this loop is for all of the events
+            //for (let i=0;i<EVENTS.length;i++) {
+            for (let i=1;i<=1;i++) {
                 let clonedEvent = eventTemplate.cloneNode(true);
                 clonedEvent.id="";
                 clonedEvent.style.display="flex";
@@ -71,7 +73,7 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
                 if (average===-1) {
                     document.getElementsByClassName("avg-text")[i+2].textContent = "N/A";
                 }else{
-                    document.getElementsByClassName("avg-text")[i+2].textContent = user.averages[EVENTS[i]];
+                    document.getElementsByClassName("avg-text")[i+2].textContent = average;
                 }
             }
         });

@@ -171,3 +171,8 @@ html, body {
   background: #d6ae5c;
   background: linear-gradient(90deg,rgba(214, 174, 92, 1) 0%, rgba(138, 100, 18, 1) 100%);
 }
+
+.snsfall25-badge {
+  background: #7a601c;
+  background: linear-gradient(90deg, rgba(122, 96, 28, 1) 0%, rgba(158, 150, 38, 1) 100%);
+}

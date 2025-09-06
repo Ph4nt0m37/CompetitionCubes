@@ -88,7 +88,7 @@ public class DBController {
                 statement.setString(3, userSecret);
                 statement.setInt(4, 0);
                 statement.setInt(5, 0);
-                statement.setArray(6, conn.createArrayOf("INT", new Integer[0]));
+                statement.setArray(6, conn.createArrayOf("INT", new Integer[]{7}));
 
                 //sending sql query
                 statement.executeUpdate();

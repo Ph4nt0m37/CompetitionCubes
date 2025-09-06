@@ -3,6 +3,7 @@ html, body {
     margin: 0;
     background-color: var(--main-bg-color);
     color: #333;
+    overflow-y: hidden;
 }
 
 button {

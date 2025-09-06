@@ -49,8 +49,12 @@ public class AuthController {
         + "&redirect_uri=" + request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/wca-auth/callback"
         + "&response_type=code&scope=public";*/
 
+        /*String authURL = "https://www.worldcubeassociation.org/oauth/authorize?client_id=" + appId
+        + "&redirect_uri=" + request.getScheme()+"://"+request.getServerName()+"/wca-auth/callback"
+        + "&response_type=code&scope=public";*/
+
         String authURL = "https://www.worldcubeassociation.org/oauth/authorize?client_id=" + appId
-        + "&redirect_uri=https://compcubetest.pakn.dev/wca-auth/callback"
+        + "&redirect_uri=https://compcubetest2.pakn.dev/wca-auth/callback"
         + "&response_type=code&scope=public";
 
         return new RedirectView(authURL);
@@ -62,7 +66,8 @@ public class AuthController {
         
         //getting token through a post request
         //String redirectUri = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()+"/wca-auth/callback";
-        String redirectUri = "https://compcubetest.pakn.dev/wca-auth/callback";
+        //String redirectUri = request.getScheme() + "://" + request.getServerName() + "/wca-auth/callback";
+        String redirectUri = "https://compcubetest2.pakn.dev/wca-auth/callback";
 
         HashMap<String, String> params = new HashMap<>();
         params.put("grant_type", "authorization_code");
