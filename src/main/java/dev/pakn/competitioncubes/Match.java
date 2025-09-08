@@ -24,6 +24,8 @@ public class Match {
     private User winner = null;
     private int eloChange = 0;
 
+    private User quitUser = null;
+
     public Match() {
         currentSolver = users[0];
         for (int user:users) userScores.put(user, 0);
@@ -70,6 +72,10 @@ public class Match {
 
     public User getWinner() {
         return winner;
+    }
+
+    public User getQuitUser() {
+        return quitUser;
     }
 
     public Event getEvent() {
@@ -142,31 +148,7 @@ public class Match {
                         userScores.put(userId, userScores.get(userId)+1);
                     }
                     if (userScores.get(userId)>=5) {
-                        eloChange = 15;
-                        winner = DBController.getUsers().get(userId);
-                        for (int loserUserId:users) {
-                            if (loserUserId!=winner.getUserId()) {
-                                User loser = DBController.getUsers().get(loserUserId);
-                                if (Math.abs(winner.getElo(event)-loser.getElo(event))>75) {
-                                    if (winner.getElo(event)<loser.getElo(event)) {
-                                        eloChange=(Math.abs(winner.getElo(event)-loser.getElo(event))/4)*(loser.getElo(event)/winner.getElo(event));
-                                    }else {
-                                        eloChange=(int)((Math.abs(winner.getElo(event)-loser.getElo(event))/4)*(loser.getElo(event)/Math.pow(winner.getElo(event),1.325)));
-                                    }
-                                    eloChange=Math.abs(Math.max(5,Math.min(100, eloChange)));
-                                }
-                                int loserNewElo = loser.getElo(event)-eloChange;
-                                loser.setElo(event, loserNewElo);
-                                loser.addLoss();
-                                loser.saveUserData();
-                                DBController.saveDataForEvent(loserUserId, event, loserNewElo, loser.getSingle(event), loser.getAverage(event));
-                            }
-                        }
-                        int winnerNewElo = winner.getElo(event)+eloChange;
-                        winner.setElo(event, winnerNewElo);
-                        winner.addWin();
-                        winner.saveUserData();
-                        DBController.saveDataForEvent(userId, event, winnerNewElo, winner.getSingle(event), winner.getAverage(event));
+                        setWinner(userId);
                         return true;
                     }
                 }
@@ -207,5 +189,33 @@ public class Match {
         double averageDouble = (Math.round((timeTotal/3.0)*100))/100.0;
         userAo5s.put(user, TimeConversions.doubleToTime(averageDouble));
         return averageDouble;
+    }
+
+    public void setWinner(int userId) {
+        eloChange = 15;
+        winner = DBController.getUsers().get(userId);
+        for (int loserUserId:users) {
+            if (loserUserId!=winner.getUserId()) {
+                User loser = DBController.getUsers().get(loserUserId);
+                if (Math.abs(winner.getElo(event)-loser.getElo(event))>75) {
+                    if (winner.getElo(event)<loser.getElo(event)) {
+                        eloChange=(Math.abs(winner.getElo(event)-loser.getElo(event))/4)*(loser.getElo(event)/winner.getElo(event));
+                    }else {
+                        eloChange=(int)((Math.abs(winner.getElo(event)-loser.getElo(event))/4)*(loser.getElo(event)/Math.pow(winner.getElo(event),1.325)));
+                    }
+                    eloChange=Math.abs(Math.max(5,Math.min(100, eloChange)));
+                }
+                int loserNewElo = loser.getElo(event)-eloChange;
+                loser.setElo(event, loserNewElo);
+                loser.addLoss();
+                loser.saveUserData();
+                DBController.saveDataForEvent(loserUserId, event, loserNewElo, loser.getSingle(event), loser.getAverage(event));
+            }
+        }
+        int winnerNewElo = winner.getElo(event)+eloChange;
+        winner.setElo(event, winnerNewElo);
+        winner.addWin();
+        winner.saveUserData();
+        DBController.saveDataForEvent(userId, event, winnerNewElo, winner.getSingle(event), winner.getAverage(event));
     }
 }

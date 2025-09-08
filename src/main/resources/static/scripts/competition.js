@@ -116,7 +116,11 @@ export function endMatch(matchData) {
     setTimerEnabled(false);
     let winner = matchData.winner['username'];
     let eloChange = matchData.eloChange;
-    scrambleText.textContent = `${winner} has won the match!`;
+    if (matchData.quitUser) {
+        scrambleText.textContent = `${match.quitUser} has disconnected from the match!\n${winner} has won the match!`
+    }else {
+        scrambleText.textContent = `${winner} has won the match!`;
+    }
     scrambleText.style.color = "lime";
     footerDiv.style.display="flex";
     footerDiv.classList.add("fade-in-element");

@@ -37,7 +37,9 @@ public class WebSocketEventListener {
         System.out.println("removed "+userId+" from waiting list!");
         Match userMatch = MatchController.getCurrentUserMatch(userId);
         if (userMatch!=null) {
-            userMatch.setWinner();
+            for (int matchUserId:userMatch.getUsers()) {
+                if (matchUserId!=userId) userMatch.setWinner(matchUserId);
+            }
         }
     }
 }
