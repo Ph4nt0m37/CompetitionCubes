@@ -18,18 +18,6 @@ const signOutDropdownLink = document.getElementById("sign-out-dropdown-link");
 
 let searchInt = null;
 
-//button functions
-searchButton.addEventListener("click",()=>{
-    if (searchButton.textContent==="Search for match") {
-        searchButton.textContent = "Cancel Search";
-        startMatchSearch();
-    }else {
-        searchButton.textContent = "Search for match";
-        cancelMatchSearch();
-    }
-
-});
-
 profileDropdownContent.style.visibility="hidden";
 profileButton.addEventListener("click",()=>{ 
     if (profileDropdownContent.style.visibility==="hidden") {
@@ -68,71 +56,83 @@ onload = (event)=>{
         }).then(function(data) {
             user=data;
             userId=user.userId;
+
+            //client stuff
+            const stompClient = new StompJs.Client({
+                brokerURL: `wss://${window.location.host}/user-connect`,
+                connectHeaders: {
+                    user_id: String(userId)
+                },
+            });
+
+            //button functions
+            searchButton.addEventListener("click",()=>{
+                if (searchButton.textContent==="Search for match") {
+                    searchButton.textContent = "Cancel Search";
+                    startMatchSearch(stompClient);
+                }else {
+                    searchButton.textContent = "Search for match";
+                    cancelMatchSearch(stompClient);
+                }
+
+            });
+
+            stompClient.onConnect = (frame)=>{
+                console.log("connected: "+ frame);
+                stompClient.subscribe('/room/found-match', (matchJSON) => {
+                    let match = JSON.parse(matchJSON.body)
+                    let users = match.users;
+                    let roomId = match.roomId;
+                    if (users && users.includes(userId)) {
+                        fetch(`${window.location.origin}/waiting-list`, {
+                            method: "DELETE",
+                            body: JSON.stringify({
+                                userId: userId
+                            }),
+                            headers: {
+                                "Content-type": "application/json; charset=UTF-8"
+                            }
+                        }).catch(error=>{
+                            //do nothing!
+                        });
+                        sessionStorage.setItem("userId",userId);
+                        window.location.replace(`${window.location.origin}/competition?roomId=${roomId}`);
+                    }
+                });
+            }
+
+            stompClient.onDisconnect = (frame)=>{
+                console.log("disconnected: "+ frame);
+                //delete request to remove user from waiting list
+                fetch(`${window.location.origin}/waiting-list`, {
+                    method: "DELETE",
+                    body: JSON.stringify({
+                        userId: userId
+                    }),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8"
+                    }
+                }).catch(error=>{
+                    //do nothing!
+                });
+
+            }
+
+            stompClient.onWebSocketError = (error) => {
+                console.error('Error with websocket', error);
+            };
+
+            stompClient.onStompError = (frame) => {
+                console.error('Broker reported error: ' + frame.headers['message']);
+                console.error('Additional details: ' + frame.body);
+            };
         }).catch(function(err) {
             console.log('Failed to fetch!', err);
         });
 }
 
-//client stuff
-const stompClient = new StompJs.Client({
-    brokerURL: `wss://${window.location.host}/user-connect`
-});
 
-stompClient.onConnect = (frame)=>{
-    console.log("connected: "+ frame);
-    stompClient.subscribe('/room/found-match', (matchJSON) => {
-        let match = JSON.parse(matchJSON.body)
-        let users = match.users;
-        let roomId = match.roomId;
-        if (users && users.includes(userId)) {
-            fetch(`${window.location.origin}/waiting-list`, {
-                method: "DELETE",
-                body: JSON.stringify({
-                    userId: userId
-                }),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
-                }
-            }).catch(error=>{
-                //do nothing!
-            });
-            sessionStorage.setItem("userId",userId);
-            window.location.replace(`${window.location.origin}/competition?roomId=${roomId}`);
-        }
-    });
-}
-
-stompClient.onDisconnect = (frame)=>{
-    console.log("disconnected: "+ frame);
-    //delete request to remove user from waiting list
-    fetch(`${window.location.origin}/waiting-list`, {
-        method: "DELETE",
-        body: JSON.stringify({
-            userId: userId
-        }),
-        headers: {
-            "Content-type": "application/json; charset=UTF-8"
-        }
-    }).catch(error=>{
-        //do nothing!
-    });
-
-}
-
-stompClient.onWebSocketError = (error) => {
-    console.error('Error with websocket', error);
-};
-
-stompClient.onStompError = (frame) => {
-    console.error('Broker reported error: ' + frame.headers['message']);
-    console.error('Additional details: ' + frame.body);
-};
-
-
-
-
-
-function startMatchSearch() {
+function startMatchSearch(stompClient) {
 
 
     searchText.style.visibility="visible";
@@ -142,7 +142,8 @@ function startMatchSearch() {
         method: "POST",
         body: JSON.stringify({
             'userId': userId,
-            'event':'3x3'
+            'event':'3x3',
+            //'sessionId':
         }),
         headers: {
             "Content-type": "application/json; charset=UTF-8"
@@ -174,7 +175,7 @@ function startMatchSearch() {
     },250);
 }
 
-function cancelMatchSearch() {
+function cancelMatchSearch(stompClient) {
     stompClient.deactivate();
     fetch(`${window.location.origin}/waiting-list`, {
         method: "DELETE",

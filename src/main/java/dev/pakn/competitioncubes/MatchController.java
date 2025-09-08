@@ -81,4 +81,15 @@ public class MatchController {
     public static ArrayList<Match> getMatches() {
         return matches;
     }
+
+    public static Match getCurrentUserMatch(int userId) {
+        for (Match match:matches) {
+            for (int matchUserId:match.getUsers()) {
+                if (matchUserId==userId) {
+                    return match;
+                }
+            }
+        }
+        return null;
+    }
 }

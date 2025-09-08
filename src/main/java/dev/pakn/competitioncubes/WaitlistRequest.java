@@ -24,4 +24,5 @@ public class WaitlistRequest {
     public void setEvent(String newEvent) {
         event=newEvent;
     }
+
 }
