@@ -14,12 +14,22 @@ public class CompController {
     private static ArrayList<WaitlistRequest> waitingList = new ArrayList<>();
 
     @PostMapping("/waiting-list")
-    private void addToWaitingList(@RequestBody String userIdJSON) {
+    private boolean addToWaitingList(@RequestBody String userIdJSON) {
         JSONObject requestJson = new JSONObject(userIdJSON);
         int userId = requestJson.getInt("userId");
         String event = requestJson.getString("event");
         System.out.println("added "+userId+" to waiting list");
+        Match userMatch = MatchController.getCurrentUserMatch(userId);
+        if (userMatch!=null) {
+            return false;
+        }
+        for (WaitlistRequest req:waitingList) {
+            if (req.getUserId()==userId) {
+                return false;
+            }
+        }
         waitingList.add(new WaitlistRequest(userId, event));
+        return true;
     }
 
     @GetMapping("/waiting-list/{userId}")
@@ -34,10 +44,15 @@ public class CompController {
         removeFromWaitingList(userId);
     }
 
-    public static void removeFromWaitingList(int userId) {
+    public static boolean removeFromWaitingList(int userId) {
+        boolean removed = false;
         for (int i=0;i<waitingList.size();i++) {
-            if (waitingList.get(i).getUserId()==userId) waitingList.remove(i);
+            if (waitingList.get(i).getUserId()==userId) {
+                waitingList.remove(i);
+                removed = true;
+            }
         }
+        return removed;
     }
 
     public static ArrayList<WaitlistRequest> getWaitingList() {

@@ -2,8 +2,10 @@ package dev.pakn.competitioncubes;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@EnableScheduling
 public class CompetitioncubesApplication {
 
 	public static void main(String[] args) {

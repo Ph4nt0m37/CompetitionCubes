@@ -19,6 +19,9 @@ public class MatchController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
+    @Autowired
+    private static SimpMessagingTemplate staticSimpMessagingTemplate;
+
     private static ArrayList<Match> matches = new ArrayList<>();
 
     @MessageMapping("/find-match")
@@ -66,6 +69,10 @@ public class MatchController {
         }
 
         simpMessagingTemplate.convertAndSend("/room/matches/"+command.getRoomId(),match);
+    }
+
+    public static void sendMatchData(Match match) {
+        staticSimpMessagingTemplate.convertAndSend("/room/matches/"+match.getRoomId(),match);
     }
 
     @GetMapping("/get-match-info/{roomId}")

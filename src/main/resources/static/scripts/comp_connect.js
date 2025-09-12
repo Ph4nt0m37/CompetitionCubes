@@ -3,7 +3,10 @@ import { setTimerState, setTime, setEarlyTime, setPenalty, clearPenalty } from "
 import { setTimerEnabled } from "./timer.js";
 
 export const stompClient = new StompJs.Client({
-    brokerURL: `wss://${window.location.host}/user-connect`
+    brokerURL: `wss://${window.location.host}/user-connect`,
+    connectHeaders: {
+        user_id: sessionStorage.getItem("userId")
+    }
 });
 
 stompClient.activate();

@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
@@ -13,6 +14,8 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 public class WebSocketEventListener {
 
     HashMap<String, Integer> sessionUserIdMap = new HashMap<>();
+
+    HashMap<Integer, Integer> matchDisconnectTimer = new HashMap<>();
     
     @EventListener
     public void handleWebSocketConnectedListener(final SessionConnectedEvent event) {
@@ -23,7 +26,9 @@ public class WebSocketEventListener {
     public void handleWebSocketConnectListener(final SessionConnectEvent event) {
         StompHeaderAccessor headers = StompHeaderAccessor.wrap(event.getMessage());
         try {
-            sessionUserIdMap.put(headers.getSessionId(), Integer.parseInt(headers.getFirstNativeHeader("user_id")));
+            int userId = Integer.parseInt(headers.getFirstNativeHeader("user_id"));
+            sessionUserIdMap.put(headers.getSessionId(), userId);
+            matchDisconnectTimer.remove(userId);
         }catch (NumberFormatException e) {
             System.out.println("wth how did they get a userId that is not a number???");
             e.printStackTrace();
@@ -36,9 +41,27 @@ public class WebSocketEventListener {
         CompController.removeFromWaitingList(userId);
         System.out.println("removed "+userId+" from waiting list!");
         Match userMatch = MatchController.getCurrentUserMatch(userId);
-        if (userMatch!=null) {
-            for (int matchUserId:userMatch.getUsers()) {
-                if (matchUserId!=userId) userMatch.setWinner(matchUserId);
+        if (userMatch!=null) matchDisconnectTimer.put(userId, 5);
+    }
+
+    @Scheduled(fixedRate = 1000)
+    public void decrementDisconnect() {
+        for (Integer userId:matchDisconnectTimer.keySet()) {
+            matchDisconnectTimer.put(userId,matchDisconnectTimer.get(userId)-1);
+            System.out.println(matchDisconnectTimer.keySet());
+            Match userMatch = MatchController.getCurrentUserMatch(userId);
+            if (userMatch!=null && matchDisconnectTimer.get(userId)<=0) {
+                matchDisconnectTimer.remove(userId);
+                for (int matchUserId:userMatch.getUsers()) {
+                    System.out.println("user1: "+matchUserId);
+                    System.out.println("user2: "+userId);
+                    if (matchUserId!=(int) userId) {
+                        System.out.println("yay");
+                        userMatch.setWinner(matchUserId);
+                        MatchController.sendMatchData(userMatch);
+                        System.out.println("ended match");
+                    }
+                }
             }
         }
     }

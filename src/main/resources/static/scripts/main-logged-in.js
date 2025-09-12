@@ -29,26 +29,6 @@ profileButton.addEventListener("click",()=>{
     }
 });
 
-profileDropdownLink.addEventListener("click",()=>{
-    cancelMatchSearch();
-    profileDropdownContent.style.visibility="hidden";
-    window.location.href=`/user/${userId}`;
-});
-
-signOutDropdownLink.addEventListener("click",()=>{
-    cancelMatchSearch();
-    fetch('/wca-auth/sign-out', {
-        method: 'DELETE'
-    }).then(() => {
-        location.reload();
-    });
-});
-
-leaderboardButton.addEventListener("click",()=>{
-    cancelMatchSearch();
-    window.location.href=`/rankings`;
-});
-
 onload = (event)=>{
     //on website loading stuff
     fetch(`/api/get-user-data`).then((response)=> {
@@ -62,13 +42,32 @@ onload = (event)=>{
                 brokerURL: `wss://${window.location.host}/user-connect`,
                 connectHeaders: {
                     user_id: String(userId)
-                },
+                }
+            });
+
+            profileDropdownLink.addEventListener("click",()=>{
+                cancelMatchSearch(stompClient);
+                profileDropdownContent.style.visibility="hidden";
+                window.location.href=`/user/${userId}`;
+            });
+
+            signOutDropdownLink.addEventListener("click",()=>{
+                cancelMatchSearch(stompClient);
+                fetch('/wca-auth/sign-out', {
+                    method: 'DELETE'
+                }).then(() => {
+                    location.reload();
+                });
+            });
+
+            leaderboardButton.addEventListener("click",()=>{
+                cancelMatchSearch(stompClient);
+                window.location.href=`/rankings`;
             });
 
             //button functions
             searchButton.addEventListener("click",()=>{
                 if (searchButton.textContent==="Search for match") {
-                    searchButton.textContent = "Cancel Search";
                     startMatchSearch(stompClient);
                 }else {
                     searchButton.textContent = "Search for match";
@@ -133,10 +132,6 @@ onload = (event)=>{
 
 
 function startMatchSearch(stompClient) {
-
-
-    searchText.style.visibility="visible";
-
     //post request to add user to waiting list
     fetch(`${window.location.origin}/waiting-list`, {
         method: "POST",
@@ -148,31 +143,44 @@ function startMatchSearch(stompClient) {
         headers: {
             "Content-type": "application/json; charset=UTF-8"
         }
+    }).then((result)=> {
+        return result.json();
+    }).then((data)=> {
+        if (!data) {
+            searchText.style.visibility="visible";
+            searchText.style.color="#e23333";
+            searchText.textContent = "You are already searching for (or are in) a match!"
+            return;
+        }
+        searchButton.textContent = "Cancel Search";
+        searchText.textContent = `Searching...`;
+        searchText.style.color="#555";
+        searchText.style.visibility="visible";
+
+        stompClient.activate();
+
+        //searching for user interval. also controls dots
+        let dotCount = 1;
+        searchInt = setInterval(()=>{
+            //search
+            if (dotCount===3) {
+                stompClient.publish({
+                    destination: "/app/find-match",
+                    body: JSON.stringify({
+                        'userId':userId,
+                        'event':'3x3'
+                    })
+                });
+            }
+
+            //dots
+            searchText.textContent = `Searching${".".repeat(dotCount)}`;
+            dotCount++;
+            if (!(dotCount%4)) {
+                dotCount=1;
+            }
+        },250);
     });
-
-    stompClient.activate();
-
-    //searching for user interval. also controls dots
-    let dotCount = 1;
-    searchInt = setInterval(()=>{
-        //search
-        if (dotCount===3) {
-            stompClient.publish({
-                destination: "/app/find-match",
-                body: JSON.stringify({
-                    'userId':userId,
-                    'event':'3x3'
-                })
-            });
-        }
-
-        //dots
-        searchText.textContent = `Searching${".".repeat(dotCount)}`;
-        dotCount++;
-        if (!(dotCount%4)) {
-            dotCount=1;
-        }
-    },250);
 }
 
 function cancelMatchSearch(stompClient) {
