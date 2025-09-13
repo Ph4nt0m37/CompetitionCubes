@@ -3,7 +3,6 @@ export let roomId = new URLSearchParams(window.location.search).get("roomId");
 export let userId = sessionStorage.getItem("userId");
 sessionStorage.removeItem("userId");
 import { setTimerEnabled } from "./timer.js";
-import { startMatchSearch, cancelMatchSearch } from "./comp_connect.js";
 
 let scrambleText = document.getElementById("scramble-text");
 
@@ -15,8 +14,6 @@ let oppao5 = document.getElementById("opp-ao5");
 
 const usernameText = document.getElementById("username");
 const oppUsernameText = document.getElementById("opp-username");
-
-const searchButton = document.getElementById("search-button");
 
 let footerDiv = document.getElementById("footer-div");
 let numWins = 0;
@@ -117,7 +114,7 @@ export function endMatch(matchData) {
     let winner = matchData.winner['username'];
     let eloChange = matchData.eloChange;
     if (matchData.quitUser) {
-        scrambleText.textContent = `${match.quitUser} has disconnected from the match!\n${winner} has won the match!`
+        scrambleText.innerHTML = `${matchData.quitUser['username']} has disconnected from the match!<br>${winner} has won the match!`
     }else {
         scrambleText.textContent = `${winner} has won the match!`;
     }
@@ -148,18 +145,6 @@ export function setAo5s(ao5Json) {
         }
     }
 }
-
-//search button
-searchButton.addEventListener("click",()=>{
-    if (searchButton.textContent==="Next Match") {
-        searchButton.textContent = "Cancel Search";
-        startMatchSearch();
-    }else {
-        searchButton.textContent = "Next Match";
-        cancelMatchSearch();
-    }
-
-});
 
 //moved ao5 calculation to server
 /*export function calculateAo5s(solveData) {

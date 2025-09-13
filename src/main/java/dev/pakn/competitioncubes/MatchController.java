@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.annotation.PostConstruct;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -19,10 +21,14 @@ public class MatchController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    @Autowired
     private static SimpMessagingTemplate staticSimpMessagingTemplate;
 
     private static ArrayList<Match> matches = new ArrayList<>();
+
+    @PostConstruct
+    public void init() {
+        staticSimpMessagingTemplate = simpMessagingTemplate;
+    }
 
     @MessageMapping("/find-match")
     @SendTo("/room/found-match")
@@ -44,6 +50,8 @@ public class MatchController {
                 System.out.println("match found between "+waitlistRequest.getUserId()+" and "+oppId);
                 Match match = new Match(event,new int[]{waitlistRequest.getUserId(),oppId},(int)(Math.random()*9999999));
                 matches.add(match);
+                user.setCurrentMatch(match);
+                oppUser.setCurrentMatch(match);
                 return match;
             }
         }
@@ -87,16 +95,5 @@ public class MatchController {
 
     public static ArrayList<Match> getMatches() {
         return matches;
-    }
-
-    public static Match getCurrentUserMatch(int userId) {
-        for (Match match:matches) {
-            for (int matchUserId:match.getUsers()) {
-                if (matchUserId==userId) {
-                    return match;
-                }
-            }
-        }
-        return null;
     }
 }

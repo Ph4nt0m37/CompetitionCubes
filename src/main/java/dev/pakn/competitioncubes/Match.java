@@ -78,6 +78,10 @@ public class Match {
         return quitUser;
     }
 
+    public void setQuitUser(User user) {
+        quitUser = user;
+    }
+
     public Event getEvent() {
         return event;
     }
@@ -209,6 +213,7 @@ public class Match {
                 loser.setElo(event, loserNewElo);
                 loser.addLoss();
                 loser.saveUserData();
+                loser.setCurrentMatch(null);
                 DBController.saveDataForEvent(loserUserId, event, loserNewElo, loser.getSingle(event), loser.getAverage(event));
             }
         }
@@ -216,6 +221,8 @@ public class Match {
         winner.setElo(event, winnerNewElo);
         winner.addWin();
         winner.saveUserData();
+        winner.setCurrentMatch(null);
         DBController.saveDataForEvent(userId, event, winnerNewElo, winner.getSingle(event), winner.getAverage(event));
+        MatchController.getMatches().remove(this);
     }
 }

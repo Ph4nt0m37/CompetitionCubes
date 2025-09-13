@@ -30,6 +30,7 @@ h1 {
     color: var(--timer-color);
     font-size: 3vw;
     margin: 15px;
+    text-align: center;
 }
 
 #timer-main-div {

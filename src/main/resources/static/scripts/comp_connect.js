@@ -61,6 +61,7 @@ stompClient.onConnect = (frame)=>{
 
         if (match.winner && match.winner['username']) {
             endMatch(match);
+            stompClient.deactivate();
             return;
         }
 
@@ -124,58 +125,3 @@ stompClient.onStompError = (frame) => {
     console.error('Broker reported error: ' + frame.headers['message']);
     console.error('Additional details: ' + frame.body);
 };
-
-let searchInt = null;
-const searchText = document.getElementById("searching-text");
-
-export function startMatchSearch() {
-
-
-    searchText.style.display="block";
-
-    //post request to add user to waiting list
-    fetch(`${window.location.origin}/waiting-list`, {
-        method: "POST",
-        body: JSON.stringify({
-            userId: userId
-        }),
-        headers: {
-            "Content-type": "application/json; charset=UTF-8"
-        }
-    });
-
-    //searching for user interval. also controls dots
-    let dotCount = 1;
-    searchInt = setInterval(()=>{
-        //search
-        if (dotCount===3) {
-            stompClient.publish({
-                destination: "/app/find-match",
-                body: userId
-            });
-        }
-
-        //dots
-        searchText.textContent = `Searching${".".repeat(dotCount)}`;
-        dotCount++;
-        if (!(dotCount%4)) {
-            dotCount=1;
-        }
-    },250);
-}
-
-export function cancelMatchSearch() {
-    fetch(`${window.location.origin}/waiting-list`, {
-        method: "DELETE",
-        body: JSON.stringify({
-            userId: userId
-        }),
-        headers: {
-            "Content-type": "application/json; charset=UTF-8"
-        }
-    }).catch(error=>{
-        //do nothing!
-    });
-    searchText.style.visibility="hidden";
-    clearInterval(searchInt);
-}

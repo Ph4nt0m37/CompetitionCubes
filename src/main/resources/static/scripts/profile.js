@@ -60,20 +60,21 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
                 clonedEvent.style.display="flex";
                 rankingsDiv.appendChild(clonedEvent);
                 //i+2 because we already have two of each ...-text for the key and template
-                document.getElementsByClassName("event-text")[i+2].textContent = eventsToText[EVENTS[i]];
-                document.getElementsByClassName("elo-text")[i+2].textContent = user.elos[EVENTS[i]];
-                document.getElementsByClassName("rank-text")[i+2].textContent = String(ranks[EVENTS[i]]);
+                //CHANGE ALL OF THE i+1 TO i+2 WHEN GOING BACK TO THE TOP IF STATEMENT
+                document.getElementsByClassName("event-text")[i+1].textContent = eventsToText[EVENTS[i]];
+                document.getElementsByClassName("elo-text")[i+1].textContent = user.elos[EVENTS[i]];
+                document.getElementsByClassName("rank-text")[i+1].textContent = String(ranks[EVENTS[i]]);
                 const single = user.singles[EVENTS[i]];
                 if (single===-1) {
-                    document.getElementsByClassName("single-text")[i+2].textContent = "N/A";
+                    document.getElementsByClassName("single-text")[i+1].textContent = "N/A";
                 }else{
                     document.getElementsByClassName("single-text")[i+2].textContent = single;
                 }
                 const average = user.averages[EVENTS[i]];
                 if (average===-1) {
-                    document.getElementsByClassName("avg-text")[i+2].textContent = "N/A";
+                    document.getElementsByClassName("avg-text")[i+1].textContent = "N/A";
                 }else{
-                    document.getElementsByClassName("avg-text")[i+2].textContent = average;
+                    document.getElementsByClassName("avg-text")[i+1].textContent = average;
                 }
             }
         });

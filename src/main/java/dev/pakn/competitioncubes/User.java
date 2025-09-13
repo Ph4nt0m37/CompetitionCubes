@@ -17,6 +17,8 @@ public class User {
     private ArrayList<Integer> badges = new ArrayList<>();
     private ArrayList<Match> last10Matches = new ArrayList<>();
 
+    private Match currMatch;
+
     User(String username) {
         this.username = username;
     }
@@ -97,6 +99,14 @@ public class User {
             last10Matches.remove(0);
         }
         last10Matches.add(match);
+    }
+
+    public void setCurrentMatch(Match match) {
+        currMatch = match;
+    }
+
+    public Match getCurrentMatch() {
+        return currMatch;
     }
 
     public int getUserId() {

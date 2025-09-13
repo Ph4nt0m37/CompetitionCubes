@@ -19,7 +19,7 @@ public class CompController {
         int userId = requestJson.getInt("userId");
         String event = requestJson.getString("event");
         System.out.println("added "+userId+" to waiting list");
-        Match userMatch = MatchController.getCurrentUserMatch(userId);
+        Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
         if (userMatch!=null) {
             return false;
         }

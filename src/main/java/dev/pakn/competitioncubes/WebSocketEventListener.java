@@ -40,28 +40,32 @@ public class WebSocketEventListener {
         int userId = sessionUserIdMap.get(event.getSessionId());
         CompController.removeFromWaitingList(userId);
         System.out.println("removed "+userId+" from waiting list!");
-        Match userMatch = MatchController.getCurrentUserMatch(userId);
-        if (userMatch!=null) matchDisconnectTimer.put(userId, 5);
+        Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
+        System.out.println(userMatch);
+        if (userMatch!=null && userMatch.getWinner()==null) matchDisconnectTimer.put(userId, 3);
     }
 
     @Scheduled(fixedRate = 1000)
     public void decrementDisconnect() {
         for (Integer userId:matchDisconnectTimer.keySet()) {
-            matchDisconnectTimer.put(userId,matchDisconnectTimer.get(userId)-1);
-            System.out.println(matchDisconnectTimer.keySet());
-            Match userMatch = MatchController.getCurrentUserMatch(userId);
-            if (userMatch!=null && matchDisconnectTimer.get(userId)<=0) {
-                matchDisconnectTimer.remove(userId);
-                for (int matchUserId:userMatch.getUsers()) {
-                    System.out.println("user1: "+matchUserId);
-                    System.out.println("user2: "+userId);
-                    if (matchUserId!=(int) userId) {
-                        System.out.println("yay");
-                        userMatch.setWinner(matchUserId);
-                        MatchController.sendMatchData(userMatch);
-                        System.out.println("ended match");
+            try {
+                matchDisconnectTimer.put(userId,matchDisconnectTimer.get(userId)-1);
+                Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
+                if (userMatch!=null && matchDisconnectTimer.get(userId)<=0) {
+                    matchDisconnectTimer.remove(userId);
+                    for (int matchUserId:userMatch.getUsers()) {
+                        if (matchUserId!=(int) userId) {
+                            User quitUser = DBController.getUsers().get(userId);
+                            userMatch.setQuitUser(quitUser);
+                            quitUser.setCurrentMatch(null);
+                            userMatch.setWinner(matchUserId);
+                            MatchController.sendMatchData(userMatch);
+                        }
                     }
+                    
                 }
+            }catch(Exception e) {
+                e.printStackTrace();
             }
         }
     }
