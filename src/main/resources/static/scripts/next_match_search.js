@@ -7,26 +7,26 @@ const searchButton = document.getElementById("search-button");
 
 let searchInt = null;
 
-const stompClient = new StompJs.Client({
-    brokerURL: `wss://${window.location.host}/user-connect`,
-    connectHeaders: {
-        user_id: userId
-    }
-});
+export function startMatchSearchClient() {
+    const stompClient = new StompJs.Client({
+        brokerURL: `wss://${window.location.host}/user-connect`,
+        connectHeaders: {
+            user_id: userId
+        }
+    });
 
-//search button
-searchButton.addEventListener("click",()=>{
-    if (searchButton.textContent==="Next Match") {
-        searchButton.textContent = "Cancel Search";
-        startMatchSearch(stompClient);
-    }else {
-        searchButton.textContent = "Next Match";
-        cancelMatchSearch(stompClient);
-    }
+    //search button
+    searchButton.addEventListener("click",()=>{
+        if (searchButton.textContent==="Next Match") {
+            searchButton.textContent = "Cancel Search";
+            startMatchSearch(stompClient);
+        }else {
+            searchButton.textContent = "Next Match";
+            cancelMatchSearch(stompClient);
+        }
 
-});
-
-onload = (event)=>{
+    });
+    
     //on website loading stuff
     stompClient.onConnect = (frame)=>{
         console.log("connected: "+ frame);
@@ -97,6 +97,7 @@ function startMatchSearch(stompClient) {
     }).then((result)=> {
         return result.json();
     }).then((data)=> {
+        searchText.style.display="block";
         if (!data) {
             searchText.style.visibility="visible";
             searchText.style.color="#e23333";

@@ -198,18 +198,22 @@ public class Match {
     public void setWinner(int userId) {
         eloChange = 15;
         winner = DBController.getUsers().get(userId);
+        int winnerElo = winner.getElo(event);
         for (int loserUserId:users) {
             if (loserUserId!=winner.getUserId()) {
                 User loser = DBController.getUsers().get(loserUserId);
-                if (Math.abs(winner.getElo(event)-loser.getElo(event))>75) {
-                    if (winner.getElo(event)<loser.getElo(event)) {
-                        eloChange=(Math.abs(winner.getElo(event)-loser.getElo(event))/4)*(loser.getElo(event)/winner.getElo(event));
+                int loserElo = loser.getElo(event);
+                if (loserElo>0 && Math.abs(winnerElo-loserElo)>75) {
+                    if (winnerElo<loserElo) {
+                        eloChange=(Math.abs(winnerElo-loserElo)/4)*(loserElo/winnerElo);
                     }else {
-                        eloChange=(int)((Math.abs(winner.getElo(event)-loser.getElo(event))/4)*(loser.getElo(event)/Math.pow(winner.getElo(event),1.325)));
+                        eloChange=(int)((Math.abs(winnerElo-loserElo)/4)*(loserElo/Math.pow(winnerElo,1.325)));
                     }
                     eloChange=Math.abs(Math.max(5,Math.min(100, eloChange)));
                 }
-                int loserNewElo = loser.getElo(event)-eloChange;
+                int loserNewElo = loserElo-eloChange;
+                //whoop whoop ternary operator :D
+                loserNewElo = loserNewElo>=0 ? loserNewElo : 0;
                 loser.setElo(event, loserNewElo);
                 loser.addLoss();
                 loser.saveUserData();
@@ -217,7 +221,7 @@ public class Match {
                 DBController.saveDataForEvent(loserUserId, event, loserNewElo, loser.getSingle(event), loser.getAverage(event));
             }
         }
-        int winnerNewElo = winner.getElo(event)+eloChange;
+        int winnerNewElo = winnerElo+eloChange;
         winner.setElo(event, winnerNewElo);
         winner.addWin();
         winner.saveUserData();

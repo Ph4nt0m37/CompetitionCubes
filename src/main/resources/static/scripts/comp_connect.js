@@ -1,4 +1,5 @@
 import { roomId, userId, setScramble, matchData, setMatchData, setWins, endMatch, setAo5s } from "./competition.js";
+import { startMatchSearchClient } from "./next_match_search.js";
 import { setTimerState, setTime, setEarlyTime, setPenalty, clearPenalty } from "./opptimer.js"
 import { setTimerEnabled } from "./timer.js";
 
@@ -62,6 +63,7 @@ stompClient.onConnect = (frame)=>{
         if (match.winner && match.winner['username']) {
             endMatch(match);
             stompClient.deactivate();
+            startMatchSearchClient();
             return;
         }
 
