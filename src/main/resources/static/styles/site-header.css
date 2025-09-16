@@ -14,13 +14,15 @@ header {
 }
 
 #header-logo {
-
+    flex-basis: 0px;
+    flex-grow: 1;
 }
 
 #header-buttons-div {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-basis: 0px;
     flex-grow: 1;
     margin: -20px 0;
 }
@@ -31,11 +33,40 @@ header {
     padding: 0px 15px;
     font-size: 1rem;
     font-weight: 500;
-    color: var(--h2-color)
+    color: var(--h2-color);
+
 }
 
 .header-button:hover {
     background-color: var(--neutral-button);
+}
+
+#left-anchored {
+    display: flex;
+    flex-basis: 0px;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: end;
+}
+
+#search-bar {
+    padding: 6px;
+    margin: 0px 40px;
+    min-width: 150px;
+    max-width: 200px;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--h2-color);
+    transition: box-shadow 0.2s ease;
+}
+
+#search-bar:focus {
+    outline: none;
+    box-shadow: 0 0 6px #a4a4a4;
+    border-color: #a4a4a4;
 }
 
 #profile-button {

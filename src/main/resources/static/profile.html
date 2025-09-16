@@ -10,25 +10,14 @@
     <title>User Profile | Competition Cubes</title>
 </head>
 <body>
-    <header id="header">
-        <div id="header-logo">
-            --Logo--
-        </div>
-        <div id="header-buttons-div">
-            <button class="header-button">TBA</button>
-            <button class="header-button" id="leaderboard-button">Leaderboard</button>
-            <button class="header-button">TBA</button>
-        </div>
-        <div class="dropdown" id="profile-dropdown">
-            <button type="button" id="profile-button">Profile</button>
-            <div id="profile-dropdown-content" class="dropdown-content">
-                <a id="profile-dropdown-link">Profile</a>
-                <a>TBD</a>
-                <a id="sign-out-dropdown-link">Sign out</a>
-            </div>
-        </div>
-        <button type="button" id="sign-in-button">Sign in with WCA</button>
-    </header>
+    <header id="header"></header>
+    <script>
+        fetch("header.html")
+            .then(res => res.text())
+            .then(html => {
+            document.getElementById("header").innerHTML = html;
+            });
+    </script>
 
 
     <div class="main-div">

@@ -49,6 +49,7 @@ label {
     border-radius: 6px;
     text-align: center;
     font-size: 1rem;
+    font-family: inherit;
     transition: box-shadow 0.2s ease;
 }
 
