@@ -18,6 +18,8 @@ public class ErrorMapper implements ErrorController {
             int code = Integer.parseInt(status.toString());
             if (code==HttpStatus.NOT_FOUND.value()) {
                 return "error-404.html";
+            }else if (code==HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+                return "error-500.html";
             }
         }
         return "error.html";
