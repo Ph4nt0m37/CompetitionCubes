@@ -49,9 +49,16 @@ header {
     justify-content: end;
 }
 
+#search-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0px 20px;
+}
+
 #search-bar {
     padding: 6px;
-    margin: 0px 40px;
+    padding-right: 32px;
     min-width: 150px;
     max-width: 200px;
     border: 1px solid #cccccc;
@@ -67,6 +74,14 @@ header {
     outline: none;
     box-shadow: 0 0 6px #a4a4a4;
     border-color: #a4a4a4;
+}
+
+#search-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: -35px;
+    padding: 7px;
+    cursor: pointer;
 }
 
 #profile-button {

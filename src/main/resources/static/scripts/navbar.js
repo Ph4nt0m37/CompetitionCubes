@@ -1,61 +1,84 @@
 let userId = 0;
 
-const leaderboardButton = document.getElementById("leaderboard-button");
+onload = (event)=>{
 
-leaderboardButton.addEventListener("click",()=>{
-    window.location.href=`/rankings`;
-});
+    const header = document.getElementById("header");
 
-const signInButton = document.getElementById("sign-in-button");
+    fetch("header.html")
+            .then(res => res.text())
+            .then(html => {
+            header.innerHTML = html;
 
-const profileButton = document.getElementById("profile-button");
-const profileDropdown = document.getElementById("profile-dropdown")
-const profileDropdownContent = document.getElementById("profile-dropdown-content");
+            const leaderboardButton = document.getElementById("leaderboard-button");
 
-const profileDropdownLink = document.getElementById("profile-dropdown-link");
-const signOutDropdownLink = document.getElementById("sign-out-dropdown-link");
+            leaderboardButton.addEventListener("click",()=>{
+                window.location.href=`/rankings`;
+            });
 
-profileDropdownContent.style.visibility="hidden";
-profileButton.addEventListener("click",()=>{ 
-    if (profileDropdownContent.style.visibility==="hidden") {
-        profileDropdownContent.style.visibility="visible";
-        profileButton.style.borderRadius="5px 5px 0 0";
-    }else {
-        profileDropdownContent.style.visibility="hidden";
-        profileButton.style.borderRadius="5px";
-    }
-});
+            const signInButton = document.getElementById("sign-in-button");
 
-profileDropdownLink.addEventListener("click",()=>{
-    profileDropdownContent.style.visibility="hidden";
-    window.location.href=`/user/${userId}`;
-});
+            //sign in stuff
+            signInButton.addEventListener("click",()=>{
+                window.location.replace(`${window.location.origin}/wca-auth`);
+            });
 
-signOutDropdownLink.addEventListener("click",()=>{
-    fetch('/wca-auth/sign-out', {
-        method: 'DELETE'
-    }).then(() => {
-        location.reload();
-    });
-});
+            const profileButton = document.getElementById("profile-button");
+            const profileDropdown = document.getElementById("profile-dropdown")
+            const profileDropdownContent = document.getElementById("profile-dropdown-content");
 
-signInButton.addEventListener("click",()=>{
-    window.location.replace(`${window.location.origin}/wca-auth`);
-});
+            const profileDropdownLink = document.getElementById("profile-dropdown-link");
+            const signOutDropdownLink = document.getElementById("sign-out-dropdown-link");
 
-fetch(`/api/get-user-data`).then((response)=> {
-    return response.json();
-    }).then(function(data) {
-        userId=data.userId;
-        if (userId>0) {
-            signInButton.style.display="none";
-            profileButton.style.display="block";
-        }else {
-            profileButton.style.display="none";
-            signInButton.style.display="block";
-        }
-    }).catch(function(err) {
-        console.log('Failed to fetch!', err);
-        profileButton.style.display="none";
-        signInButton.style.display="block";
-    });
+            profileDropdownContent.style.visibility="hidden";
+            profileButton.addEventListener("click",()=>{ 
+                if (profileDropdownContent.style.visibility==="hidden") {
+                    profileDropdownContent.style.visibility="visible";
+                    profileButton.style.borderRadius="5px 5px 0 0";
+                }else {
+                    profileDropdownContent.style.visibility="hidden";
+                    profileButton.style.borderRadius="5px";
+                }
+            });
+
+            profileDropdownLink.addEventListener("click",()=>{
+                profileDropdownContent.style.visibility="hidden";
+                window.location.href=`/user/${userId}`;
+            });
+
+            signOutDropdownLink.addEventListener("click",()=>{
+                fetch('/wca-auth/sign-out', {
+                    method: 'DELETE'
+                }).then(() => {
+                    location.reload();
+                });
+            });
+
+            signInButton.addEventListener("click",()=>{
+                window.location.replace(`${window.location.origin}/wca-auth`);
+            });
+
+            const searchBar = document.getElementById("search-bar");
+            const searchIcon = document.getElementById("search-icon");
+            searchIcon.addEventListener("click",()=>{
+                window.location.href=`/search?query=${searchBar.value}`;
+            });
+
+            fetch(`/api/get-user-data`).then((response)=> {
+                return response.json();
+                }).then(function(data) {
+                    userId=data.userId;
+                    if (userId>0) {
+                        signInButton.style.display="none";
+                        profileButton.style.display="block";
+                    }else {
+                        profileButton.style.display="none";
+                        signInButton.style.display="block";
+                    }
+                }).catch(function(err) {
+                    //console.log('Failed to fetch!', err);
+                    profileButton.style.display="none";
+                    signInButton.style.display="block";
+            });
+        });
+
+}
