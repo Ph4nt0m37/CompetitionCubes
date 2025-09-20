@@ -81,6 +81,7 @@ function sortByElo(selectedEvent) {
                 let userEntry = userEntryTemplate.cloneNode(true);
                 let userRank = i+1;
                 let userElo = eloSortedUsers[i]['elo'];
+                userEntry.removeAttribute("id");
                 optionKeyText.textContent = 'ELO';
                 if (i>0 && userElo===eloSortedUsers[i-1]['elo']) {
                     userRank=String(lastRank);
@@ -114,6 +115,7 @@ function sortBySingle(selectedEvent) {
                 if (userElo>-1) {
                     let userEntry = userEntryTemplate.cloneNode(true);
                     let userRank = i+1;
+                    userEntry.removeAttribute("id");
                     if (i>0 && userElo===eloSortedUsers[i-1]['single']) {
                         userRank=String(lastRank);
                     }else{
@@ -147,6 +149,7 @@ function sortByAverage(selectedEvent) {
                 if (userElo>-1) {
                     let userEntry = userEntryTemplate.cloneNode(true);
                     let userRank = i+1;
+                    userEntry.removeAttribute("id");
                     if (i>0 && userElo===eloSortedUsers[i-1]['average']) {
                         userRank=String(lastRank);
                     }else{

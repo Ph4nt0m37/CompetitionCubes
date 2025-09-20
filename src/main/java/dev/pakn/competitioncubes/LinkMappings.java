@@ -63,4 +63,9 @@ public class LinkMappings {
     public String rankingsPage() {
         return "leaderboard.html";
     }
+
+    @RequestMapping("/search") 
+    public String searchPage() {
+        return "search-page.html";
+    }
 }

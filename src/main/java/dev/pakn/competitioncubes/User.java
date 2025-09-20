@@ -23,8 +23,9 @@ public class User {
         this.username = username;
     }
 
-    User(String username, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost) {
+    User(String username, String wcaId, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost) {
         this.username = username;
+        this.wcaId = wcaId;
         this.elos = elos;
         this.pbSingles = pbSingles;
         this.pbAverages = pbAverages;
@@ -34,9 +35,10 @@ public class User {
     }
 
     //should only be used when loading from database
-    User(int userId, String username, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost, ArrayList<Match> last10Matches) {
+    User(int userId, String username, String wcaId, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost, ArrayList<Match> last10Matches) {
         this.userId = userId;
         this.username = username;
+        this.wcaId = wcaId;
         this.elos = elos;
         this.pbSingles = pbSingles;
         this.pbAverages = pbAverages;
@@ -56,6 +58,10 @@ public class User {
 
     public HashMap<Event, Integer> getElos() {
         return elos;
+    }
+
+    public String getWcaId() {
+        return wcaId;
     }
 
     public HashMap<Event, Double> getSingles() {

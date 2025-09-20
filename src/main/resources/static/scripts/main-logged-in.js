@@ -4,30 +4,8 @@ export let userId = null;
 
 const searchButton = document.getElementById("search-button");
 const searchText = document.getElementById("searching-text");
-const profileButton = document.getElementById("profile-button");
-const profileDropdown = document.getElementById("profile-dropdown")
-const profileDropdownContent = document.getElementById("profile-dropdown-content");
-
-//header links
-const leaderboardButton = document.getElementById("leaderboard-button");
-
-//dropdown links
-const profileDropdownLink = document.getElementById("profile-dropdown-link");
-const signOutDropdownLink = document.getElementById("sign-out-dropdown-link");
-
 
 let searchInt = null;
-
-profileDropdownContent.style.visibility="hidden";
-profileButton.addEventListener("click",()=>{ 
-    if (profileDropdownContent.style.visibility==="hidden") {
-        profileDropdownContent.style.visibility="visible";
-        profileButton.style.borderRadius="5px 5px 0 0";
-    }else {
-        profileDropdownContent.style.visibility="hidden";
-        profileButton.style.borderRadius="5px";
-    }
-});
 
 onload = (event)=>{
     //on website loading stuff
@@ -43,26 +21,6 @@ onload = (event)=>{
                 connectHeaders: {
                     user_id: String(userId)
                 }
-            });
-
-            profileDropdownLink.addEventListener("click",()=>{
-                cancelMatchSearch(stompClient);
-                profileDropdownContent.style.visibility="hidden";
-                window.location.href=`/user/${userId}`;
-            });
-
-            signOutDropdownLink.addEventListener("click",()=>{
-                cancelMatchSearch(stompClient);
-                fetch('/wca-auth/sign-out', {
-                    method: 'DELETE'
-                }).then(() => {
-                    location.reload();
-                });
-            });
-
-            leaderboardButton.addEventListener("click",()=>{
-                cancelMatchSearch(stompClient);
-                window.location.href=`/rankings`;
             });
 
             //button functions

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
@@ -60,10 +62,11 @@ public class DBController {
             while (userResultSet.next()) {
                 int userId = userResultSet.getInt("userid");
                 String username = userResultSet.getString("username");
+                String wcaId = userResultSet.getString("wcaid");
                 int matchesWon = userResultSet.getInt("matcheswon");
                 int matchesLost = userResultSet.getInt("matcheslost");
                 Integer[] badgesArray = (Integer[]) userResultSet.getArray("badges").getArray();
-                userList.put(userId, new User(userId,username,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null));
+                userList.put(userId, new User(userId,username,wcaId,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null));
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -117,7 +120,7 @@ public class DBController {
                 }
 
                 //adding user to userList
-                userList.put(userId, new User(userId,username,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),new Integer[0],0,0,null));
+                userList.put(userId, new User(userId,username,userWcaId,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),new Integer[0],0,0,null));
 
                 conn.close();
                 return true;
@@ -161,7 +164,7 @@ public class DBController {
                 HashMap<Event, Double> userAverages = getAveragesByUserId(userId, conn);
                 Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
                 conn.close();
-                return new User(userId,username,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null);
+                return new User(userId,username,wcaId,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null);
             }else {
                 conn.close();
                 return null;
@@ -187,7 +190,7 @@ public class DBController {
                 HashMap<Event, Double> userSingles = getSinglesByUserId(userId, conn);
                 HashMap<Event, Double> userAverages = getAveragesByUserId(userId, conn);
                 Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
-                return new User(userId,username,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null);
+                return new User(userId,username,wcaId,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null);
             }else {
                 conn.close();
                 return null;
@@ -718,6 +721,66 @@ public class DBController {
             conn.close();
             return averageSortedUsers;
         }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @GetMapping("/api/search/{query}")
+    private ArrayList<SearchResult> getUsersByQuery(@PathVariable("query") String queryStr) {
+        try {
+            ArrayList<SearchResult> searchResults = new ArrayList<>();
+
+            Connection conn = DriverManager.getConnection(staticDbURL,staticDbUsername,staticDbPassword);
+
+            //search results by userId
+            try {
+                String idStatementString = "SELECT * FROM users WHERE userid=?";
+                PreparedStatement idStatement = conn.prepareStatement(idStatementString);
+                idStatement.setInt(1,Integer.parseInt(queryStr));
+                ResultSet idResults = idStatement.executeQuery();
+
+                while (idResults.next()) {
+                    int userId = idResults.getInt("userid");
+                    String username = idResults.getString("username");
+                    String wcaId = idResults.getString("wcaid");
+                    SearchResult result = new SearchResult(userId, username, wcaId);
+                    searchResults.add(result);
+                }
+            }catch (NumberFormatException e) {
+                //do nothing. this just means the search query wasn't a pure number
+            }
+
+            //search results by userId
+            String wcaIdStatementString = "SELECT * FROM users WHERE wcaid=?";
+            PreparedStatement wcaIdStatement = conn.prepareStatement(wcaIdStatementString);
+            wcaIdStatement.setString(1, queryStr.toUpperCase());
+            ResultSet wcaIdResults = wcaIdStatement.executeQuery();
+
+            while (wcaIdResults.next()) {
+                int userId = wcaIdResults.getInt("userid");
+                String username = wcaIdResults.getString("username");
+                String wcaId = wcaIdResults.getString("wcaid");
+                SearchResult result = new SearchResult(userId, username, wcaId);
+                searchResults.add(result);
+            }
+
+            //searching by levenshtein. I'm not using OR here because lvenshtein needs to be ordered by the distance - wcaid and id do not
+            String levStatementString = "SELECT * FROM users WHERE levenshtein(username,?) <=3 ORDER BY levenshtein(username, ?)";
+            PreparedStatement levStatement = conn.prepareStatement(levStatementString);
+            levStatement.setString(1, queryStr);
+            levStatement.setString(2, queryStr);
+            ResultSet levResults = levStatement.executeQuery();
+
+            while (levResults.next()) {
+                int userId = levResults.getInt("userid");
+                String username = levResults.getString("username");
+                String wcaId = levResults.getString("wcaid");
+                SearchResult result = new SearchResult(userId, username, wcaId);
+                searchResults.add(result);
+            }
+            return searchResults;
+        }catch(SQLException e) {
             e.printStackTrace();
             return null;
         }
