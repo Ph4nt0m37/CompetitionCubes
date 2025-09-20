@@ -206,3 +206,28 @@ button {
     flex-grow: 10;
     font-size: 2rem;
 }
+
+#home-button {
+    border: none;
+    position: absolute;
+    color: white;
+    border-radius: 17.5px;
+    font-size: 2rem;
+    padding: 10px 20px;
+    font-weight: bold;
+    background-color: var(--green-button);
+    padding: 15px 30px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+#home-button:hover {
+    background-color: var(--green-button-hover);
+}
+
+#home-button:active {
+    transform: scale(0.97);
+}

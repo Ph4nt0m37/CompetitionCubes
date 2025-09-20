@@ -118,7 +118,15 @@ export function endMatch(matchData) {
     }else {
         scrambleText.textContent = `${winner} has won the match!`;
     }
+
     scrambleText.style.color = "lime";
+
+    const homeButton = document.getElementById("home-button");
+    homeButton.addEventListener("click", ()=>{
+        window.location.href="/";
+    });
+    homeButton.style.display="block";
+    homeButton.classList.add("fade-in-element");
     footerDiv.style.display="flex";
     footerDiv.classList.add("fade-in-element");
     let eloChangeText = document.getElementById("elo-change-text");
