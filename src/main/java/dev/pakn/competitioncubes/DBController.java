@@ -481,19 +481,17 @@ public class DBController {
     @GetMapping("/api/get-user-ranks/{userId}")
     public static HashMap<Event, Integer> getUserRanks(@PathVariable int userId) {
         try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
             HashMap<Event, Integer> userRanks = new HashMap<>();
             //for (Event event: Event.values()) {
             Event event = Event.THREE_BY_THREE;
-                ArrayList<LeaderboardEntry> users = getSortedUsersByEloList(event,conn);
+                ArrayList<LeaderboardEntry> users = getSortedUsersByEloList(event);
                 for (int i=1;i<=users.size();i++) {
                     LeaderboardEntry entry = users.get(i-1);
                     int entryUserId = entry.getUserId();
                     if (entryUserId==userId) {
                         int rank = i+1;
                         int dbRankCheckIndex = i-1;
-                        while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getElo()<=entry.getElo()) {
+                        while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getStat()<=entry.getStat()) {
                             dbRankCheckIndex--;
                             rank=dbRankCheckIndex+2;
                         }
@@ -511,17 +509,15 @@ public class DBController {
 
     public static int getUserRank(int userId, Event event) {
         try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
             int userRank = -1;
-            ArrayList<LeaderboardEntry> users = getSortedUsersByEloList(event,conn);
+            ArrayList<LeaderboardEntry> users = getSortedUsersByEloList(event);
             for (int i=1;i<=users.size();i++) {
                 LeaderboardEntry entry = users.get(i-1);
                 int entryUserId = entry.getUserId();
                 if (entryUserId==userId) {
                     int rank = i+1;
                     int dbRankCheckIndex = i-1;
-                    while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getElo()<=entry.getElo()) {
+                    while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getStat()<=entry.getStat()) {
                         dbRankCheckIndex--;
                         rank=dbRankCheckIndex+2;
                     }
@@ -561,16 +557,13 @@ public class DBController {
             ArrayList<LeaderboardEntry> eloSortedUsers = new ArrayList<>();
             ResultSet sortedUsersDB = getSortedUsersByEloDB(event);
             int usersFound = 0;
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
             while (sortedUsersDB.next() && usersFound<=resultLimit) {
                 int userId = sortedUsersDB.getInt("userid");
-                String username = getUserByID(userId,conn).getUsername();
+                String username = userList.get(userId).getUsername();
                 int userElo = sortedUsersDB.getInt("elo");
                 eloSortedUsers.add(new LeaderboardEntry(userId, username, event, userElo));
                 usersFound++;
             }
-            conn.close();
             return eloSortedUsers;
         }catch (Exception e) {
             e.printStackTrace();
@@ -578,17 +571,16 @@ public class DBController {
         }
     }
 
-    public static ArrayList<LeaderboardEntry> getSortedUsersByEloList(Event event, Connection conn) {
+    public static ArrayList<LeaderboardEntry> getSortedUsersByEloList(Event event) {
         try {
             ArrayList<LeaderboardEntry> eloSortedUsers = new ArrayList<>();
             ResultSet sortedUsersDB = getSortedUsersByEloDB(event);
             while (sortedUsersDB.next()) {
                 int userId = sortedUsersDB.getInt("userid");
-                String username = getUserByID(userId,conn).getUsername();
+                String username = userList.get(userId).getUsername();
                 int userElo = sortedUsersDB.getInt("elo");
                 eloSortedUsers.add(new LeaderboardEntry(userId, username, event, userElo));
             }
-            conn.close();
             return eloSortedUsers;
         }catch (Exception e) {
             e.printStackTrace();
@@ -607,7 +599,7 @@ public class DBController {
             Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
 
             //checking for userId
-            String findUsersQuery = "SELECT * FROM "+eventDBNames.get(event)+" ORDER BY single DESC;";
+            String findUsersQuery = "SELECT * FROM "+eventDBNames.get(event)+" ORDER BY single;";
             PreparedStatement usersQueryStatement = conn.prepareStatement(findUsersQuery);
 
             //getting resultset
@@ -626,16 +618,13 @@ public class DBController {
             ArrayList<LeaderboardEntry> singleSortedUsers = new ArrayList<>();
             ResultSet sortedUsersDB = getSortedUsersBySingleDB(event);
             int usersFound = 0;
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
             while (sortedUsersDB.next() && usersFound<=resultLimit) {
                 int userId = sortedUsersDB.getInt("userid");
-                String username = getUserByID(userId,conn).getUsername();
-                int userSingle = sortedUsersDB.getInt("single");
+                String username = userList.get(userId).getUsername();
+                double userSingle = sortedUsersDB.getDouble("single");
                 singleSortedUsers.add(new LeaderboardEntry(userId, username, event, userSingle));
                 usersFound++;
             }
-            conn.close();
             return singleSortedUsers;
         }catch (Exception e) {
             e.printStackTrace();
@@ -643,17 +632,16 @@ public class DBController {
         }
     }
 
-    public static ArrayList<LeaderboardEntry> getSortedUsersBySingleList(Event event, Connection conn) {
+    public static ArrayList<LeaderboardEntry> getSortedUsersBySingleList(Event event) {
         try {
             ArrayList<LeaderboardEntry> singleSortedUsers = new ArrayList<>();
             ResultSet sortedUsersDB = getSortedUsersBySingleDB(event);
             while (sortedUsersDB.next()) {
                 int userId = sortedUsersDB.getInt("userid");
-                String username = getUserByID(userId,conn).getUsername();
-                int userSingle = sortedUsersDB.getInt("single");
+                String username = userList.get(userId).getUsername();
+                double userSingle = sortedUsersDB.getDouble("single");
                 singleSortedUsers.add(new LeaderboardEntry(userId, username, event, userSingle));
             }
-            conn.close();
             return singleSortedUsers;
         }catch (Exception e) {
             e.printStackTrace();
@@ -662,7 +650,7 @@ public class DBController {
     }
 
     @GetMapping("/api/get-sorted-users-by-average/{event}")
-    public ArrayList<LeaderboardEntry> getSingleAverageListRequest(@PathVariable String event) {
+    public ArrayList<LeaderboardEntry> getSortedAverageListRequest(@PathVariable String event) {
         return getSortedUsersByAverageList(stringToEventMap.get(event),100);
     }
 
@@ -672,7 +660,7 @@ public class DBController {
             Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
 
             //checking for userId
-            String findUsersQuery = "SELECT * FROM "+eventDBNames.get(event)+" ORDER BY average DESC;";
+            String findUsersQuery = "SELECT * FROM "+eventDBNames.get(event)+" ORDER BY average;";
             PreparedStatement usersQueryStatement = conn.prepareStatement(findUsersQuery);
 
             //getting resultset
@@ -691,16 +679,16 @@ public class DBController {
             ArrayList<LeaderboardEntry> averageSortedUsers = new ArrayList<>();
             ResultSet sortedUsersDB = getSortedUsersByAverageDB(event);
             int usersFound = 0;
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
             while (sortedUsersDB.next() && usersFound<=resultLimit) {
                 int userId = sortedUsersDB.getInt("userid");
-                String username = getUserByID(userId,conn).getUsername();
-                int userAvg = sortedUsersDB.getInt("average");
+                String username = userList.get(userId).getUsername();
+                double userAvg = sortedUsersDB.getDouble("average");
                 averageSortedUsers.add(new LeaderboardEntry(userId, username, event, userAvg));
                 usersFound++;
             }
-            conn.close();
+            for (LeaderboardEntry entry:averageSortedUsers) {
+                System.out.println(entry.getStat());
+            }
             return averageSortedUsers;
         }catch (Exception e) {
             e.printStackTrace();
@@ -708,17 +696,16 @@ public class DBController {
         }
     }
 
-    public static ArrayList<LeaderboardEntry> getSortedUsersByAverageList(Event event, Connection conn) {
+    public static ArrayList<LeaderboardEntry> getSortedUsersByAverageList(Event event) {
         try {
             ArrayList<LeaderboardEntry> averageSortedUsers = new ArrayList<>();
             ResultSet sortedUsersDB = getSortedUsersByAverageDB(event);
             while (sortedUsersDB.next()) {
                 int userId = sortedUsersDB.getInt("userid");
-                String username = getUserByID(userId,conn).getUsername();
-                int userAvg = sortedUsersDB.getInt("average");
+                String username = userList.get(userId).getUsername();
+                double userAvg = sortedUsersDB.getDouble("average");
                 averageSortedUsers.add(new LeaderboardEntry(userId, username, event, userAvg));
             }
-            conn.close();
             return averageSortedUsers;
         }catch (Exception e) {
             e.printStackTrace();

@@ -119,11 +119,6 @@ public class Match {
 
     public boolean nextSolver() {
         try {
-            User currentSolverUser = DBController.getUsers().get(currentSolver);
-            double currentSolveTime = TimeConversions.timeToDouble(userTimes.get(currentSolver).get(currentSolve));
-            if (currentSolveTime<currentSolverUser.getSingle(event)) {
-                currentSolverUser.setSingle(event, currentSolveTime);
-            }
             solverIndex++;
             solverIndex=solverIndex%users.length;
             currentSolver = users[solverIndex];
@@ -131,7 +126,8 @@ public class Match {
                 if (userTimes.get(userId).size()>4) {
                     double ao5 = calculateAo5(userId);
                     User user = DBController.getUsers().get(userId);
-                    if (ao5>0 && ao5<user.getAverage(event)) {
+                    double userPbAverage = user.getAverage(event) < 0 ? Integer.MAX_VALUE : user.getAverage(event);
+                    if (ao5>0 && ao5<userPbAverage) {
                         user.setAverage(event, ao5);
                     }
                 }
@@ -211,6 +207,13 @@ public class Match {
                     }
                     eloChange=Math.abs(Math.max(5,Math.min(100, eloChange)));
                 }
+                //check pb single
+                double userSingle = loser.getSingle(event) < 0 ? Integer.MAX_VALUE : loser.getSingle(event);
+                double matchPbSingle = Double.parseDouble(Collections.min(userTimes.get(loserUserId)));
+                if (matchPbSingle!=Integer.MAX_VALUE && matchPbSingle<userSingle) {
+                    loser.setSingle(event, matchPbSingle);
+                }
+
                 int loserNewElo = loserElo-eloChange;
                 //whoop whoop ternary operator :D
                 loserNewElo = loserNewElo>=0 ? loserNewElo : 0;
@@ -221,6 +224,13 @@ public class Match {
                 DBController.saveDataForEvent(loserUserId, event, loserNewElo, loser.getSingle(event), loser.getAverage(event));
             }
         }
+        //check pb single
+        double userSingle = winner.getSingle(event) < 0 ? Integer.MAX_VALUE : winner.getSingle(event);
+        double matchPbSingle = Double.parseDouble(Collections.min(userTimes.get(userId)));
+        if (matchPbSingle!=Integer.MAX_VALUE && matchPbSingle<userSingle) {
+            winner.setSingle(event, matchPbSingle);
+        }
+
         int winnerNewElo = winnerElo+eloChange;
         winner.setElo(event, winnerNewElo);
         winner.addWin();

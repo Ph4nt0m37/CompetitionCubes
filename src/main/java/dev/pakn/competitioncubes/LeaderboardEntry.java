@@ -4,13 +4,13 @@ public class LeaderboardEntry {
     private int userId;
     private String username;
     private Event event;
-    private int elo;
+    private double stat;
 
-    LeaderboardEntry(int userId, String username, Event event, int elo) {
+    LeaderboardEntry(int userId, String username, Event event, double stat) {
         this.userId = userId;
         this.username = username;
         this.event = event;
-        this.elo = elo;
+        this.stat = stat;
     }
 
     public int getUserId() {
@@ -25,7 +25,7 @@ public class LeaderboardEntry {
         return event;
     }
 
-    public int getElo() {
-        return elo;
+    public double getStat() {
+        return stat;
     }
 }

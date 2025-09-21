@@ -63,7 +63,7 @@ function clearOptionsColors() {
 
 function removeLeaderboardEntries() {
     const children = leaderboardDiv.children;
-    for (let i=1;i<children.length;i++) {
+    for (let i=children.length-1;i>=2;i--) {
         leaderboardDiv.removeChild(children[i]);
     }
 }
@@ -80,10 +80,10 @@ function sortByElo(selectedEvent) {
             for(let i=0;i<(eloSortedUsers.length>100 ? 100 : eloSortedUsers.length);i++) {
                 let userEntry = userEntryTemplate.cloneNode(true);
                 let userRank = i+1;
-                let userElo = eloSortedUsers[i]['elo'];
+                let userElo = Math.floor(eloSortedUsers[i]['stat']);
                 userEntry.removeAttribute("id");
                 optionKeyText.textContent = 'ELO';
-                if (i>0 && userElo===eloSortedUsers[i-1]['elo']) {
+                if (i>0 && userElo===Math.floor(eloSortedUsers[i-1]['stat'])) {
                     userRank=String(lastRank);
                 }else{
                     lastRank=userRank;
@@ -106,17 +106,17 @@ function sortBySingle(selectedEvent) {
     fetch(`/api/get-sorted-users-by-single/${selectedEvent}`).then((response)=> {
         return response.json();
         }).then(function(data) {
-            eloSortedUsers=data;
+            let singleSortedUsers=data;
             removeLeaderboardEntries();
             let lastRank = 1;
-            for(let i=0;i<(eloSortedUsers.length>100 ? 100 : eloSortedUsers.length);i++) {
-                let userElo = eloSortedUsers[i]['single'];
+            for(let i=0;i<(singleSortedUsers.length>100 ? 100 : singleSortedUsers.length);i++) {
+                let userSingle = singleSortedUsers[i]['stat'];
                 optionKeyText.textContent = 'Single';
-                if (userElo>-1) {
+                if (userSingle>-1) {
                     let userEntry = userEntryTemplate.cloneNode(true);
-                    let userRank = i+1;
                     userEntry.removeAttribute("id");
-                    if (i>0 && userElo===eloSortedUsers[i-1]['single']) {
+                    let userRank = i+1;
+                    if (i>0 && userSingle===singleSortedUsers[i-1]['stat']) {
                         userRank=String(lastRank);
                     }else{
                         lastRank=userRank;
@@ -124,9 +124,9 @@ function sortBySingle(selectedEvent) {
                     //editing rank
                     userEntry.children[0].textContent=String(userRank);
                     //editing username
-                    userEntry.children[1].innerHTML=`<a href=/user/${eloSortedUsers[i]['userId']}>${eloSortedUsers[i]['username']}</a>`;
+                    userEntry.children[1].innerHTML=`<a href=/user/${singleSortedUsers[i]['userId']}>${singleSortedUsers[i]['username']}</a>`;
                     //editing elo
-                    userEntry.children[2].textContent=String(userElo);
+                    userEntry.children[2].textContent=String(userSingle);
                     //adding userEntry
                     leaderboardDiv.appendChild(userEntry);
                 }
@@ -140,17 +140,18 @@ function sortByAverage(selectedEvent) {
     fetch(`/api/get-sorted-users-by-average/${selectedEvent}`).then((response)=> {
         return response.json();
         }).then(function(data) {
-            eloSortedUsers=data;
+            let averageSortedUsers=data;
             removeLeaderboardEntries();
             let lastRank = 1;
-            for(let i=0;i<(eloSortedUsers.length>100 ? 100 : eloSortedUsers.length);i++) {
-                let userElo = eloSortedUsers[i]['average'];
+            for(let i=0;i<(averageSortedUsers.length>100 ? 100 : averageSortedUsers.length);i++) {
+                let userAverage = averageSortedUsers[i]['stat'];
                 optionKeyText.textContent = 'Average';
-                if (userElo>-1) {
+                if (userAverage>-1) {
                     let userEntry = userEntryTemplate.cloneNode(true);
+                    userEntry.removeAttribute("id");
                     let userRank = i+1;
                     userEntry.removeAttribute("id");
-                    if (i>0 && userElo===eloSortedUsers[i-1]['average']) {
+                    if (i>0 && userAverage===averageSortedUsers[i-1]['stat']) {
                         userRank=String(lastRank);
                     }else{
                         lastRank=userRank;
@@ -158,9 +159,9 @@ function sortByAverage(selectedEvent) {
                     //editing rank
                     userEntry.children[0].textContent=String(userRank);
                     //editing username
-                    userEntry.children[1].innerHTML=`<a href=/user/${eloSortedUsers[i]['userId']}>${eloSortedUsers[i]['username']}</a>`;
+                    userEntry.children[1].innerHTML=`<a href=/user/${averageSortedUsers[i]['userId']}>${averageSortedUsers[i]['username']}</a>`;
                     //editing elo
-                    userEntry.children[2].textContent=String(userElo);
+                    userEntry.children[2].textContent=String(userAverage);
                     //adding userEntry
                     leaderboardDiv.appendChild(userEntry);
                 }

@@ -40,6 +40,7 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
     return response.json();
     }).then(function(data) {
         let user = data;
+        console.log(data);
         usernameText.textContent=user.username;
         let badgesDiv = document.getElementById("badges-div");
         for (let i=0;i<user.badges.length;i++) {
@@ -68,7 +69,7 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
                 if (single===-1) {
                     document.getElementsByClassName("single-text")[i+1].textContent = "N/A";
                 }else{
-                    document.getElementsByClassName("single-text")[i+2].textContent = single;
+                    document.getElementsByClassName("single-text")[i+1].textContent = single;
                 }
                 const average = user.averages[EVENTS[i]];
                 if (average===-1) {
@@ -96,8 +97,9 @@ function updateUserStatistics(user) {
     matchesPlayedText.textContent=`Matches Played: ${matchesPlayed}`;
     matchesWonText.textContent=`Matches Won: ${matchesWon}`;
     matchesLostText.textContent=`Matches Lost: ${matchesLost}`;
+    const winLoss = (matchesWon/(matchesPlayed))*100;
     if (matchesPlayed>0) {
-        winLossText.textContent=`Win-Loss %: ${(matchesWon/(matchesPlayed))*100}%`;
+        winLossText.textContent=`Win-Loss %: ${Math.round((winLoss+Number.EPSILON) * 100) / 100}%`;
     }else {
         winLossText.textContent=`Win-Loss %: N/A`;
     }

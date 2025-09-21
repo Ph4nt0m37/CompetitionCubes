@@ -98,3 +98,7 @@ html, body {
 .username-text {
     min-width: 20rem;
 }
+
+#user-entry-template {
+    display: none;
+}

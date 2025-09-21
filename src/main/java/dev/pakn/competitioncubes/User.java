@@ -85,7 +85,7 @@ public class User {
     }
 
     public void setSingle(Event event, double newSingle) {
-        this.pbSingles.put(event,newSingle);
+        pbSingles.put(event,newSingle);
     }
 
     public double getAverage(Event event) {
@@ -93,7 +93,7 @@ public class User {
     }
 
     public void setAverage(Event event, double newAverage) {
-        this.pbAverages.put(event,newAverage);
+        pbAverages.put(event,newAverage);
     }
 
     public ArrayList<Match> getLast10Matches() {
