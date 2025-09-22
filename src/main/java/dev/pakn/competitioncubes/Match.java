@@ -209,9 +209,11 @@ public class Match {
                 }
                 //check pb single
                 double userSingle = loser.getSingle(event) < 0 ? Integer.MAX_VALUE : loser.getSingle(event);
-                double matchPbSingle = Double.parseDouble(Collections.min(userTimes.get(loserUserId)));
-                if (matchPbSingle!=Integer.MAX_VALUE && matchPbSingle<userSingle) {
-                    loser.setSingle(event, matchPbSingle);
+                if (userTimes.get(loserUserId).size()>0) {
+                    double matchPbSingle = Double.parseDouble(Collections.min(userTimes.get(loserUserId)));
+                    if (matchPbSingle!=Integer.MAX_VALUE && matchPbSingle<userSingle) {
+                        loser.setSingle(event, matchPbSingle);
+                    }
                 }
 
                 int loserNewElo = loserElo-eloChange;
@@ -226,9 +228,11 @@ public class Match {
         }
         //check pb single
         double userSingle = winner.getSingle(event) < 0 ? Integer.MAX_VALUE : winner.getSingle(event);
-        double matchPbSingle = Double.parseDouble(Collections.min(userTimes.get(userId)));
-        if (matchPbSingle!=Integer.MAX_VALUE && matchPbSingle<userSingle) {
-            winner.setSingle(event, matchPbSingle);
+        if (userTimes.get(userId).size()>0) {
+            double matchPbSingle = Double.parseDouble(Collections.min(userTimes.get(userId)));
+            if (matchPbSingle!=Integer.MAX_VALUE && matchPbSingle<userSingle) {
+                winner.setSingle(event, matchPbSingle);
+            }
         }
 
         int winnerNewElo = winnerElo+eloChange;

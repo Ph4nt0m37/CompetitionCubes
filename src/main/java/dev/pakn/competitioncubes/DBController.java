@@ -619,11 +619,13 @@ public class DBController {
             ResultSet sortedUsersDB = getSortedUsersBySingleDB(event);
             int usersFound = 0;
             while (sortedUsersDB.next() && usersFound<=resultLimit) {
-                int userId = sortedUsersDB.getInt("userid");
-                String username = userList.get(userId).getUsername();
                 double userSingle = sortedUsersDB.getDouble("single");
-                singleSortedUsers.add(new LeaderboardEntry(userId, username, event, userSingle));
-                usersFound++;
+                if (userSingle>=0) {
+                    int userId = sortedUsersDB.getInt("userid");
+                    String username = userList.get(userId).getUsername();
+                    singleSortedUsers.add(new LeaderboardEntry(userId, username, event, userSingle));
+                    usersFound++;
+                }
             }
             return singleSortedUsers;
         }catch (Exception e) {
@@ -680,11 +682,13 @@ public class DBController {
             ResultSet sortedUsersDB = getSortedUsersByAverageDB(event);
             int usersFound = 0;
             while (sortedUsersDB.next() && usersFound<=resultLimit) {
-                int userId = sortedUsersDB.getInt("userid");
-                String username = userList.get(userId).getUsername();
                 double userAvg = sortedUsersDB.getDouble("average");
-                averageSortedUsers.add(new LeaderboardEntry(userId, username, event, userAvg));
-                usersFound++;
+                if (userAvg>=0) {
+                    int userId = sortedUsersDB.getInt("userid");
+                    String username = userList.get(userId).getUsername();
+                    averageSortedUsers.add(new LeaderboardEntry(userId, username, event, userAvg));
+                    usersFound++;
+                }
             }
             for (LeaderboardEntry entry:averageSortedUsers) {
                 System.out.println(entry.getStat());
