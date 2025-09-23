@@ -1,0 +1,38 @@
+html, body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: var(--main-bg-color);
+    color: #333;
+}
+
+#main {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+li {
+    color: var(--h2-color);
+    font-weight: 500;
+    font-size: 1.35rem;
+    margin-bottom: 15px;
+}
+
+p {
+    color: var(--h2-color);
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+#rules-div {
+    background-color: var(--popup-color);
+    min-width: 50rem;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgb(0,0,0,0.1);
+}
+
+.exceptions > p {
+    margin: 0;
+}
