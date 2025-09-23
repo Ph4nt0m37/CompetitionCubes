@@ -52,17 +52,17 @@
 			<groupId>org.worldcubeassociation.tnoodle</groupId>
 			<artifactId>lib-scrambles</artifactId>
 			<version>0.19.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-		<exclusions>
-			<exclusion>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-			</exclusion>
-			<exclusion>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-core</artifactId>
-			</exclusion>
-		</exclusions>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
