@@ -1,0 +1,49 @@
+:root {
+    --main-bg-color: #ececec;
+    --header-color: #f5f5f5;
+    --popup-color: #f7f7f7;
+    --defecit-color: #ebebeb;
+    --h1-color: #36535e;
+    --h2-color: #414141;
+    --green-button: #2ecc71;
+    --green-button-hover: #29b866;
+    --bright-green-button: #3df188;
+    --bright-green-button-hover: #37d97a;
+    --blue-button: #3498db;
+    --blue-button-hover: #2980b9;
+    --neutral-button: #e0e0e0;
+    --neutral-button-hover: #cacaca;
+    --card-color: #cccccc;
+    --warning-color: #d7e233;
+    --error-color: #e23333;
+    --dark-blue-color: #2555e6;
+}
+
+h1 {
+    color: var(--h1-color);
+    font-size: 3rem;
+}
+
+h2 {
+    font-size: 1.75rem;
+    color: var(--h2-color);
+}
+
+h3 {
+    font-size: 1.4rem;
+}
+
+a {
+    color: #3b5cc2;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #23397a;
+}
+
+p {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #0d1127;
+}

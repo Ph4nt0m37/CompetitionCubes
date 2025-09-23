@@ -1,0 +1,52 @@
+html, body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: var(--main-bg-color);
+    color: #333;
+    overflow-y: hidden;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    border: none;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 85px);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#search-button {
+    border: none;
+    color: white;
+    border-radius: 17.5px;
+    font-size: 2rem;
+    padding: 10px 20px;
+    font-weight: bold;
+    background-color: var(--green-button);
+    padding: 15px 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#search-button:hover {
+    background-color: var(--green-button-hover);
+}
+
+#search-button:active {
+    transform: scale(0.97);
+}
+
+#searching-text {
+    font-size: 1.3rem;
+    visibility: hidden;
+    color: #555;
+    margin-top: 20px;
+}

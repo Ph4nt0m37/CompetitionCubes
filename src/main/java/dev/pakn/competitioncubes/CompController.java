@@ -11,13 +11,25 @@ import java.util.*;
 @RestController
 public class CompController {
 
-    private static ArrayList<Integer> waitingList = new ArrayList<>();
+    private static ArrayList<WaitlistRequest> waitingList = new ArrayList<>();
 
     @PostMapping("/waiting-list")
-    private void addToWaitingList(@RequestBody String userIdJSON) {
-        int userId = new JSONObject(userIdJSON).getInt("userId");
+    private boolean addToWaitingList(@RequestBody String userIdJSON) {
+        JSONObject requestJson = new JSONObject(userIdJSON);
+        int userId = requestJson.getInt("userId");
+        String event = requestJson.getString("event");
         System.out.println("added "+userId+" to waiting list");
-        waitingList.add(userId);
+        Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
+        if (userMatch!=null) {
+            return false;
+        }
+        for (WaitlistRequest req:waitingList) {
+            if (req.getUserId()==userId) {
+                return false;
+            }
+        }
+        waitingList.add(new WaitlistRequest(userId, event));
+        return true;
     }
 
     @GetMapping("/waiting-list/{userId}")
@@ -26,13 +38,24 @@ public class CompController {
     }
 
     @DeleteMapping("/waiting-list")
-    private void removeFromWaitingList(@RequestBody String userIdJSON) {
+    private void removeFromWaitingListReq(@RequestBody String userIdJSON) {
         int userId = new JSONObject(userIdJSON).getInt("userId");
         System.out.println("removed "+userId+" from waiting list");
-        waitingList.remove(userId);
+        removeFromWaitingList(userId);
     }
 
-    public static ArrayList<Integer> getWaitingList() {
+    public static boolean removeFromWaitingList(int userId) {
+        boolean removed = false;
+        for (int i=0;i<waitingList.size();i++) {
+            if (waitingList.get(i).getUserId()==userId) {
+                waitingList.remove(i);
+                removed = true;
+            }
+        }
+        return removed;
+    }
+
+    public static ArrayList<WaitlistRequest> getWaitingList() {
         return waitingList;
     }
 }

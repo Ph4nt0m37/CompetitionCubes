@@ -1,5 +1,9 @@
-body {
-    font-family: 'Trebuchet MS', monospace
+html, body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: var(--main-bg-color);
+    color: #333;
+    overflow-y: hidden;
 }
 
 button {
@@ -10,38 +14,19 @@ button {
 .main {
     display: flex;
     flex-direction: column;
-    height: 96vh;
+    height: calc(100vh - 85px);
     justify-content: center;
     align-items: center;
+    text-align: center;
 }
 
-#search-button {
-    border: 3px solid rgb(0,0,0);
-    border-radius: 100px;
-    font-size: 2vw;
-    padding: 0.8vw 2.5vw;
-    font: 'Trebuchet MS';
-    font-weight: bolder;
+h1 {
+    color: var(--h1-color);
+    font-size: 2rem;
 }
 
-#search-button:not(:hover) {
-    background-color: rgb(234,234,234);
-    transition: background-color 0.2s;
+button {
+    font-family: inherit;
+    outline: none;
+    border: none;
 }
-
-#search-button:hover {
-    background-color: rgb(212,212,212);
-    transition: background-color 0.2s;
-}
-
-#search-button:active {
-    background-color: rgb(184,184,184);
-    font-size: 1.95vw;
-    transition: background-color 0.1s;
-}
-
-#searching-text {
-    font-size: 1.75vw;
-    visibility: hidden;
-}
-

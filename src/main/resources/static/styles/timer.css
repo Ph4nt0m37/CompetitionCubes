@@ -2,6 +2,15 @@ body {
     font-family: 'Trebuchet MS', monospace;
     display: flex;
     flex-direction: column;
+    background-color: var(--main-bg-color);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+
+:root {
+    --timer-color: #242424;
 }
 
 h1 {
@@ -14,14 +23,24 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 0px 10px;
+}
+
+#scramble-text {
+    color: var(--timer-color);
+    font-size: 3vw;
+    margin: 15px;
+    text-align: center;
 }
 
 #timer-main-div {
+    overflow: hidden;
     display: flex;
     /*border: 10px solid rgb(255, 0, 0);*/
-    height: 87vh;
+    height: 85vh;
     align-items: center;
     justify-content: center;
+    margin-bottom: 10px;
 }
 
 .timer-div {
@@ -36,4 +55,179 @@ h1 {
 .timer {
     font-size: 7vw;
     /*border: 10px solid black;*/
+    color: var(--timer-color);
+}
+
+.ao5 {
+    font-size: 2.75vw;
+    /*border: 10px solid black;*/
+    color: var(--timer-color);
+}
+
+.winsText {
+    font-size: 2.75vw;
+    transition: color 2s ease-out;
+    color: var(--timer-color);
+}
+
+.winsText.wonRound {
+    color: lime;
+    transition: color 0s;
+}
+
+.winsText.lostRound {
+    color: red;
+    transition: color 0s;
+}
+
+.username {
+    font-size: 2.9vw;
+    color: var(--dark-blue-color);
+}
+
+#penalties-div {
+    display: none;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+button {
+    border-radius: 1.2vw;
+    border: none;
+    font-weight: bold;
+    font-size: 2.25vw;
+    cursor: pointer;
+    padding: 6px 10px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+#ok-button {
+    background-color: var(--green-button);
+}
+
+#ok-button:hover {
+    background-color: var(--green-button-hover);
+}
+
+#ok-button:active {
+    transform: scale(0.97);
+}
+
+#plus-2-button {
+    background-color: var(--warning-color);
+}
+
+#dnf-button {
+    background-color: var(--error-color);
+}
+
+#plus-2-button:hover {
+    background-color: #c2cb2e;
+}
+
+#dnf-button:hover {
+    background-color: #cb2e2e;
+}
+
+#plus-2-button:active {
+    transform: scale(0.97);
+}
+
+#dnf-button:active {
+    transform: scale(0.97);
+}
+
+.penalty-text {
+    color: var(--timer-color);
+    margin: -1vh;
+    font-size: 2.75vw;
+    display: none;
+}
+
+.placeholder {
+    visibility: hidden;
+}
+
+#footer-div {
+    position: absolute;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    bottom: 0;
+    padding: 20px 0px;
+    width: 100vw;
+    background-color: var(--header-color);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.fade-in-element { animation: fadeIn 2s; }
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+#searching-div {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+#search-button {
+    border: none;
+    color: white;
+    border-radius: 17.5px;
+    font-size: 2rem;
+    padding: 10px 20px;
+    font-weight: bold;
+    background-color: var(--green-button);
+    padding: 15px 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#search-button:hover {
+    background-color: var(--green-button-hover);
+}
+
+#search-button:active {
+    transform: scale(0.97);
+}
+
+#searching-text {
+    font-size: 1.3rem;
+    display: none;
+    color: #555;
+    margin-top: 20px;
+}
+
+.elo-change-text {
+    flex-grow: 10;
+    font-size: 2rem;
+}
+
+#home-button {
+    border: none;
+    position: absolute;
+    color: white;
+    border-radius: 17.5px;
+    font-size: 2rem;
+    padding: 10px 20px;
+    font-weight: bold;
+    background-color: var(--green-button);
+    padding: 15px 30px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+#home-button:hover {
+    background-color: var(--green-button-hover);
+}
+
+#home-button:active {
+    transform: scale(0.97);
 }

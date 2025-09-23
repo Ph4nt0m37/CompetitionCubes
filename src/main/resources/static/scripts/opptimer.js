@@ -1,11 +1,14 @@
 import { timerStates } from "./timer.js";
+import { setScramble } from "./competition.js";
 
-const oppTimer = document.getElementById("opp-timer");
-let timerState = timerStates.STOPPED;
+let oppTimer = document.getElementById("opp-timer");
+let oppPenaltyText = document.getElementById("penalty-text-opp");
+let timerState = null;
 
 let timerInterval = null;
 
 export function setTimerState(ts) {
+    timerState = timerStates.STOPPED;
     timerState = ts;
     if (timerState===timerStates.STOPPED) {
         oppTimer.style.color="black";
@@ -31,19 +34,11 @@ export function setTimerState(ts) {
     }else if (timerState===timerStates.TIMING) {
         oppTimer.style.color="black";
         clearInterval(timerInterval);
-        let ms = 0;
-        let s = 0;
-        let min = 0;
+        let startTime = Date.now();
         timerInterval = setInterval(()=> {
-            ms+=1;
-            if (ms>=100) {
-                ms=0;
-                s++;
-            }
-            if (s>=60) {
-                s=0;
-                min++;
-            }
+            let ms = Math.floor(((Date.now()-startTime)/10)%100);
+            let s = Math.floor(((Date.now()-startTime)/1000)%60);
+            let min = Math.floor((Date.now()-startTime)/60000);
 
             if (min) {
                 oppTimer.textContent=`${min.toString()}:${s.toString().padStart(2,0)}.${(ms).toString().padStart(2,0)}`;
@@ -56,4 +51,24 @@ export function setTimerState(ts) {
 
 export function setTime(time) {
     oppTimer.textContent=time;
+}
+
+export function setEarlyTime(time) {
+    oppTimer.textContent=time;
+    setScramble("Waiting for Opponent to confirm solve...");
+}
+
+export function setPenalty(penalty) {
+    oppPenaltyText.style.display="block";
+    oppPenaltyText.textContent = penalty;
+    if (penalty==="+2" || penalty==="+4") {
+        oppPenaltyText.style.color="#d7e233";
+    }else if (penalty==="DNF") {
+        oppPenaltyText.style.color="#e23333";
+    }
+}
+
+export function clearPenalty() {
+    oppPenaltyText.style.display="none";
+    oppPenaltyText.style.color="#242424";
 }

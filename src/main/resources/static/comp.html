@@ -3,24 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/root.css">
     <link rel="stylesheet" href="styles/timer.css">
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
-    <title>1v1</title>
+    <title>1v1 | Competition Cubes</title>
 </head>
 <body>
-    <div id="scramble-div" style="border-bottom: 10px solid black">
-        <h1 id="scramble-text">Waiting for Opponent...</h1>
+    <button type="button" id="home-button">Home</button>
+    <div id="scramble-div" style="border-bottom: 10px solid #242424">
+        <h2 id="scramble-text">Waiting for Opponent to solve...</h1>    
     </div>
     <div id="timer-main-div">
-        <div class="timer-div"  style="border-right: 10px solid black;">
+        <div class="timer-div" style="border-right: 5px solid #242424;">
+            <h2 class="username" id="username">Username Not Found</h2>
+            <h2 class="winsText" id="user-wins">Wins: 0</h1>
+            <h2 class="penalty-text" id="penalty-text">+2</h2>
             <h1 class="timer" id="user-timer">00:00.00</h1>
+            <h2 class="ao5" id="user-ao5">ao5: - </h1>
+            <div id="penalties-div">
+                <button id="ok-button">OK</button>
+                <button id="plus-2-button">+2</button>
+                <button id="dnf-button">DNF</button>
+            </div>
         </div>
-        <div class="timer-div">
+        <div class="timer-div" style="border-left: 5px solid #242424;">
+            <h2 class="username" id="opp-username">Username Not Found</h2>
+            <h2 class="winsText" id="opp-wins">Wins: 0</h1>
+            <h2 class="penalty-text" id="penalty-text-opp">+2</h2>
             <h1 class="timer" id="opp-timer">00:00.00</h1>
+            <h2 class="ao5" id="opp-ao5">ao5: - </h1>
+            <div id="penalties-div">
+                <button class="placeholder">.</button>
+            </div>
         </div>
+    </div>
+    <div id="footer-div">
+        <h1 class="elo-change-text" id="elo-change-text">ELO: 100>>100</h1>
+        <div id="searching-div">
+            <button type="button" id="search-button">Next Match</button>
+            <h1 id="searching-text">Searching...</h1>
+        </div>
+        <h1 class="elo-change-text" id="opp-elo-change-text">ELO: 100>>100</h1>
     </div>
 </body>
 <script type="module" src="scripts/competition.js"></script>
 <script type="module" src="scripts/competition.js"></script>
 <script type="module" src="scripts/comp_connect.js"></script>
+<script type="module" src="scripts/next_match_search.js"></script>
 </html>

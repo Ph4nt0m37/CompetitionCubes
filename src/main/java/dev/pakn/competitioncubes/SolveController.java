@@ -1,23 +1,51 @@
 package dev.pakn.competitioncubes;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
 public class SolveController {
 
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
 
     @MessageMapping("/solveData")
-    @SendTo("/room/solves")
-    public SolveData sendSolveData(SolveData data) {
-        return data;
+    public void sendSolveData(SolveData data) {
+        try {
+            ArrayList<Match> matches = MatchController.getMatches();
+            for (Match currMatch:matches) {
+                if (currMatch.getRoomId()==data.getRoomId()) {
+                    ArrayList<String> times = currMatch.getUserTimes().get(data.getUserId());
+                    times.add(data.getTime());
+                    ArrayList<Penalty> currentPenalties = currMatch.getUserPenalties().get(data.getUserId());
+                    Penalty penalty = Penalty.OK;
+                    if (data.getPenalty().equals("+2")) penalty=Penalty.PLUS_2;
+                    if (data.getPenalty().equals("+4")) penalty=Penalty.PLUS_4;
+                    if (data.getPenalty().equalsIgnoreCase("DNF")) penalty=Penalty.DNF;
+                    currentPenalties.add(penalty);
+                }
+            }
+            simpMessagingTemplate.convertAndSend("/room/solves/"+data.getRoomId(),data);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @MessageMapping("/solveCompleted")
+    public void sendSolveCompleted(EarlySolveData data) {
+        simpMessagingTemplate.convertAndSend("/room/solveCompleted/"+data.getRoomId(),data);
     }
 
     @MessageMapping("/switchTimer")
-    @SendTo("/room/switchTimer")
-    public TimerState sendStart(TimerState state) {
-        return state;
+    public void sendStart(TimerState state) {
+        simpMessagingTemplate.convertAndSend("/room/switchTimer/"+state.getRoomId(),state);
     }
 }

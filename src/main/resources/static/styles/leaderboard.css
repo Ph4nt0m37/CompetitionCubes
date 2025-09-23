@@ -1,0 +1,104 @@
+html, body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: var(--main-bg-color);
+    color: #333;
+}
+
+#main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#options-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--popup-color);
+    min-width: 50rem;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgb(0,0,0,0.1);
+}
+
+
+#sorting-options-box {
+    margin-top: 15px;
+}
+
+.sorting-button {
+    padding: 5px 12px;
+    margin: 3px;
+    font-size: 1rem;
+    font-weight: 500;
+    border: 2px solid #bebebe;
+    border-radius: 5px;
+    background-color: var(--popup-color);
+    transition: background-color 0.125s ease, transform 0.1s ease;
+}
+
+.sorting-button:hover {
+    background-color: var(--neutral-button);
+}
+
+.sorting-button:active {
+    background-color: var(--bright-green-button)
+}
+
+.event-button {
+    padding: 10px 12px;
+    font-size: 1.5rem;
+    border: 2px solid #bebebe;
+    border-radius: 5px;
+    background-color: var(--popup-color);
+    transition: background-color 0.125s ease, transform 0.1s ease;
+}
+
+.event-button:hover {
+    background-color: var(--neutral-button);
+}
+
+.event-button:active {
+    background-color: var(--bright-green-button);
+}
+
+#leaderboard-div {
+    display: flex;
+    flex-direction: column;
+    min-width: 50rem;
+    padding: 8px 20px;
+    margin: 20px;
+    background-color: var(--popup-color);
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgb(0,0,0,0.1);
+}
+
+.user-entry {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    margin: -10px 10px;
+}
+
+#leaderboard-key {
+    margin-bottom: 10px;
+    border-bottom: 2px solid #bebebe;
+}
+
+.leaderboard-key {
+    font-weight: bold;
+}
+
+.rank-text {
+    min-width: 2rem;
+    font-weight: 650;
+}
+
+.username-text {
+    min-width: 20rem;
+}
+
+#user-entry-template {
+    display: none;
+}
