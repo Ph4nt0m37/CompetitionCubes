@@ -1,3 +1,10 @@
+html, body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: var(--main-bg-color);
+    color: #333;
+}
+
 button {
     font-family: inherit;
     cursor: pointer;

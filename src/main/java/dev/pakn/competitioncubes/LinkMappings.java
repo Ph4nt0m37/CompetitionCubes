@@ -68,4 +68,9 @@ public class LinkMappings {
     public String searchPage() {
         return "search-page.html";
     }
+
+    @RequestMapping("/rules")
+    public String rulesPage() {
+        return "rules.html";
+    }
 }

@@ -13,6 +13,12 @@ fetch("/header.html")
             window.location.href=`/rankings`;
         });
 
+        const rulesButton = document.getElementById("rules-button");
+
+        rulesButton.addEventListener("click",()=>{
+            window.location.href=`/rules`;
+        });
+
         const signInButton = document.getElementById("sign-in-button");
 
         //sign in stuff
