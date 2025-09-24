@@ -19,6 +19,12 @@ fetch("/header.html")
             window.location.href=`/rules`;
         });
 
+        const bugButton = document.getElementById("bug-button");
+
+        bugButton.addEventListener("click",()=>{
+            window.open("https://forms.gle/XqEMeJ8JavkhuhVD7","_blank");
+        });
+
         const signInButton = document.getElementById("sign-in-button");
 
         //sign in stuff
