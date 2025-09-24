@@ -12,7 +12,10 @@ createButton.addEventListener("click",()=>{
                 "Content-type": "application/json; charset=UTF-8"
             }
         }).then((response) => response.json())
-        .then((json) => window.location.replace("/"));
+        .then((json) => {
+            document.cookie = "tutorial_complete=false;"
+            window.location.replace("/")
+        });
     }else {
         console.log("textbox empty!");
     }

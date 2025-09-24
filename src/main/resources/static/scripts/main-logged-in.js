@@ -5,6 +5,9 @@ export let userId = null;
 const searchButton = document.getElementById("search-button");
 const searchText = document.getElementById("searching-text");
 
+const tutorialDiv = document.getElementById("tutorial-div");
+const tutorialButton = document.getElementById("tutorial-accept-button");
+
 let searchInt = null;
 
 onload = (event)=>{
@@ -83,6 +86,25 @@ onload = (event)=>{
                 console.error('Broker reported error: ' + frame.headers['message']);
                 console.error('Additional details: ' + frame.body);
             };
+
+            let tutorial_complete = false;
+            //cookie example: tutorial_complete=false
+            const cookies = document.cookie.split("=");
+            for (let i=0;i<cookies.length;i+=2) {
+                //if the cookie is/includes 'tutorial_complete', then we know the next index is the value
+                if (cookies[i].includes("tutorial_complete")) {
+                    tutorial_complete = cookies[i+1]==="true";
+                }
+            }
+
+            if (!tutorial_complete) {
+                tutorialDiv.style.display="flex";
+                tutorialButton.addEventListener("click",()=>{
+                    document.cookie = "tutorial_complete=true;";
+                    tutorialDiv.style.display="none";
+                });
+            }
+
         }).catch(function(err) {
             console.log('Failed to fetch!', err);
         });
