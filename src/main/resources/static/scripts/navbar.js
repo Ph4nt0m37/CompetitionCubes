@@ -31,6 +31,7 @@ fetch("/header.html")
         const profileDropdownContent = document.getElementById("profile-dropdown-content");
 
         const profileDropdownLink = document.getElementById("profile-dropdown-link");
+        const tutorialDropdownLink = document.getElementById("tutorial-dropdown-link");
         const signOutDropdownLink = document.getElementById("sign-out-dropdown-link");
 
         profileDropdownContent.style.visibility="hidden";
@@ -47,6 +48,11 @@ fetch("/header.html")
         profileDropdownLink.addEventListener("click",()=>{
             profileDropdownContent.style.visibility="hidden";
             window.location.href=`/user/${userId}`;
+        });
+
+        tutorialDropdownLink.addEventListener("click",()=>{
+            document.cookie = "tutorial_complete=false;";
+            window.location.replace("/");
         });
 
         signOutDropdownLink.addEventListener("click",()=>{

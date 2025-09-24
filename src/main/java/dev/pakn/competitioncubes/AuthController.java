@@ -4,16 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpRequest.BodyPublisher;
-import java.net.http.HttpRequest.BodyPublishers;
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
@@ -54,7 +44,7 @@ public class AuthController {
         + "&response_type=code&scope=public";*/
 
         String authURL = "https://www.worldcubeassociation.org/oauth/authorize?client_id=" + appId
-        + "&redirect_uri=https://compcube.pakn.dev/wca-auth/callback"
+        + "&redirect_uri=https://compcubetest2.pakn.dev/wca-auth/callback"
         + "&response_type=code&scope=public";
 
         return new RedirectView(authURL);
@@ -67,7 +57,7 @@ public class AuthController {
         //getting token through a post request
         //String redirectUri = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()+"/wca-auth/callback";
         //String redirectUri = request.getScheme() + "://" + request.getServerName() + "/wca-auth/callback";
-        String redirectUri = "https://compcube.pakn.dev/wca-auth/callback";
+        String redirectUri = "https://compcubetest2.pakn.dev/wca-auth/callback";
 
         HashMap<String, String> params = new HashMap<>();
         params.put("grant_type", "authorization_code");
