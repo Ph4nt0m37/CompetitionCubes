@@ -25,6 +25,12 @@ fetch("/header.html")
             window.open("https://forms.gle/XqEMeJ8JavkhuhVD7","_blank");
         });
 
+        const feedbackButton = document.getElementById("feedback-button");
+
+        feedbackButton.addEventListener("click",()=>{
+            window.open("https://forms.gle/j8VnwBCfFiT52ryCA","_blank");
+        });
+
         const signInButton = document.getElementById("sign-in-button");
 
         //sign in stuff
