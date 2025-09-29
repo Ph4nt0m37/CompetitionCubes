@@ -20,18 +20,9 @@ header {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-#header-logo-div {
+#header-logo {
     flex-basis: 0px;
     flex-grow: 1;
-    display: flex;
-    align-items: center;
-}
-
-#header-logo {
-    width: 45px;
-    height: 45px;
-    padding-left: 10px;
-    image-rendering: pixelated;
 }
 
 #header-buttons-div {

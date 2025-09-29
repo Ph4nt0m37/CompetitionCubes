@@ -50,35 +50,6 @@ button {
     margin-top: 20px;
 }
 
-#searching-div-grow {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-grow: 1;
-}
-
-#discord-link-div {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    font-weight: 500;
-    margin-bottom: 25px;
-    font-size: 1.075rem;
-}
-
-.discord-logo-div {
-    display: flex;
-    align-items: center;
-    background-color: #5865F2;
-    padding: 7px 5px;
-    margin: 5px;
-    border-radius: 7px;
-}
-
-.discord-logo-div > img {
-    width: 20px;
-}
-
 #tutorial-div {
     position: absolute;
     left: 0;
