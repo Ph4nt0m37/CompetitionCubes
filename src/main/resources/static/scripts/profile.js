@@ -34,7 +34,23 @@ const eventsToText = {
     "THREE_BLD":"3x3 BLD"
 }
 
+const rankToClassName = {
+    "BRONZE":"bronze-rank",
+    "SILVER":"silver-rank",
+    "GOLD":"gold-rank",
+    "DIAMOND":"diamond-rank",
+    "EMERALD":"emerald-rank",
+    "CHAMPION":"champ-rank",
+}
+
 let userId = pathname[pathname.length-1];
+
+//if I switch back to buttons i'll use this
+/*const button3x3 = document.getElementById("3x3-button");
+button3x3.style.backgroundColor="#3df188";
+
+let selectedEvent = threeCubeButton.getAttribute("event");*/
+
 
 fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
     return response.json();
@@ -64,7 +80,8 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
                 //CHANGE ALL OF THE i+1 TO i+2 WHEN GOING BACK TO THE TOP IF STATEMENT
                 document.getElementsByClassName("event-text")[i+1].textContent = eventsToText[EVENTS[i]];
                 document.getElementsByClassName("elo-text")[i+1].textContent = user.elos[EVENTS[i]];
-                document.getElementsByClassName("rank-text")[i+1].textContent = String(ranks[EVENTS[i]]);
+                document.getElementsByClassName("world-rank-text")[i+1].textContent = String(ranks[EVENTS[i]]);
+                document.getElementsByClassName("rank-text")[i+1].children[0].classList.add(rankToClassName[user.ranks[EVENTS[i]]])
                 const single = user.singles[EVENTS[i]];
                 if (single===-1) {
                     document.getElementsByClassName("single-text")[i+1].textContent = "N/A";

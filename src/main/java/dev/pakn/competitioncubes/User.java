@@ -14,6 +14,7 @@ public class User {
     private HashMap<Event, Integer> elos = new HashMap<>();
     private HashMap<Event, Double> pbSingles = new HashMap<>();
     private HashMap<Event, Double> pbAverages = new HashMap<>();
+    private HashMap<Event, Rank> ranks = new HashMap<>();
     private ArrayList<Integer> badges = new ArrayList<>();
     private ArrayList<Match> last10Matches = new ArrayList<>();
 
@@ -32,6 +33,9 @@ public class User {
         this.badges = new ArrayList<>(Arrays.asList(badgesArray));
         this.matchesWon=matchesWon;
         this.matchesLost=matchesLost;
+        for (Event event:elos.keySet()) {
+            ranks.put(event, Rank.getRankByElo(elos.get(event)));
+        }
     }
 
     //should only be used when loading from database
@@ -46,6 +50,9 @@ public class User {
         this.matchesWon=matchesWon;
         this.matchesLost=matchesLost;
         this.last10Matches = last10Matches;
+        for (Event event:elos.keySet()) {
+            ranks.put(event, Rank.getRankByElo(elos.get(event)));
+        }
     }
 
     public String getUsername() {
@@ -58,6 +65,10 @@ public class User {
 
     public HashMap<Event, Integer> getElos() {
         return elos;
+    }
+
+    public HashMap<Event, Rank> getRanks() {
+        return ranks;
     }
 
     public String getWcaId() {
@@ -78,6 +89,10 @@ public class User {
 
     public void setElo(Event event, int newElo) {
         this.elos.put(event,newElo);
+    }
+
+    public Rank getRank(Event event) {
+        return ranks.get(event);
     }
 
     public double getSingle(Event event) {

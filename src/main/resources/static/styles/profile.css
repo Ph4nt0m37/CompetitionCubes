@@ -135,6 +135,76 @@ html, body {
   display: none;
 }
 
+.event-button {
+  padding: 6px 9px;
+  font-size: 1.2rem;
+  border: 2px solid #bebebe;
+  border-radius: 5px;
+  background-color: var(--popup-color);
+  transition: background-color 0.125s ease, transform 0.1s ease;
+}
+
+.event-button:hover {
+  background-color: var(--neutral-button);
+}
+
+.event-button:active {
+  background-color: var(--bright-green-button);
+}
+
+.hidden-button {
+  display: none;
+}
+
+.rank {
+  background-color: #999999;
+  border-radius: 20px;
+  padding: 4px 10px;
+  width: 5rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.rank-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* Ranks */
+
+.champ-rank {
+  background: #a7b83b;
+  background: linear-gradient(90deg, rgba(167, 184, 59, 1) 0%, rgba(210, 217, 2, 1) 100%);
+  -webkit-box-shadow:0px 0px 16px 10px rgba(237,240,72,0.9);
+  -moz-box-shadow: 0px 0px 16px 10px rgba(237,240,72,0.9);
+  box-shadow: 0px 0px 16px 10px rgba(237,240,72,0.9);
+}
+
+.emerald-rank {
+  background: #2eba18;
+  background: linear-gradient(90deg, rgba(46, 186, 24, 1) 0%, rgba(127, 255, 110, 1) 100%);
+}
+
+.diamond-rank {
+  background: #8bf6f7;
+  background: linear-gradient(90deg,rgba(139, 246, 247, 1) 0%, rgba(36, 163, 227, 1) 100%);
+}
+
+.gold-rank {
+  background: #EFBF04;
+}
+
+.silver-rank {
+  background: #C4C4C4;
+}
+
+.bronze-rank {
+  background: #CE8946;
+}
+
 
 /* Badges */
 .owner-badge {
