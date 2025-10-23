@@ -95,9 +95,13 @@ fetch("/header.html")
             return response.json();
             }).then(function(data) {
                 userId=data.userId;
+                profileButton.textContent = data.username;
+                const chevronIcon = document.createElement("img");
+                chevronIcon.src="/images/chevron-down.svg";
+                profileButton.appendChild(chevronIcon);
                 if (userId>0) {
                     signInButton.style.display="none";
-                    profileButton.style.display="block";
+                    profileButton.style.display="flex";
                 }else {
                     profileButton.style.display="none";
                     signInButton.style.display="block";
