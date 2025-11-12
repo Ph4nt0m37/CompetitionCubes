@@ -43,6 +43,15 @@ const rankToClassName = {
     "CHAMPION":"champ-rank",
 }
 
+const rankEnumToRankText = {
+    "BRONZE":"Bronze",
+    "SILVER":"Silver",
+    "GOLD":"Gold",
+    "DIAMOND":"Diamond",
+    "EMERALD":"Emerald",
+    "CHAMPION":"Champion",
+}
+
 let userId = pathname[pathname.length-1];
 
 //if I switch back to buttons i'll use this
@@ -81,6 +90,7 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
                 document.getElementsByClassName("event-text")[i+1].textContent = eventsToText[EVENTS[i]];
                 document.getElementsByClassName("elo-text")[i+1].textContent = user.elos[EVENTS[i]];
                 document.getElementsByClassName("world-rank-text")[i+1].textContent = String(ranks[EVENTS[i]]);
+                document.getElementsByClassName("rank-text")[i+1].children[0].textContent = rankEnumToRankText[user.ranks[EVENTS[i]]];
                 document.getElementsByClassName("rank-text")[i+1].children[0].classList.add(rankToClassName[user.ranks[EVENTS[i]]])
                 const single = user.singles[EVENTS[i]];
                 if (single===-1) {

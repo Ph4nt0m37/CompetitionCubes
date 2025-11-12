@@ -16,7 +16,10 @@ public class Match {
     private int solverIndex = 0;
     private int currentSolve = 0;
     private String currentScramble;
+    //times without penalties. don't ask me why I don't add it with penalties because I don't know
     private HashMap<Integer,ArrayList<String>> userTimes = new HashMap<>();
+    //times as a double with penalties
+    private HashMap<Integer,ArrayList<Double>> userTimesDoubles = new HashMap<>();
     private HashMap<Integer,String> userAo5s = new HashMap<>();
     private HashMap<Integer,Integer> userScores = new HashMap<>();
     private HashMap<Integer,ArrayList<Penalty>> userPenalties = new HashMap<>();
@@ -30,6 +33,7 @@ public class Match {
         currentSolver = users[0];
         for (int user:users) userScores.put(user, 0);
         for (int user:users) userTimes.put(user, new ArrayList<String>());
+        for (int user:users) userTimesDoubles.put(user, new ArrayList<Double>());
         for (int user:users) userPenalties.put(user, new ArrayList<Penalty>());
         event=Event.THREE_BY_THREE;
         generateNewScramble(EventToPuzzle.eventToPuzzle(event));
@@ -94,6 +98,10 @@ public class Match {
         return userTimes;
     }
 
+    public HashMap<Integer,ArrayList<Double>> getUserTimesDoubles() {
+        return userTimesDoubles;
+    }
+
     public HashMap<Integer,Integer> getUserScores() {
         return userScores;
     }
@@ -135,14 +143,14 @@ public class Match {
             if (solverIndex==0) {
                 double fastestTime = Integer.MAX_VALUE;
                 for (int userId:users) {
-                    double userTime = TimeConversions.timeToDouble(userTimes.get(userId).get(currentSolve));
+                    double userTime = userTimesDoubles.get(userId).get(currentSolve);
                     if (userPenalties.get(userId).get(currentSolve)==Penalty.DNF) userTime=Integer.MAX_VALUE;
                     if (userTime<fastestTime) {
                         fastestTime=userTime;
                     }
                 }
                 for (int userId:users) {
-                    double userTime = TimeConversions.timeToDouble(userTimes.get(userId).get(currentSolve));
+                    double userTime = userTimesDoubles.get(userId).get(currentSolve);
                     if (userPenalties.get(userId).get(currentSolve)==Penalty.DNF) userTime=Integer.MAX_VALUE;
                     if (userTime==fastestTime) {
                         userScores.put(userId, userScores.get(userId)+1);
@@ -210,8 +218,8 @@ public class Match {
                 //check pb single
                 double userSingle = loser.getSingle(event) < 0 ? Integer.MAX_VALUE : loser.getSingle(event);
                 if (userTimes.get(loserUserId).size()>0) {
-                    double matchPbSingle = Double.parseDouble(Collections.min(userTimes.get(loserUserId)));
-                    if (matchPbSingle!=Integer.MAX_VALUE && matchPbSingle<userSingle) {
+                    double matchPbSingle = Collections.min(userTimesDoubles.get(loserUserId));
+                    if (Math.abs(Integer.MAX_VALUE-matchPbSingle) > 0.0001 && matchPbSingle<userSingle) {
                         loser.setSingle(event, matchPbSingle);
                     }
                 }
@@ -229,8 +237,8 @@ public class Match {
         //check pb single
         double userSingle = winner.getSingle(event) < 0 ? Integer.MAX_VALUE : winner.getSingle(event);
         if (userTimes.get(userId).size()>0) {
-            double matchPbSingle = Double.parseDouble(Collections.min(userTimes.get(userId)));
-            if (matchPbSingle!=Integer.MAX_VALUE && matchPbSingle<userSingle) {
+            double matchPbSingle = Collections.min(userTimesDoubles.get(userId));
+            if (Math.abs(Integer.MAX_VALUE-matchPbSingle) > 0.0001 && matchPbSingle<userSingle) {
                 winner.setSingle(event, matchPbSingle);
             }
         }
