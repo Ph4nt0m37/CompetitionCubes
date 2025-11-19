@@ -18,7 +18,7 @@ public class SolveController {
 
 
     @MessageMapping("/solveData")
-    public void sendSolveData(SolveData data) {
+    public void sendSolveData(SentSolveData data) {
         try {
             ArrayList<Match> matches = MatchController.getMatches();
             for (Match currMatch:matches) {

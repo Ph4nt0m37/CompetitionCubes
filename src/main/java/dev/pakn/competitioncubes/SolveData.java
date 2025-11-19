@@ -1,39 +1,39 @@
 package dev.pakn.competitioncubes;
 
-import lombok.Getter;
-
 public class SolveData {
-    private int roomId;
-    private String time;
+    private String timeString;
+    private double timeDouble;
     private String scramble;
-    private String penalty;
+    private Penalty penalty;
     private int userId;
+    private boolean isValid;
 
-    public SolveData() {}
-
-    public SolveData(int id, String time, String penalty, int userId) {
-        roomId = id;
-        this.time=time;
-        this.scramble="";
+    public SolveData(String timeString, String scramble, Penalty penalty, int userId) {
+        this.timeString = timeString;
+        this.timeDouble = TimeConversions.timeToDouble(timeString);
+        this.scramble = scramble;
         this.penalty = penalty;
-        this.userId=userId;
+        this.userId = userId;
     }
 
-
-    public SolveData(int id, String time, String penalty, String scramble, int userId) {
-        roomId = id;
-        this.time=time;
-        this.scramble=scramble;
+    public SolveData(double timeDouble, String scramble, Penalty penalty, int userId) {
+        this.timeDouble = timeDouble;
+        this.timeString = TimeConversions.doubleToTime(timeDouble);
+        this.scramble = scramble;
         this.penalty = penalty;
-        this.userId=userId;
+        this.userId = userId;
     }
 
-    public String getTime() {
-        return time;
+    public String getTimeString() {
+        return timeString;
     }
 
-    public int getRoomId() {
-        return roomId;
+    public double getTimeDouble() {
+        return timeDouble;
+    }
+
+    public Penalty getPenalty() {
+        return penalty;
     }
 
     public String getScramble() {
@@ -42,9 +42,5 @@ public class SolveData {
 
     public int getUserId() {
         return userId;
-    }
-
-    public String getPenalty() {
-        return penalty;
     }
 }
