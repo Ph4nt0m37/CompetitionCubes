@@ -16,7 +16,7 @@ public class TimeConversions {
         int minutes = (int)(doub/60);
         double seconds = doub-(minutes*60);
         if (minutes>0) {
-            return String.valueOf(minutes)+":"+String.format("%2s",String.valueOf(seconds)).replace(' ', '0');
+            return String.valueOf(minutes)+":"+String.format("%05.2f",seconds).replace(' ', '0');
         }else {
             return String.valueOf(seconds);
         }

@@ -7,53 +7,70 @@ import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 
 public class AntiCheat {
-    public static void getWCASingle(String wcaId, Event event) {
-        try {
-            HttpResponse<String> response = WebRequests.sendGetRequest("https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/persons/"+wcaId+".json");
-            if (response.statusCode()!=HttpStatus.OK.value()) {
-                throw new Exception("Got bad status code (not 200). Code: "+response.statusCode());
-            }else {
-                int single = -1;
+    public static double getWCASingle(String wcaId, Event event) {
+        System.out.println("id:"+wcaId);
+        if (!wcaId.isEmpty() && wcaId!=null) {
+            try {
+                HttpResponse<String> response = WebRequests.sendGetRequest("https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/persons/"+wcaId+".json");
+                if (response.statusCode()!=HttpStatus.OK.value()) {
+                    throw new Exception("Got bad status code (not 200). Code: "+response.statusCode());
+                }else {
+                    int single = -1;
 
-                JSONObject responseJson = new JSONObject(response.body());
-                JSONArray singles = responseJson.getJSONObject("rank").getJSONArray("singles");
-                for (int i=0;i<singles.length();i++) {
-                    String currEvent = singles.getJSONObject(i).getString("eventId");
-                    if (currEvent.equals(event.getEventId())) {
-                        single = singles.getJSONObject(i).getInt("best");
+                    JSONObject responseJson = new JSONObject(response.body());
+                    JSONArray singles = responseJson.getJSONObject("rank").getJSONArray("singles");
+                    for (int i=0;i<singles.length();i++) {
+                        String currEvent = singles.getJSONObject(i).getString("eventId");
+                        if (currEvent.equals(event.getEventId())) {
+                            single = singles.getJSONObject(i).getInt("best");
+                        }
+                    }
+                    if (single!=-1) {
+                        return single/100.0;
+                    }else {
+                        return -1;
                     }
                 }
-                System.out.println(single/100.0);
+            }catch (Exception e) {
+                System.out.println("Something went wrong with the request! "+e.getMessage());
+                e.printStackTrace();
+                return -1;
             }
-        }catch (Exception e) {
-            System.out.println("Something went wrong with the request! "+e.getMessage());
-            e.printStackTrace();
+        }else {
+            return -1;
         }
     }
 
-    public static void getWCAAverage(String wcaId, Event event) {
-        try {
-            HttpResponse<String> response = WebRequests.sendGetRequest("https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/persons/"+wcaId+".json");
-            if (response.statusCode()!=HttpStatus.OK.value()) {
-                throw new Exception("Got bad status code (not 200). Code: "+response.statusCode());
-            }else {
-                int single = -1;
+    public static double getWCAAverage(String wcaId, Event event) {
+        if (!wcaId.isEmpty() && wcaId!=null) {
+            try {
+                HttpResponse<String> response = WebRequests.sendGetRequest("https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/persons/"+wcaId+".json");
+                if (response.statusCode()!=HttpStatus.OK.value()) {
+                    throw new Exception("Got bad status code (not 200). Code: "+response.statusCode());
+                }else {
+                    int average = -1;
 
-                JSONObject responseJson = new JSONObject(response.body());
-                JSONArray singles = responseJson.getJSONObject("rank").getJSONArray("averages");
-                for (int i=0;i<singles.length();i++) {
-                    String currEvent = singles.getJSONObject(i).getString("eventId");
-                    if (currEvent.equals(event.getEventId())) {
-                        single = singles.getJSONObject(i).getInt("best");
-                        break;
+                    JSONObject responseJson = new JSONObject(response.body());
+                    JSONArray averages = responseJson.getJSONObject("rank").getJSONArray("averages");
+                    for (int i=0;i<averages.length();i++) {
+                        String currEvent = averages.getJSONObject(i).getString("eventId");
+                        if (currEvent.equals(event.getEventId())) {
+                            average = averages.getJSONObject(i).getInt("best");
+                        }
+                    }
+                    if (average!=-1) {
+                        return average/100.0;
+                    }else {
+                        return -1;
                     }
                 }
-                if (single!=-1)
-                    System.out.println(single/100.0);
+            }catch (Exception e) {
+                System.out.println("Something went wrong with the request! "+e.getMessage());
+                e.printStackTrace();
+                return -1;
             }
-        }catch (Exception e) {
-            System.out.println("Something went wrong with the request! "+e.getMessage());
-            e.printStackTrace();
+        }else {
+            return -1;
         }
     }
 

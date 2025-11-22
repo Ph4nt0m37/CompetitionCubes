@@ -23,24 +23,11 @@ public class SolveController {
             ArrayList<Match> matches = MatchController.getMatches();
             for (Match currMatch:matches) {
                 if (currMatch.getRoomId()==data.getRoomId()) {
-                    ArrayList<Double> timesDoubles = currMatch.getUserTimesDoubles().get(data.getUserId());
-                    ArrayList<Penalty> currentPenalties = currMatch.getUserPenalties().get(data.getUserId());
-                    Penalty penalty = Penalty.OK;
-                    if (data.getPenalty().equals("+2")) {
-                        penalty=Penalty.PLUS_2;
-                        timesDoubles.add(TimeConversions.timeToDouble(data.getTime())+2.0);
-                    }
-                    if (data.getPenalty().equals("+4")) {
-                        penalty=Penalty.PLUS_4;
-                        timesDoubles.add(TimeConversions.timeToDouble(data.getTime())+4.0);
-                    }
-                    if (data.getPenalty().equalsIgnoreCase("DNF")) {
-                        penalty=Penalty.DNF;
-                        timesDoubles.add((double) Integer.MAX_VALUE);
-                    }
-                    currentPenalties.add(penalty);
-                    ArrayList<String> times = currMatch.getUserTimes().get(data.getUserId());
-                    times.add(data.getTime());
+                    ArrayList<SolveData> times = currMatch.getUserSolves().get(data.getUserId());
+                    SolveData solveData = new SolveData(currMatch.getEvent(),data.getTime(),data.getScramble(),Penalty.stringToPenalty(data.getPenalty()),data.getUserId());
+                    solveData.setValidity(AntiCheat.validateSolve(solveData.getPenalizedTime(), currMatch.getUserWcaPbAvg(data.getUserId())));
+                    System.out.println("Solve: "+solveData.getPenalizedTime()+" | Validity: "+solveData.isValid());
+                    times.add(solveData);
                 }
             }
             simpMessagingTemplate.convertAndSend("/room/solves/"+data.getRoomId(),data);

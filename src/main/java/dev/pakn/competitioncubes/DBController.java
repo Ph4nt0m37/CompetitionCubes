@@ -776,4 +776,90 @@ public class DBController {
             return null;
         }
     }
+
+    //AntiCheat methods
+    public static void addInvalidSingle(SolveData solve) {
+        //connect to DB
+        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+            String sqlQuery = "INSERT INTO invalid_solves (id, username, scramble, single, event) VALUES (?, ?, ?, ?, ?);";
+            PreparedStatement statement = conn.prepareStatement(sqlQuery);
+            statement.setInt(1, solve.getUserId());
+            statement.setString(2, userList.get(solve.getUserId()).getUsername());
+            statement.setString(3, solve.getScramble());
+            statement.setDouble(4, solve.getTimeDouble());
+            statement.setString(5, solve.getEvent().getEventId());
+
+            //sending sql query
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static void addInvalidAverage(User user, Event event, double average) {
+        //connect to DB
+        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+            String sqlQuery = "INSERT INTO invalid_solves (id, username, average, event) VALUES (?, ?, ?, ?);";
+            PreparedStatement statement = conn.prepareStatement(sqlQuery);
+            statement.setInt(1, user.getUserId());
+            statement.setString(2, user.getUsername());
+            statement.setDouble(3, average);
+            statement.setString(4, event.getEventId());
+
+            //sending sql query
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    @GetMapping("/api/get-invalid-times")
+    public static ArrayList<InvalidTime> getInvalidTimes() {
+        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+            String sqlQuerySingle = "SELECT * FROM invalid_solves WHERE NOT single IS null;";
+            PreparedStatement statementSingle = conn.prepareStatement(sqlQuerySingle);
+
+            //sending sql query
+            ResultSet setSingle = statementSingle.executeQuery();
+
+            ArrayList<InvalidTime> invalidTimes= new ArrayList<>();
+
+            while (setSingle.next()) {
+                int userId = setSingle.getInt("id");
+                String username = setSingle.getString("username");
+                String scramble = setSingle.getString("scramble");
+                double single = setSingle.getDouble("single");
+                Event event = Event.eventIdToEvent(setSingle.getString("event"));
+                InvalidTime time = new InvalidTime(userId, username, event, scramble, single);
+                invalidTimes.add(time);
+            }
+
+            String sqlQueryAverage = "SELECT * FROM invalid_solves WHERE NOT average IS null;";
+            PreparedStatement statementAverage = conn.prepareStatement(sqlQueryAverage);
+
+            //sending sql query
+            ResultSet setAverage = statementAverage.executeQuery();
+
+            while (setAverage.next()) {
+                int userId = setAverage.getInt("id");
+                String username = setAverage.getString("username");
+                String scramble = setAverage.getString("scramble");
+                double average = setAverage.getDouble("average");
+                Event event = Event.eventIdToEvent(setAverage.getString("event"));
+                InvalidTime time = new InvalidTime(userId, username, event, scramble, average);
+                invalidTimes.add(time);
+            }
+
+            return invalidTimes;
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

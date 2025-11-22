@@ -75,4 +75,9 @@ public class LinkMappings {
     public String rulesPage() {
         return "rules.html";
     }
+
+    @RequestMapping("/admin")
+    public String adminDashboard() {
+        return "admin-dashboard.html";
+    }
 }

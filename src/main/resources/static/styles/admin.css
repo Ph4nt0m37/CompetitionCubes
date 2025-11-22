@@ -1,0 +1,118 @@
+html, body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: var(--main-bg-color);
+    color: #333;
+}
+
+.main {
+    display: flex;
+    align-items : center;
+    flex-direction: column;
+}
+
+h1 {
+    font-weight: bold;
+}
+
+#dashboard-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 50rem;
+    padding: 8px 20px;
+    margin: 20px;
+    background-color: var(--popup-color);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgb(0,0,0,0.1);
+}
+
+.solve-entry {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--defecit-color);
+    width: 21rem;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+}
+
+.solve-user {
+    margin: 0px;
+    color: #484a67;
+}
+
+.solve-time {
+    margin: 5px;
+    font-size: 1.3rem;
+    margin-top: 0;
+    color: #414141;
+}
+
+.event-text {
+    margin: 0;
+    color: #414141;
+}
+
+.wca-pb {
+    margin: 0;
+    color: #414141;
+}
+
+.buttons-div {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+button {
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 6px 10px;
+    margin: 10px 0 5px 0;
+    color: #1a1a1a;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+#ok-button {
+    background-color: var(--green-button);
+}
+
+#ok-button:hover {
+    background-color: var(--green-button-hover);
+}
+
+#ok-button:active {
+    transform: scale(0.97);
+}
+
+#dnf-button {
+    background-color: var(--error-color);
+}
+
+#dnf-button:hover {
+    background-color: #cb2e2e;
+}
+
+#dnf-button:active {
+    transform: scale(0.97);
+}
+
+#ban-button {
+    background-color: var(--ban-color);
+}
+
+#ban-button:hover {
+    background-color: #a81313;
+}
+
+#ban-button:active {
+    transform: scale(0.97);
+}
+.template {
+    display: none;
+}
