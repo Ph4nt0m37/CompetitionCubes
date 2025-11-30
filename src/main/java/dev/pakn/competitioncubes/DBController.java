@@ -778,16 +778,18 @@ public class DBController {
     }
 
     //AntiCheat methods
-    public static void addInvalidSingle(SolveData solve) {
+    public static void addInvalidSingle(SolveData solve, String wcaSingle, String wcaAverage) {
         //connect to DB
         try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
-            String sqlQuery = "INSERT INTO invalid_solves (id, username, scramble, single, event) VALUES (?, ?, ?, ?, ?);";
+            String sqlQuery = "INSERT INTO invalid_solves (id, username, scramble, single, event, wca_single, wca_average) VALUES (?, ?, ?, ?, ?, ?, ?);";
             PreparedStatement statement = conn.prepareStatement(sqlQuery);
             statement.setInt(1, solve.getUserId());
             statement.setString(2, userList.get(solve.getUserId()).getUsername());
             statement.setString(3, solve.getScramble());
             statement.setDouble(4, solve.getTimeDouble());
             statement.setString(5, solve.getEvent().getEventId());
+            statement.setString(6, wcaSingle);
+            statement.setString(7, wcaAverage);
 
             //sending sql query
             statement.executeUpdate();
@@ -798,15 +800,17 @@ public class DBController {
         }
     }
 
-    public static void addInvalidAverage(User user, Event event, double average) {
+    public static void addInvalidAverage(User user, Event event, double average, String wcaSingle, String wcaAverage) {
         //connect to DB
         try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
-            String sqlQuery = "INSERT INTO invalid_solves (id, username, average, event) VALUES (?, ?, ?, ?);";
+            String sqlQuery = "INSERT INTO invalid_solves (id, username, average, event, wca_single, wca_average) VALUES (?, ?, ?, ?, ?, ?);";
             PreparedStatement statement = conn.prepareStatement(sqlQuery);
             statement.setInt(1, user.getUserId());
             statement.setString(2, user.getUsername());
             statement.setDouble(3, average);
             statement.setString(4, event.getEventId());
+            statement.setString(5, wcaSingle);
+            statement.setString(6, wcaAverage);
 
             //sending sql query
             statement.executeUpdate();
@@ -834,7 +838,9 @@ public class DBController {
                 String scramble = setSingle.getString("scramble");
                 double single = setSingle.getDouble("single");
                 Event event = Event.eventIdToEvent(setSingle.getString("event"));
-                InvalidTime time = new InvalidTime(userId, username, event, scramble, single);
+                String wcaSingle = setSingle.getString("wca_single");
+                String wcaAverage = setSingle.getString("wca_average");
+                InvalidTime time = new InvalidTime(userId, username, event, scramble, single, wcaSingle, wcaAverage);
                 invalidTimes.add(time);
             }
 
@@ -850,7 +856,9 @@ public class DBController {
                 String scramble = setAverage.getString("scramble");
                 double average = setAverage.getDouble("average");
                 Event event = Event.eventIdToEvent(setAverage.getString("event"));
-                InvalidTime time = new InvalidTime(userId, username, event, scramble, average);
+                String wcaSingle = setSingle.getString("wca_single");
+                String wcaAverage = setSingle.getString("wca_average");
+                InvalidTime time = new InvalidTime(userId, username, event, scramble, average, wcaSingle, wcaAverage);
                 invalidTimes.add(time);
             }
 

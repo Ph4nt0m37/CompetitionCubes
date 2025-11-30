@@ -40,6 +40,9 @@ window.onload = ()=>{
 
     let currentPenalty = Penalty.OK;
 
+    const eightSecondsAudio = document.getElementById("8s-audio");
+    const twelveSecondsAudio = document.getElementById("12s-audio");
+
     okButton.addEventListener("click",()=>{
         if (timerState===timerStates.STOPPED) {
             penaltiesDiv.style.display="none";
@@ -178,6 +181,11 @@ window.onload = ()=>{
                         inspectionTime--;
                         if (inspectionTime>0) {
                             userTimer.textContent=inspectionTime.toString();
+                            if (inspectionTime==7) {
+                                eightSecondsAudio.play();
+                            }else if (inspectionTime==3) {
+                                twelveSecondsAudio.play();
+                            }
                         }else if (inspectionTime<1 && inspectionTime>-2) {
                             userTimer.textContent="+2";
                             penaltyText.style.display="block";

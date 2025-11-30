@@ -5,7 +5,7 @@ html, body {
     color: #333;
 }
 
-button {
+a {
     font-family: inherit;
     cursor: pointer;
     outline: none;
@@ -44,16 +44,19 @@ header {
 }
 
 .header-button {
+    display: flex;
+    text-align: center;
+    align-items: center;
     height: 100%;
     background-color: var(--header-color);
     padding: 0px 15px;
     font-size: 1rem;
     font-weight: 500;
     color: var(--h2-color);
-
 }
 
 .header-button:hover {
+    color: var(--h2-color);
     background-color: var(--neutral-button);
 }
 
@@ -175,6 +178,7 @@ header {
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.1s ease;
+    text-align: center;
 }
 
 #sign-in-button:hover {

@@ -138,8 +138,12 @@ public class Match {
                     double ao5 = calculateAo5(userId);
                     User user = DBController.getUsers().get(userId);
                     double userPbAverage = user.getAverage(event) < 0 ? Integer.MAX_VALUE : user.getAverage(event);
-                    if (ao5>0 && ao5<userPbAverage && AntiCheat.validateAverage(ao5, userWcaAveragePbs.get(userId))) {
+                    boolean isValidAverage = AntiCheat.validateAverage(ao5, userWcaAveragePbs.get(userId));
+                    if (ao5>0 && ao5<userPbAverage) {
                         user.setAverage(event, ao5);
+                    }
+                    if (!isValidAverage) {
+                        AntiCheat.addInvalidAverage(user, event, ao5, TimeConversions.doubleToTime(userWcaSinglePbs.get(userId)), TimeConversions.doubleToTime(userWcaAveragePbs.get(userId)));
                     }
                 }
             }
@@ -238,7 +242,10 @@ public class Match {
         if (userSolves.get(userId).size()>0) {
             SolveData pbSolveData = Collections.min(userSolves.get(userId));
             double matchPbSingle = pbSolveData.getPenalizedTime();
-            if (Math.abs(Integer.MAX_VALUE-matchPbSingle) > 0.0001 && matchPbSingle<userSingle && pbSolveData.isValid()) {
+            if (!pbSolveData.isValid()) {
+                AntiCheat.addInvalidSingle(pbSolveData, TimeConversions.doubleToTime(userWcaSinglePbs.get(userId)), TimeConversions.doubleToTime(userWcaAveragePbs.get(userId)));
+            }
+            if (Math.abs(Integer.MAX_VALUE-matchPbSingle) > 0.0001 && matchPbSingle<userSingle) {
                 winner.setSingle(event, matchPbSingle);
             }
         }

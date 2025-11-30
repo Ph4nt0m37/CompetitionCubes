@@ -10,25 +10,15 @@ public class InvalidTime {
     private String wcaPbSingleString = "N/A";
     private String wcaPbAverageString = "N/A";
 
-    public InvalidTime(int userId, String username, Event event, String scramble, double timeDouble) {
+    public InvalidTime(int userId, String username, Event event, String scramble, double timeDouble, String wcaSingle, String wcaAverage) {
         this.userId = userId;
         this.username = username;
         this.event = event;
         this.scramble = scramble;
         this.timeDouble = timeDouble;
         timeString = TimeConversions.doubleToTime(timeDouble);
-        User user = DBController.getUserByIDList(userId);
-        System.out.println(user);
-        if (user!=null) {
-            double wcaSingleDouble = AntiCheat.getWCASingle(user.getWcaId(),event);
-            System.out.println(wcaSingleDouble);
-            if (wcaSingleDouble>0)
-                wcaPbSingleString = TimeConversions.doubleToTime(wcaSingleDouble);
-
-            double wcaAverageDouble = AntiCheat.getWCAAverage(user.getWcaId(),event);
-            if (wcaAverageDouble>0)
-                wcaPbAverageString = TimeConversions.doubleToTime(wcaAverageDouble);
-        }
+        wcaPbSingleString = wcaSingle;
+        wcaPbAverageString = wcaAverage;
     }
 
     public int getUserId() {

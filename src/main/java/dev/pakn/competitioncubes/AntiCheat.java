@@ -94,4 +94,14 @@ public class AntiCheat {
         double solveDiffPercent = -((time-wcaAveragePb)/wcaAveragePb);
         return solveDiffPercent < maxPercentDiff;
     }
+
+    public static void addInvalidSingle(SolveData solve, String wcaSingle, String wcaAverage) {
+        //TODO: calculate auto bans
+        DBController.addInvalidSingle(solve, wcaSingle, wcaAverage);
+    }
+
+    public static void addInvalidAverage(User user, Event event, double avg, String wcaSingle, String wcaAverage) {
+        //TODO: calculate auto bans
+        DBController.addInvalidAverage(user, event, avg, wcaSingle, wcaAverage);
+    }
 }
