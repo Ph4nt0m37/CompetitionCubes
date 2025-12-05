@@ -1,5 +1,6 @@
 package dev.pakn.competitioncubes;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,6 +15,8 @@ public class User {
     private HashMap<Event, Integer> elos = new HashMap<>();
     private HashMap<Event, Double> pbSingles = new HashMap<>();
     private HashMap<Event, Double> pbAverages = new HashMap<>();
+    private HashMap<Event, ArrayDeque<Double>> prevPbSingles = new HashMap<>();
+    private HashMap<Event, ArrayDeque<Double>> prevPbAverages = new HashMap<>();
     private HashMap<Event, Rank> ranks = new HashMap<>();
     private ArrayList<Integer> badges = new ArrayList<>();
     private ArrayList<Match> last10Matches = new ArrayList<>();
@@ -24,12 +27,14 @@ public class User {
         this.username = username;
     }
 
-    User(String username, String wcaId, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost) {
+    User(String username, String wcaId, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost, HashMap<Event, ArrayDeque<Double>> prevPbSingles, HashMap<Event, ArrayDeque<Double>> prevPbAverages) {
         this.username = username;
         this.wcaId = wcaId;
         this.elos = elos;
         this.pbSingles = pbSingles;
         this.pbAverages = pbAverages;
+        this.prevPbSingles = prevPbSingles;
+        this.prevPbAverages = prevPbAverages;
         this.badges = new ArrayList<>(Arrays.asList(badgesArray));
         this.matchesWon=matchesWon;
         this.matchesLost=matchesLost;
@@ -39,13 +44,15 @@ public class User {
     }
 
     //should only be used when loading from database
-    User(int userId, String username, String wcaId, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost, ArrayList<Match> last10Matches) {
+    User(int userId, String username, String wcaId, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost, ArrayList<Match> last10Matches,  HashMap<Event, ArrayDeque<Double>> prevPbSingles, HashMap<Event, ArrayDeque<Double>> prevPbAverages) {
         this.userId = userId;
         this.username = username;
         this.wcaId = wcaId;
         this.elos = elos;
         this.pbSingles = pbSingles;
         this.pbAverages = pbAverages;
+        this.prevPbSingles = prevPbSingles;
+        this.prevPbAverages = prevPbAverages;
         this.badges = new ArrayList<>(Arrays.asList(badgesArray));
         this.matchesWon=matchesWon;
         this.matchesLost=matchesLost;
@@ -95,6 +102,42 @@ public class User {
         return ranks.get(event);
     }
 
+    public void addSingle(Event event, double single) {
+        prevPbSingles.get(event).offerFirst(single);
+        if (prevPbSingles.size()>5) {
+            prevPbSingles.get(event).pollLast();
+        }
+        setSingle(event, single);
+    }
+
+    public void removeSingle(Event event, double single) {
+        prevPbSingles.get(event).removeFirstOccurrence(single);
+        Double lastPb = prevPbSingles.get(event).peekFirst();
+        if (lastPb == null) {
+            setSingle(event, -1);
+        }else {
+            setSingle(event, lastPb);
+        }
+    }
+
+    public void addAverage(Event event, double average) {
+        prevPbAverages.get(event).offerFirst(average);
+        if (prevPbAverages.size()>5) {
+            prevPbAverages.get(event).pollLast();
+        }
+        setAverage(event, average);
+    }
+
+    public void removeAverage(Event event, double average) {
+        prevPbAverages.get(event).removeFirstOccurrence(average);
+        Double lastPb = prevPbAverages.get(event).peekFirst();
+        if (lastPb == null) {
+            setAverage(event, -1);
+        }else {
+            setAverage(event, lastPb);
+        }
+    }
+
     public double getSingle(Event event) {
         return pbSingles.get(event);
     }
@@ -103,12 +146,30 @@ public class User {
         pbSingles.put(event,newSingle);
     }
 
+    public Double[] getAllSinglesArray(Event event) {
+        ArrayDeque<Double> eventSingles = prevPbSingles.get(event);
+        Double[] singlesArray = new Double[eventSingles.size()];
+        for (int i=0;i<eventSingles.size();i++) {
+            singlesArray[i] = eventSingles.pollFirst();
+        }
+        return singlesArray;
+    }
+
     public double getAverage(Event event) {
         return pbAverages.get(event);
     }
 
     public void setAverage(Event event, double newAverage) {
         pbAverages.put(event,newAverage);
+    }
+
+    public Double[] getAllAveragesArray(Event event) {
+        ArrayDeque<Double> eventAverages = prevPbAverages.get(event);
+        Double[] averagesArray = new Double[eventAverages.size()];
+        for (int i=0;i<eventAverages.size();i++) {
+            averagesArray[i] = eventAverages.pollFirst();
+        }
+        return averagesArray;
     }
 
     public ArrayList<Match> getLast10Matches() {

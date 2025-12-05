@@ -32,6 +32,7 @@ html, body {
     margin: 3px;
     font-size: 1rem;
     font-weight: 500;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     border: 2px solid #bebebe;
     border-radius: 5px;
     background-color: var(--popup-color);

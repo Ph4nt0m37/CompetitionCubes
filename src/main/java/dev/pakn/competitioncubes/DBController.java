@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -66,7 +67,7 @@ public class DBController {
                 int matchesWon = userResultSet.getInt("matcheswon");
                 int matchesLost = userResultSet.getInt("matcheslost");
                 Integer[] badgesArray = (Integer[]) userResultSet.getArray("badges").getArray();
-                userList.put(userId, new User(userId,username,wcaId,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null));
+                userList.put(userId, new User(userId,username,wcaId,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn)));
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -120,7 +121,7 @@ public class DBController {
                 }
 
                 //adding user to userList
-                userList.put(userId, new User(userId,username,userWcaId,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),new Integer[0],0,0,null));
+                userList.put(userId, new User(userId,username,userWcaId,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),new Integer[0],0,0,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn)));
 
                 conn.close();
                 return true;
@@ -164,7 +165,7 @@ public class DBController {
                 HashMap<Event, Double> userAverages = getAveragesByUserId(userId, conn);
                 Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
                 conn.close();
-                return new User(userId,username,wcaId,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null);
+                return new User(userId,username,wcaId,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn));
             }else {
                 conn.close();
                 return null;
@@ -190,7 +191,7 @@ public class DBController {
                 HashMap<Event, Double> userSingles = getSinglesByUserId(userId, conn);
                 HashMap<Event, Double> userAverages = getAveragesByUserId(userId, conn);
                 Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
-                return new User(userId,username,wcaId,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null);
+                return new User(userId,username,wcaId,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn));
             }else {
                 conn.close();
                 return null;
@@ -430,12 +431,17 @@ public class DBController {
             Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
         
             //creating sql query
-            String sqlQuery = "UPDATE "+eventDBNames.get(event)+" SET elo=?, single=?, average=? WHERE userid=?";
+            String sqlQuery = "UPDATE "+eventDBNames.get(event)+" SET elo=?, single=?, average=?, old_singles=?, old_averages=? WHERE userid=?";
             PreparedStatement statement = conn.prepareStatement(sqlQuery);
             statement.setInt(1, newElo);
             statement.setDouble(2, newSingle);
             statement.setDouble(3, newAverage);
             statement.setInt(4, userId);
+
+            User user = getUserByIDList(userId);
+
+            statement.setArray(5, conn.createArrayOf("NUMERIC",user.getAllSinglesArray(event)));
+            statement.setArray(6, conn.createArrayOf("NUMERIC",user.getAllAveragesArray(event)));
 
             //sending sql query
             statement.executeUpdate();
@@ -446,6 +452,66 @@ public class DBController {
             System.out.println("Failed to connect to db!");
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private static HashMap<Event, ArrayDeque<Double>> getPrevSinglesByUserId(int userId, Connection conn) {
+        try {
+            //creating elo map
+            HashMap<Event, ArrayDeque<Double>> userPrevSingles = new HashMap<>();
+
+            for (Event event:eventDBNames.keySet()) {
+                //checking for userId
+                String findUsersQuery = "SELECT old_singles FROM "+eventDBNames.get(event)+" WHERE userid=?";
+                PreparedStatement usersQueryStatement = conn.prepareStatement(findUsersQuery);
+                usersQueryStatement.setInt(1, userId);
+
+                //getting resultset
+                ResultSet usersFound = usersQueryStatement.executeQuery();
+                usersFound.next();
+
+                Double[] prevPbsArrays = (Double[]) usersFound.getArray(1).getArray();
+                ArrayDeque<Double> prevPbs = new ArrayDeque<>();
+                for (double prevPb:prevPbsArrays) {
+                    prevPbs.offerLast(prevPb);
+                }
+
+                userPrevSingles.put(event, prevPbs);
+            }
+            return userPrevSingles;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static HashMap<Event, ArrayDeque<Double>> getPrevAveragesByUserId(int userId, Connection conn) {
+        try {
+            //creating elo map
+            HashMap<Event, ArrayDeque<Double>> userPrevAverages = new HashMap<>();
+
+            for (Event event:eventDBNames.keySet()) {
+                //checking for userId
+                String findUsersQuery = "SELECT old_averages FROM "+eventDBNames.get(event)+" WHERE userid=?";
+                PreparedStatement usersQueryStatement = conn.prepareStatement(findUsersQuery);
+                usersQueryStatement.setInt(1, userId);
+
+                //getting resultset
+                ResultSet usersFound = usersQueryStatement.executeQuery();
+                usersFound.next();
+
+                Double[] prevPbsArrays = (Double[]) usersFound.getArray(1).getArray();
+                ArrayDeque<Double> prevPbs = new ArrayDeque<>();
+                for (double prevPb:prevPbsArrays) {
+                    prevPbs.offerLast(prevPb);
+                }
+
+                userPrevAverages.put(event, prevPbs);
+            }
+            return userPrevAverages;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -856,8 +922,8 @@ public class DBController {
                 String scramble = setAverage.getString("scramble");
                 double average = setAverage.getDouble("average");
                 Event event = Event.eventIdToEvent(setAverage.getString("event"));
-                String wcaSingle = setSingle.getString("wca_single");
-                String wcaAverage = setSingle.getString("wca_average");
+                String wcaSingle = setAverage.getString("wca_single");
+                String wcaAverage = setAverage.getString("wca_average");
                 InvalidTime time = new InvalidTime(userId, username, event, scramble, average, wcaSingle, wcaAverage);
                 invalidTimes.add(time);
             }

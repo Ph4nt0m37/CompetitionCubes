@@ -2,6 +2,7 @@ package dev.pakn.competitioncubes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -121,6 +122,12 @@ public class Match {
         return eloChange;
     }
 
+    public boolean addSolve(int userId, SolveData solve) {
+        if (!solve.isValid()) 
+            AntiCheat.addInvalidSingle(solve, TimeConversions.doubleToTime(getUserWcaPbSingle(userId)), TimeConversions.doubleToTime(getUserWcaPbAvg(userId)));
+        return userSolves.get(userId).add(solve);
+    }
+
     public String generateNewScramble(PuzzleRegistry puzzle) {
         PuzzleRegistry puzzleRegistry = puzzle;
         Puzzle scrambler = puzzleRegistry.getScrambler();
@@ -140,7 +147,7 @@ public class Match {
                     double userPbAverage = user.getAverage(event) < 0 ? Integer.MAX_VALUE : user.getAverage(event);
                     boolean isValidAverage = AntiCheat.validateAverage(ao5, userWcaAveragePbs.get(userId));
                     if (ao5>0 && ao5<userPbAverage) {
-                        user.setAverage(event, ao5);
+                        user.addAverage(event, ao5);
                     }
                     if (!isValidAverage) {
                         AntiCheat.addInvalidAverage(user, event, ao5, TimeConversions.doubleToTime(userWcaSinglePbs.get(userId)), TimeConversions.doubleToTime(userWcaAveragePbs.get(userId)));
@@ -223,7 +230,7 @@ public class Match {
                     SolveData pbSolveData = Collections.min(userSolves.get(loserUserId));
                     double matchPbSingle = pbSolveData.getPenalizedTime();
                     if (Math.abs(Integer.MAX_VALUE-matchPbSingle) > 0.0001 && matchPbSingle<userSingle && pbSolveData.isValid()) {
-                        loser.setSingle(event, matchPbSingle);
+                        loser.addSingle(event, matchPbSingle);
                     }
                 }
 
@@ -246,7 +253,7 @@ public class Match {
                 AntiCheat.addInvalidSingle(pbSolveData, TimeConversions.doubleToTime(userWcaSinglePbs.get(userId)), TimeConversions.doubleToTime(userWcaAveragePbs.get(userId)));
             }
             if (Math.abs(Integer.MAX_VALUE-matchPbSingle) > 0.0001 && matchPbSingle<userSingle) {
-                winner.setSingle(event, matchPbSingle);
+                winner.addSingle(event, matchPbSingle);
             }
         }
 
