@@ -5,6 +5,10 @@ html, body {
     color: #333;
 }
 
+button {
+    cursor: pointer;
+}
+
 .main-div {
     display: flex;
     flex-direction: column;
@@ -48,6 +52,8 @@ html, body {
     display: flex;
     flex-direction: row;
     gap: 50px;
+    justify-content: center;
+    width: 100%;
 }
 
 .stats-box {
@@ -64,7 +70,7 @@ html, body {
     background-color: var(--defecit-color);
     border-radius: 10px;
     padding: 5px;
-    min-width: 150px;
+    min-width: 170px;
 }
 
 .badge {
@@ -72,9 +78,20 @@ html, body {
     padding: 5px;
     margin: 5px;
     border-radius: 20px;
-    min-width: 150px;
+    width: 150px;
     text-align: center;
     font-weight: 500;
+}
+
+#temp-div {
+  display: flex;
+  flex-direction: column;
+  height: 8.65rem;
+  overflow-y: auto;
+  background-color: var(--defecit-color);
+  border-radius: 10px;
+  padding: 5px;
+  width: 170px;
 }
 
 #user-stats-div {
@@ -112,6 +129,26 @@ html, body {
 
 .event-entry-text.event-text {
   border-right: 3px solid #bebebe;
+}
+
+.sorting-button {
+    padding: 5px 12px;
+    margin: 3px;
+    font-size: 0.925rem;
+    font-weight: 500;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border: 2px solid #bebebe;
+    border-radius: 5px;
+    background-color: var(--popup-color);
+    transition: background-color 0.125s ease, transform 0.1s ease;
+}
+
+.sorting-button:hover {
+    background-color: var(--neutral-button);
+}
+
+.sorting-button:active {
+    background-color: var(--bright-green-button)
 }
 
 #rankings-key {
@@ -222,6 +259,17 @@ html, body {
   background: linear-gradient(90deg,rgba(111, 209, 75, 1) 0%, rgb(13, 104, 1) 100%);
 }
 
+.creator-badge {
+  background: #e00000;
+  background: linear-gradient(53deg, rgba(224, 0, 0, 1) 0%, rgba(255, 82, 82, 1) 100%);
+}
+
+/* Not in use */
+/*.twitch-badge {
+  background: #5600e0;
+  background: linear-gradient(53deg, rgba(86, 0, 224, 1) 0%, rgba(189, 66, 255, 1) 100%);
+}*/
+
 .diamond-badge {
   background: #8bf6f7;
   background: linear-gradient(90deg,rgba(139, 246, 247, 1) 0%, rgba(36, 163, 227, 1) 100%);
@@ -245,4 +293,22 @@ html, body {
 .snsfall25-badge {
   background: #7a601c;
   background: linear-gradient(90deg, rgba(122, 96, 28, 1) 0%, rgba(158, 150, 38, 1) 100%);
+}
+
+#wca-link {
+  font-weight: bold;
+  text-decoration: underline;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+#username-text {
+  margin: 3px;
+}
+
+.username-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: .67em;
 }

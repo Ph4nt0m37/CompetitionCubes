@@ -544,8 +544,8 @@ public class DBController {
         return getSortedUsersByEloList(stringToEventMap.get(event),100);
     }
 
-    @GetMapping("/api/get-user-ranks/{userId}")
-    public static HashMap<Event, Integer> getUserRanks(@PathVariable int userId) {
+    @GetMapping("/api/get-user-elo-ranks/{userId}")
+    public static HashMap<Event, Integer> getUserEloRanks(@PathVariable int userId) {
         try {
             HashMap<Event, Integer> userRanks = new HashMap<>();
             //for (Event event: Event.values()) {
@@ -573,10 +573,118 @@ public class DBController {
         return null;
     }
 
-    public static int getUserRank(int userId, Event event) {
+    public static int getUserEloRank(int userId, Event event) {
         try {
             int userRank = -1;
             ArrayList<LeaderboardEntry> users = getSortedUsersByEloList(event);
+            for (int i=1;i<=users.size();i++) {
+                LeaderboardEntry entry = users.get(i-1);
+                int entryUserId = entry.getUserId();
+                if (entryUserId==userId) {
+                    int rank = i+1;
+                    int dbRankCheckIndex = i-1;
+                    while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getStat()<=entry.getStat()) {
+                        dbRankCheckIndex--;
+                        rank=dbRankCheckIndex+2;
+                    }
+                    userRank = rank;
+                    break;
+                }
+            }
+            return userRank;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    @GetMapping("/api/get-user-single-ranks/{userId}")
+    public static HashMap<Event, Integer> getUserSingleRanks(@PathVariable int userId) {
+        try {
+            HashMap<Event, Integer> userRanks = new HashMap<>();
+            //for (Event event: Event.values()) {
+            Event event = Event.THREE_BY_THREE;
+                ArrayList<LeaderboardEntry> users = getSortedUsersBySingleList(event);
+                for (int i=1;i<=users.size();i++) {
+                    LeaderboardEntry entry = users.get(i-1);
+                    int entryUserId = entry.getUserId();
+                    if (entryUserId==userId) {
+                        int rank = i+1;
+                        int dbRankCheckIndex = i-1;
+                        while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getStat()<=entry.getStat()) {
+                            dbRankCheckIndex--;
+                            rank=dbRankCheckIndex+2;
+                        }
+                        userRanks.put(event, rank);
+                        break;
+                    }
+                }
+            //}
+            return userRanks;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static int getUserSingleRank(int userId, Event event) {
+        try {
+            int userRank = -1;
+            ArrayList<LeaderboardEntry> users = getSortedUsersBySingleList(event);
+            for (int i=1;i<=users.size();i++) {
+                LeaderboardEntry entry = users.get(i-1);
+                int entryUserId = entry.getUserId();
+                if (entryUserId==userId) {
+                    int rank = i+1;
+                    int dbRankCheckIndex = i-1;
+                    while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getStat()<=entry.getStat()) {
+                        dbRankCheckIndex--;
+                        rank=dbRankCheckIndex+2;
+                    }
+                    userRank = rank;
+                    break;
+                }
+            }
+            return userRank;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    @GetMapping("/api/get-user-average-ranks/{userId}")
+    public static HashMap<Event, Integer> getUserAverageRanks(@PathVariable int userId) {
+        try {
+            HashMap<Event, Integer> userRanks = new HashMap<>();
+            //for (Event event: Event.values()) {
+            Event event = Event.THREE_BY_THREE;
+                ArrayList<LeaderboardEntry> users = getSortedUsersByAverageList(event);
+                for (int i=1;i<=users.size();i++) {
+                    LeaderboardEntry entry = users.get(i-1);
+                    int entryUserId = entry.getUserId();
+                    if (entryUserId==userId) {
+                        int rank = i+1;
+                        int dbRankCheckIndex = i-1;
+                        while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getStat()<=entry.getStat()) {
+                            dbRankCheckIndex--;
+                            rank=dbRankCheckIndex+2;
+                        }
+                        userRanks.put(event, rank);
+                        break;
+                    }
+                }
+            //}
+            return userRanks;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static int getUserAverageRank(int userId, Event event) {
+        try {
+            int userRank = -1;
+            ArrayList<LeaderboardEntry> users = getSortedUsersByAverageList(event);
             for (int i=1;i<=users.size();i++) {
                 LeaderboardEntry entry = users.get(i-1);
                 int entryUserId = entry.getUserId();
@@ -935,5 +1043,15 @@ public class DBController {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static void dnfSingle(int userId, Event event, double time) {
+        User user = getUserByIDList(userId);
+        user.removeSingle(event, time);
+    }
+
+    public static void dnfAverage(int userId, Event event, double time) {
+        User user = getUserByIDList(userId);
+        user.removeAverage(event, time);
     }
 }

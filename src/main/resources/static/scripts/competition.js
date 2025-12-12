@@ -33,6 +33,16 @@ export function setScramble(scramble) {
     if (!matchWinner) {
         if (scramble!=="Waiting for Opponent to solve..." && scramble!=="Waiting for Opponent to confirm solve...") {
             currentScramble = scramble;
+            fetch("/api/reset-inactivity-timer", {
+                method: "POST",
+                body: JSON.stringify({
+                    userId: userId,
+                    maxTime: 120
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            });
         }else{
             currentScramble = "";
         }

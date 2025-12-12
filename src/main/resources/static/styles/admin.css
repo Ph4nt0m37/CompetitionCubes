@@ -78,39 +78,39 @@ button {
     transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
-#ok-button {
+.ok-button {
     background-color: var(--green-button);
 }
 
-#ok-button:hover {
+.ok-button:hover {
     background-color: var(--green-button-hover);
 }
 
-#ok-button:active {
+.ok-button:active {
     transform: scale(0.97);
 }
 
-#dnf-button {
+.dnf-button {
     background-color: var(--error-color);
 }
 
-#dnf-button:hover {
+.dnf-button:hover {
     background-color: #cb2e2e;
 }
 
-#dnf-button:active {
+.dnf-button:active {
     transform: scale(0.97);
 }
 
-#ban-button {
+.ban-button {
     background-color: var(--ban-color);
 }
 
-#ban-button:hover {
+.ban-button:hover {
     background-color: #a81313;
 }
 
-#ban-button:active {
+.ban-button:active {
     transform: scale(0.97);
 }
 .template {

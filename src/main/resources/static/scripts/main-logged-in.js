@@ -8,9 +8,14 @@ const searchText = document.getElementById("searching-text");
 const tutorialDiv = document.getElementById("tutorial-div");
 const tutorialButton = document.getElementById("tutorial-accept-button");
 
+const searchingUsersText = document.getElementById("searching-users-text");
+
 let searchInt = null;
 
 onload = (event)=>{
+    getWaitingUserCount()
+    setInterval(getWaitingUserCount,10000);
+
     //on website loading stuff
     fetch(`/api/get-user-data`).then((response)=> {
         return response.json();
@@ -110,6 +115,15 @@ onload = (event)=>{
         });
 }
 
+function getWaitingUserCount() {
+    fetch("/waiting-list/3x3").then((response)=>{
+        return response.json();
+    }).then((numSearching)=>{
+        let userWord = "users";
+        if (numSearching==1) userWord = "user";
+        searchingUsersText.textContent=`${numSearching} ${userWord} searching for match...`;
+    });
+}
 
 function startMatchSearch(stompClient) {
     //post request to add user to waiting list
@@ -127,7 +141,7 @@ function startMatchSearch(stompClient) {
         return result.json();
     }).then((data)=> {
         if (!data) {
-            searchText.style.visibility="visible";
+            searchText.style.display="block";
             searchText.style.color="#e23333";
             searchText.textContent = "You are already searching for (or are in) a match!"
             return;
@@ -135,7 +149,7 @@ function startMatchSearch(stompClient) {
         searchButton.textContent = "Cancel Search";
         searchText.textContent = `Searching...`;
         searchText.style.color="#555";
-        searchText.style.visibility="visible";
+        searchText.style.display="block";
 
         stompClient.activate();
 
@@ -176,6 +190,6 @@ function cancelMatchSearch(stompClient) {
     }).catch(error=>{
         //do nothing!
     });
-    searchText.style.visibility="hidden";
+    searchText.style.display="none";
     clearInterval(searchInt);
 }

@@ -45,9 +45,16 @@ button {
 
 #searching-text {
     font-size: 1.3rem;
-    visibility: hidden;
+    display: none;
     color: #555;
     margin-top: 20px;
+}
+
+#searching-users-text {
+    font-size: 1.15rem;
+    color: var(--success-color);
+    margin-top: 20px;
+    font-weight: 700;
 }
 
 #searching-div-grow {

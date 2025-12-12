@@ -5,6 +5,10 @@ html, body {
     color: #333;
 }
 
+button {
+    cursor: pointer;
+}
+
 #main {
     display: flex;
     flex-direction: column;

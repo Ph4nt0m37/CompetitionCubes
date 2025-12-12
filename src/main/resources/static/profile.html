@@ -17,18 +17,22 @@
 
     <div class="main-div">
         <div id="leaderboard-div">
-            <h1 id="username-text">User Name</h1>
+            <div class="username-div">
+                <h1 id="username-text">User Name</h1>
+                <a id="wca-link">WCA Profile</a>
+            </div>
             <div class="stats-div">
                 <div class="stats-box">
                     <h3>Badges</h3>
                     <div id="badges-div">
                         <div class="badge badge-template owner-badge">Owner</div>
+                        <div class="badge badge-template early-tester-badge">Early Tester</div>
+                        <div class="badge badge-template tester-badge">Tester</div>
+                        <div class="badge badge-template creator-badge">Creator</div>
                         <div class="badge badge-template diamond-badge">Top 1</div>
                         <div class="badge badge-template gold-badge">Top 10</div>
                         <div class="badge badge-template silver-badge">Top 50</div>
                         <div class="badge badge-template bronze-badge">Top 100</div>
-                        <div class="badge badge-template early-tester-badge">Early Tester</div>
-                        <div class="badge badge-template tester-badge">Tester</div>
                         <div class="badge badge-template snsfall25-badge">SNS Fall 2025</div>
                     </div>
                 </div>
@@ -43,13 +47,16 @@
                 </div>
                 <div class="stats-box">
                     <h3>Something here</h3>
-                    <div id="badges-div">
+                    <div id="temp-div">
                         <div class="badge">something here</div>
                     </div>
                 </div>
             </div>
             <h2>Rankings</h2>
-            <div id="events-box">
+            <div id="sorting-box">
+                <button class="sorting-button" id="elo-button">ELO</button>
+                <button class="sorting-button" id="single-button">Single</button>
+                <button class="sorting-button" id="avg-button">Average</button>
                 <!--<button class="event-button" id="3x3-button" event="3x3"><span class="cubing-icon event-333"></span></button>
                 <button class="event-button" id="2x2-button" event="2x2"><span class="cubing-icon event-222"></span></button>
                 <button class="event-button" id="4x4-button" event="4x4"><span class="cubing-icon event-444"></span></button>

@@ -32,16 +32,28 @@ public class CompController {
         return true;
     }
 
-    @GetMapping("/waiting-list/{userId}")
+    //Idk what i was doing when i wrote this lol
+    /*@GetMapping("/waiting-list/{userId}")
     private int getFromWaitingList(@PathVariable int userId) {
         return userId;
-    }
+    }*/
 
     @DeleteMapping("/waiting-list")
     private void removeFromWaitingListReq(@RequestBody String userIdJSON) {
         int userId = new JSONObject(userIdJSON).getInt("userId");
         System.out.println("removed "+userId+" from waiting list");
         removeFromWaitingList(userId);
+    }
+
+    @GetMapping("/waiting-list/{event}")
+    public int getFromWaitingList(@PathVariable String event) {
+        int usersInWaitingList = 0;
+        for (WaitlistRequest req:waitingList) {
+            if (req.getEvent().equals(event)) {
+                usersInWaitingList++;
+            }
+        }
+        return usersInWaitingList;
     }
 
     public static boolean removeFromWaitingList(int userId) {

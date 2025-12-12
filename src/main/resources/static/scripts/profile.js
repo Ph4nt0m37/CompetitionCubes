@@ -1,4 +1,5 @@
 const usernameText = document.getElementById("username-text");
+const wcaLink = document.getElementById("wca-link");
 const eloText = document.getElementById("elo-text");
 
 let pathname = window.location.pathname.split("/");
@@ -54,12 +55,31 @@ const rankEnumToRankText = {
 
 let userId = pathname[pathname.length-1];
 
-//if I switch back to buttons i'll use this
+//if I switch back to event buttons i'll use this
 /*const button3x3 = document.getElementById("3x3-button");
 button3x3.style.backgroundColor="#3df188";
 
 let selectedEvent = threeCubeButton.getAttribute("event");*/
 
+const eloButton = document.getElementById("elo-button");
+eloButton.style.backgroundColor="#3df188";
+
+const singleButton = document.getElementById("single-button");
+const averageButton = document.getElementById("avg-button");
+
+const rankList = {
+    elo: -1,
+    single: -1,
+    average: -1
+}
+
+const sortingMethodMap = {
+    ELO: 1,
+    SINGLE: 2,
+    AVERAGE: 3
+}
+
+let currentSortingMethod = sortingMethodMap.ELO;
 
 fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
     return response.json();
@@ -67,17 +87,21 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
         let user = data;
         console.log(data);
         usernameText.textContent=user.username;
+        wcaLink.href=`https://www.worldcubeassociation.org/persons/${user["wcaId"]}`;
+        wcaLink.target="_blank";
         let badgesDiv = document.getElementById("badges-div");
         for (let i=0;i<user.badges.length;i++) {
             let clonedBadge = badgesDiv.children[user.badges[i]].cloneNode(true);
             clonedBadge.style.display="block";
             badgesDiv.appendChild(clonedBadge);
         }
-        let rankingsDiv = document.getElementById("rankings-div");
-        let eventTemplate = document.getElementById("event-entry-template");
-        fetch(`/api/get-user-ranks/${userId}`).then((response)=> {
+
+        fetch(`/api/get-user-elo-ranks/${userId}`).then((response)=> {
             return response.json();
-        }).then(function(ranks) {
+        }).then(function(worldRanks) {
+            rankList.elo = worldRanks;
+            let rankingsDiv = document.getElementById("rankings-div");
+            let eventTemplate = document.getElementById("event-entry-template");
             // v this loop is for all of the events
             //for (let i=0;i<EVENTS.length;i++) {
             for (let i=1;i<=1;i++) {
@@ -89,7 +113,6 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
                 //CHANGE ALL OF THE i+1 TO i+2 WHEN GOING BACK TO THE TOP IF STATEMENT
                 document.getElementsByClassName("event-text")[i+1].textContent = eventsToText[EVENTS[i]];
                 document.getElementsByClassName("elo-text")[i+1].textContent = user.elos[EVENTS[i]];
-                document.getElementsByClassName("world-rank-text")[i+1].textContent = String(ranks[EVENTS[i]]);
                 document.getElementsByClassName("rank-text")[i+1].children[0].textContent = rankEnumToRankText[user.ranks[EVENTS[i]]];
                 document.getElementsByClassName("rank-text")[i+1].children[0].classList.add(rankToClassName[user.ranks[EVENTS[i]]])
                 const single = user.singles[EVENTS[i]];
@@ -105,11 +128,64 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
                     document.getElementsByClassName("avg-text")[i+1].textContent = average;
                 }
             }
+            sortByRankList(rankList.elo);
+        });
+
+        fetch(`/api/get-user-single-ranks/${userId}`).then((response)=> {
+            return response.json();
+        }).then(function(worldRanks) {
+            rankList.single = worldRanks;
+        });
+
+        fetch(`/api/get-user-average-ranks/${userId}`).then((response)=> {
+            return response.json();
+        }).then(function(worldRanks) {
+            rankList.average = worldRanks;
         });
         updateUserStatistics(user);
     }).catch(function(err) {
         console.log('Failed to fetch!', err);
     });
+
+function sortByRankList(rankList) {
+    //for (let i=0;i<EVENTS.length;i++) {
+    for (let i=1;i<=1;i++) {
+        document.getElementsByClassName("world-rank-text")[i+1].textContent = String(rankList[EVENTS[i]]);
+    }
+}
+
+eloButton.addEventListener("click",()=>{
+    if (currentSortingMethod!=sortingMethodMap.ELO) {
+        clearOptionsColors();
+        eloButton.style.backgroundColor="#3df188";
+        sortByRankList(rankList.elo);
+        currentSortingMethod = sortingMethodMap.ELO;
+    }
+});
+
+singleButton.addEventListener("click",()=>{
+    if (currentSortingMethod!=sortingMethodMap.SINGLE) {
+        clearOptionsColors();
+        singleButton.style.backgroundColor="#3df188";
+        sortByRankList(rankList.single);
+        currentSortingMethod = sortingMethodMap.SINGLE;
+    }
+});
+
+averageButton.addEventListener("click",()=>{
+    if (currentSortingMethod!=sortingMethodMap.AVERAGE) {
+        clearOptionsColors();
+        averageButton.style.backgroundColor="#3df188";
+        sortByRankList(rankList.average);
+        currentSortingMethod = sortingMethodMap.AVERAGE;
+    }
+});
+
+function clearOptionsColors() {
+    eloButton.style.backgroundColor="#f7f7f7";
+    singleButton.style.backgroundColor="#f7f7f7";
+    averageButton.style.backgroundColor="#f7f7f7";
+}
 
 function updateUserStatistics(user) {
     const matchesPlayedText = document.getElementById("matches-played-text");

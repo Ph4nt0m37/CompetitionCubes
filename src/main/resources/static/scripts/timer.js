@@ -54,6 +54,16 @@ window.onload = ()=>{
 
     plusTwoButton.addEventListener("click",()=>{
         if (timerState===timerStates.STOPPED) {
+            fetch("/api/reset-inactivity-timer", {
+                method: "POST",
+                body: JSON.stringify({
+                    userId: userId,
+                    maxTime: 60
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            });
             penaltiesDiv.style.display="none";
             penaltyText.style.display="block";
             penaltyText.style.color="#d7e233";
@@ -120,6 +130,16 @@ window.onload = ()=>{
             }
             if (timerState===timerStates.TIMING) {
                 clearInterval(timerInterval);
+                fetch("/api/reset-inactivity-timer", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        userId: userId,
+                        maxTime: 2147483647
+                    }),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8"
+                    }
+                });
                 userTimer.style.color="black";
 
                 rawTime = Date.now()-startTime;

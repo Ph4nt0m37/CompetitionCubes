@@ -2,18 +2,19 @@ package dev.pakn.competitioncubes;
 
 public class BadgeController {
     public static final int OWNER_BADGE = 0;
-    public static final int DIAMOND_BADGE = 1;
-    public static final int GOLD_BADGE = 2;
-    public static final int SILVER_BADGE = 3;
-    public static final int BRONZE_BADGE = 4;
-    public static final int EARLY_TESTER_BADGE = 5;
-    public static final int TESTER_BADGE = 6;
-    public static final int SNS_FALL_25_BADGE = 7;
+    public static final int EARLY_TESTER_BADGE = 1;
+    public static final int TESTER_BADGE = 2;
+    public static final int CREATOR_BADGE = 3;
+    public static final int DIAMOND_BADGE = 4;
+    public static final int GOLD_BADGE = 5;
+    public static final int SILVER_BADGE = 6;
+    public static final int BRONZE_BADGE = 7;
+    public static final int SNS_FALL_25_BADGE = 8;
 
     public static void calculateAndGrantBadges(Match match) {
         for (int userId:match.getUsers()) {
             User user = DBController.getUserByIDList(userId);
-            int rank = DBController.getUserRank(userId,match.getEvent());
+            int rank = DBController.getUserEloRank(userId,match.getEvent());
             if (rank>0) {
                 if (rank<=100 && !user.getBadges().contains(BRONZE_BADGE)) {
                     user.getBadges().add(BRONZE_BADGE);

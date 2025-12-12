@@ -5,7 +5,13 @@ import java.net.http.HttpResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 public class AntiCheat {
     public static double getWCASingle(String wcaId, Event event) {
         System.out.println("id:"+wcaId);
@@ -111,5 +117,17 @@ public class AntiCheat {
     public static void addInvalidAverage(User user, Event event, double avg, String wcaSingle, String wcaAverage) {
         //TODO: calculate auto bans
         DBController.addInvalidAverage(user, event, avg, wcaSingle, wcaAverage);
+    }
+
+    @PostMapping("/api/dnf-single")
+    public void dnfSingle(@RequestParam int userId, @RequestParam String event, @RequestParam double time) {
+        System.out.println("YOOO\nYOOOOOOOOOOO\nGRGTRGTRETRE\nFREREFEWQFEWQFEW\nREWQREWTFewq");
+        System.out.println(userId);
+        DBController.dnfSingle(userId, Event.eventIdToEvent(event), time);
+    }
+
+    @PostMapping("/api/dnf-average")
+    public void dnfAverage(@RequestParam int userId, @RequestParam String event, @RequestParam double time) {
+        DBController.dnfAverage(userId, Event.eventIdToEvent(event), time);
     }
 }
