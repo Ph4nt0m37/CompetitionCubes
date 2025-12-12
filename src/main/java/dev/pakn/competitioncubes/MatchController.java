@@ -72,9 +72,6 @@ public class MatchController {
         if (command.getCommand().equals("solveFinished")) {
             match.nextSolver();
         }
-        if (match.getWinner()!=null) {
-            BadgeController.calculateAndGrantBadges(match);
-        }
 
         simpMessagingTemplate.convertAndSend("/room/matches/"+command.getRoomId(),match);
     }

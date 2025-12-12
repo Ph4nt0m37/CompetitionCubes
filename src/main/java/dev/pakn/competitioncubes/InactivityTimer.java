@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,8 +21,16 @@ public class InactivityTimer {
         for (int i=0;i<userInactivityTimers.size();i++) {
             if (userInactivityTimers.get(i).getUserId()==userInactivity.getUserId()) {
                 userInactivityTimers.remove(i);
-                userInactivityTimers.add(userInactivity);
-                break;
+            }
+        }
+        userInactivityTimers.add(userInactivity);
+    }
+
+    @DeleteMapping("/api/remove-inactivity-timer/{userId}")
+    public void deleteInactivityTimer(@PathVariable int userId) {
+        for (int i=0;i<userInactivityTimers.size();i++) {
+            if (userInactivityTimers.get(i).getUserId()==userId) {
+                userInactivityTimers.remove(i);
             }
         }
     }
@@ -28,6 +38,7 @@ public class InactivityTimer {
     @Scheduled(fixedRate = 1000)
     public void incrementInactivityTimer() {
         for (UserInactivity userInactivity:userInactivityTimers) {
+            //System.out.println(userInactivity.getUserId()+" | "+userInactivity.getTime()+" | "+userInactivity.getMaxTime());
             try {
                 userInactivity.incrementTime();
                 int userId = userInactivity.getUserId();

@@ -104,6 +104,7 @@ public class User {
 
     public void addSingle(Event event, double single) {
         prevPbSingles.get(event).offerFirst(single);
+        System.out.println("Head    "+ prevPbSingles.get(event).peekFirst());
         if (prevPbSingles.size()>5) {
             prevPbSingles.get(event).pollLast();
         }

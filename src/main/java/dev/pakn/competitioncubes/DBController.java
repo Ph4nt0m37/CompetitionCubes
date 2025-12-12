@@ -1,5 +1,6 @@
 package dev.pakn.competitioncubes;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -109,12 +110,14 @@ public class DBController {
                 }
 
                 for (String eventDB:eventDBNames.values()) {
-                    String eventSqlQuery = "INSERT INTO "+eventDB+" (userid, elo, single, average) VALUES (?, ?, ?, ?);";
+                    String eventSqlQuery = "INSERT INTO "+eventDB+" (userid, elo, single, average, old_singles, old_averages) VALUES (?, ?, ?, ?, ?, ?);";
                     PreparedStatement eventStatement = conn.prepareStatement(eventSqlQuery);
                     eventStatement.setInt(1, userId);
                     eventStatement.setInt(2, 100);
                     eventStatement.setDouble(3, -1);
                     eventStatement.setDouble(4, -1);
+                    eventStatement.setArray(5, conn.createArrayOf("DOUBLE PRECISION", new Double[0]));
+                    eventStatement.setArray(6, conn.createArrayOf("DOUBLE PRECISION", new Double[0]));
 
                     //sending sql query
                     eventStatement.executeUpdate();
@@ -164,8 +167,9 @@ public class DBController {
                 HashMap<Event, Double> userSingles = getSinglesByUserId(userId, conn);
                 HashMap<Event, Double> userAverages = getAveragesByUserId(userId, conn);
                 Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
+                User newUser = new User(userId,username,wcaId,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn));
                 conn.close();
-                return new User(userId,username,wcaId,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn));
+                return newUser;
             }else {
                 conn.close();
                 return null;
@@ -436,12 +440,13 @@ public class DBController {
             statement.setInt(1, newElo);
             statement.setDouble(2, newSingle);
             statement.setDouble(3, newAverage);
-            statement.setInt(4, userId);
 
             User user = getUserByIDList(userId);
 
-            statement.setArray(5, conn.createArrayOf("NUMERIC",user.getAllSinglesArray(event)));
-            statement.setArray(6, conn.createArrayOf("NUMERIC",user.getAllAveragesArray(event)));
+            statement.setArray(4, conn.createArrayOf("DOUBLE PRECISION",user.getAllSinglesArray(event)));
+            statement.setArray(5, conn.createArrayOf("DOUBLE PRECISION",user.getAllAveragesArray(event)));
+
+            statement.setInt(6, userId);
 
             //sending sql query
             statement.executeUpdate();
@@ -470,13 +475,16 @@ public class DBController {
                 ResultSet usersFound = usersQueryStatement.executeQuery();
                 usersFound.next();
 
-                Double[] prevPbsArrays = (Double[]) usersFound.getArray(1).getArray();
-                ArrayDeque<Double> prevPbs = new ArrayDeque<>();
-                for (double prevPb:prevPbsArrays) {
-                    prevPbs.offerLast(prevPb);
-                }
+                Array pbArr = usersFound.getArray(1);
+                if (pbArr!=null) {
+                    Double[] prevPbsArrays = (Double[]) pbArr.getArray();
+                    ArrayDeque<Double> prevPbs = new ArrayDeque<>();
+                    for (double prevPb:prevPbsArrays) {
+                        prevPbs.offerLast(prevPb);
+                    }
 
-                userPrevSingles.put(event, prevPbs);
+                    userPrevSingles.put(event, prevPbs);
+                }
             }
             return userPrevSingles;
         }catch (Exception e) {
@@ -500,13 +508,16 @@ public class DBController {
                 ResultSet usersFound = usersQueryStatement.executeQuery();
                 usersFound.next();
 
-                Double[] prevPbsArrays = (Double[]) usersFound.getArray(1).getArray();
-                ArrayDeque<Double> prevPbs = new ArrayDeque<>();
-                for (double prevPb:prevPbsArrays) {
-                    prevPbs.offerLast(prevPb);
-                }
+                Array pbArr = usersFound.getArray(1);
+                if (pbArr!=null) {
+                    Double[] prevPbsArrays = (Double[]) pbArr.getArray();
+                    ArrayDeque<Double> prevPbs = new ArrayDeque<>();
+                    for (double prevPb:prevPbsArrays) {
+                        prevPbs.offerLast(prevPb);
+                    }
 
-                userPrevAverages.put(event, prevPbs);
+                    userPrevAverages.put(event, prevPbs);
+                }
             }
             return userPrevAverages;
         }catch (Exception e) {

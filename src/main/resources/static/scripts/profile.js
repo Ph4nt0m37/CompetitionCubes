@@ -119,13 +119,13 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
                 if (single===-1) {
                     document.getElementsByClassName("single-text")[i+1].textContent = "N/A";
                 }else{
-                    document.getElementsByClassName("single-text")[i+1].textContent = single;
+                    document.getElementsByClassName("single-text")[i+1].textContent = single.toFixed(2);
                 }
                 const average = user.averages[EVENTS[i]];
                 if (average===-1) {
                     document.getElementsByClassName("avg-text")[i+1].textContent = "N/A";
                 }else{
-                    document.getElementsByClassName("avg-text")[i+1].textContent = average;
+                    document.getElementsByClassName("avg-text")[i+1].textContent = average.toFixed(2);
                 }
             }
             sortByRankList(rankList.elo);

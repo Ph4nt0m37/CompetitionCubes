@@ -262,6 +262,7 @@ public class Match {
         winner.addWin();
         winner.saveUserData();
         winner.setCurrentMatch(null);
+        BadgeController.calculateAndGrantBadges(this);
         DBController.saveDataForEvent(userId, event, winnerNewElo, winner.getSingle(event), winner.getAverage(event));
         MatchController.getMatches().remove(this);
     }
