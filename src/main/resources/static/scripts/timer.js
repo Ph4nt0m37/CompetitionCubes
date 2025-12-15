@@ -33,8 +33,35 @@ window.onload = ()=>{
         actionsPopup.style.display="grid";
     });
 
+    const forfeitPopup = document.getElementById("forfeit-confirm-popup");
+    forfeitPopup.style.display="none";
+    const forfeitButton = document.getElementById("forfeit-button");
+    forfeitButton.addEventListener("click",(event)=>{
+        forfeitPopup.style.display="flex";
+    });
+
+    const forfeitConfirmButton = document.getElementById("forfeit-confirm");
+    forfeitConfirmButton.addEventListener("click",()=>{
+        actionsPopup.style.display="none";
+        forfeitPopup.style.display="none";
+        fetch("/api/forfeit-match", {
+            method: "POST",
+            body: JSON.stringify({
+                userId: userId,
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        });
+    });
+
+    const forfeitDenyButton = document.getElementById("forfeit-deny");
+    forfeitDenyButton.addEventListener("click",()=>{
+        forfeitPopup.style.display="none";
+    });
+
     actionsPopup.addEventListener("click",(event)=>{
-        if (event.target===event.currentTarget) {
+        if (event.target===event.currentTarget && forfeitPopup.style.display==="none") {
             if (reportPopup.style.display==="none") {
                 actionsPopup.style.display="none";
             }
@@ -45,7 +72,7 @@ window.onload = ()=>{
     });
 
     document.addEventListener("keydown",(event)=>{
-        if (event.key=="Escape") {
+        if (event.key=="Escape" && forfeitPopup.style.display==="none") {
             if (reportPopup.style.display==="none") {
                 actionsPopup.style.display="none";
             }
@@ -60,7 +87,8 @@ window.onload = ()=>{
     const reportPopup = document.getElementById("report-popup")
     const reportUserButtons = document.getElementById("report-user-button");
     reportUserButtons.addEventListener("click",()=>{
-        reportPopup.style.display="flex";
+        if (forfeitPopup.style.display==="none")
+            reportPopup.style.display="flex";
     });
 
     const closeReportButton = document.getElementById("close-report-button");
@@ -72,9 +100,11 @@ window.onload = ()=>{
 
     const closeMenuButton = document.getElementById("close-menu-button");
     closeMenuButton.addEventListener("click",()=>{
-        actionsPopup.style.display="none";
-        reportPopup.style.display="none";
-    })
+        if (forfeitPopup.style.display==="none") {
+            actionsPopup.style.display="none";
+            reportPopup.style.display="none";
+        }
+    });
 
     let timerState = timerStates.STOPPED;
 

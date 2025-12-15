@@ -70,4 +70,21 @@ public class CompController {
     public static ArrayList<WaitlistRequest> getWaitingList() {
         return waitingList;
     }
+
+    @PostMapping("/api/forfeit-match")
+    private void forfeitMatch(int userId) {
+        Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
+        if (userMatch!=null) {
+            for (int matchUserId:userMatch.getUsers()) {
+                if (matchUserId!=(int) userId) {
+                    User quitUser = DBController.getUsers().get(userId);
+                    userMatch.setQuitUser(quitUser);
+                    quitUser.setCurrentMatch(null);
+                    userMatch.setWinner(matchUserId);
+                    MatchController.sendMatchData(userMatch);
+                }
+            }
+            
+        }
+    }
 }
