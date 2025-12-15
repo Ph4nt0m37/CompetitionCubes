@@ -3,6 +3,7 @@
     --header-color: #f5f5f5;
     --popup-color: #f7f7f7;
     --defecit-color: #ebebeb;
+    --high-defecit-color: #d6d6d6;
     --h1-color: #36535e;
     --h2-color: #414141;
     --green-button: #2ecc71;
@@ -11,6 +12,12 @@
     --bright-green-button-hover: #37d97a;
     --blue-button: #3498db;
     --blue-button-hover: #2980b9;
+    --yellow-button: #d7e233;
+    --yellow-button-hover: #c2cb2e;
+    --red-button: #e23333;
+    --red-button-hover: #cb2e2e;
+    --dark-red-button: #bb1515;
+    --dark-red-button-hover: #961111;
     --neutral-button: #e0e0e0;
     --neutral-button-hover: #cacaca;
     --card-color: #cccccc;

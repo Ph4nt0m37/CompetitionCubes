@@ -231,3 +231,182 @@ button {
 #home-button:active {
     transform: scale(0.97);
 }
+
+#menu-button {
+    border: none;
+    position: absolute;
+    color: white;
+    border-radius: 17.5px;
+    font-size: 1.75rem;
+    font-weight: bold;
+    background-color: var(--blue-button);
+    padding: 12.5px 25px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: block;
+    right: 0;
+}
+
+#menu-button:hover {
+    background-color: var(--blue-button-hover);
+}
+
+#menu-button:active {
+    transform: scale(0.97);
+}
+
+#report-button {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+#confirm-report-button {
+    padding: 10px 40px;
+    border-radius: 12px;
+    margin: 15px;
+}
+
+.report-button {
+    border: none;
+    color: white;
+    border-radius: 17.5px;
+    font-size: 1.25rem;
+    padding: 10px 20px;
+    font-weight: bold;
+    background-color: var(--dark-red-button);
+    padding: 12.5px 22.5px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: block;
+}
+
+.report-button:hover {
+    background-color: var(--dark-red-button-hover);
+}
+
+.report-button:active {
+    transform: scale(0.97);
+}
+
+#background-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 5;
+}
+
+#actions-popup {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 22rem;
+    height: 30rem;
+    display: flex;
+    background-color: var(--main-bg-color);
+    z-index: 3;
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: fadeIn 0.15s ease-out;
+}
+
+.report-user-text {
+    color: var(--ban-color);
+    font-size: 1.8rem;
+    margin: 15px;
+}
+
+.report-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.report-form-text {
+    color: black;
+    font-size: 1.2rem;
+}
+
+#report-reason-dropdown {
+    font-weight: 700;
+    border: #555 2px solid;
+    padding: 3px 35px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+#report-reason-dropdown, ::picker(select) {
+    appearance: base-select;
+}
+
+#report-reason-dropdown:hover {
+    background-color: var(--high-defecit-color);
+}
+
+#report-reason-dropdown::picker-icon {
+    position: relative;
+    top: 3px;
+    content: url("../images/chevron-down-gray.svg");
+    transform-origin: center 12px;
+    transition: 0.15s rotate;
+    transform: scale(0.85);
+}
+
+#report-reason-dropdown:open::picker-icon {
+  rotate: 180deg;
+}
+
+#report-reason-dropdown > option {
+    border: 2px solid #555;
+    background-color: var(--defecit-color);
+    font-weight: 100;
+    outline: none;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+#report-reason-dropdown > option:first-of-type {
+  border-radius: 4px 4px 0 0;
+}
+
+#report-reason-dropdown > option:last-of-type {
+  border-radius: 0 0 4px 4px;
+}
+
+::picker(select) {
+  border-radius: 4px;
+  border: none;
+}
+
+#report-reason-dropdown > option:not(option:last-of-type) {
+  border-bottom: none;
+}
+
+#report-reason-dropdown > option:checked {
+    font-weight: bold;
+}
+
+#report-reason-dropdown > option:hover {
+    background-color: var(--high-defecit-color);
+}
+
+#report-reason-dropdown > option::checkmark {
+    order: 1;
+    margin-left: auto;
+    content: url("../images/check_gray.svg");
+    scale: 0.85;
+    position: relative;
+    top: 2px;
+}

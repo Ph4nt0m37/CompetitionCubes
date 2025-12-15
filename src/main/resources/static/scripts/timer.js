@@ -26,6 +26,23 @@ window.onload = ()=>{
     const plusTwoButton = document.getElementById("plus-2-button");
     const dnfButton = document.getElementById("dnf-button");
     const penaltyText = document.getElementById("penalty-text");
+
+    const menuButton = document.getElementById("menu-button");
+    const actionsPopup = document.getElementById("background-overlay");
+    menuButton.addEventListener("click",()=>{
+        actionsPopup.style.display="flex";
+    });
+
+    actionsPopup.addEventListener("click",()=>{
+        actionsPopup.style.display="none";
+    });
+
+    document.addEventListener("keydown",(event)=>{
+        if (event.key=="Escape") {
+            actionsPopup.style.display="none";
+        }
+    });
+
     let timerState = timerStates.STOPPED;
 
     let timerInterval = null;
