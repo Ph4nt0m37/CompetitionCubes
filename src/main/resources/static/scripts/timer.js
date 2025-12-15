@@ -30,18 +30,51 @@ window.onload = ()=>{
     const menuButton = document.getElementById("menu-button");
     const actionsPopup = document.getElementById("background-overlay");
     menuButton.addEventListener("click",()=>{
-        actionsPopup.style.display="flex";
+        actionsPopup.style.display="grid";
     });
 
-    actionsPopup.addEventListener("click",()=>{
-        actionsPopup.style.display="none";
+    actionsPopup.addEventListener("click",(event)=>{
+        if (event.target===event.currentTarget) {
+            if (reportPopup.style.display==="none") {
+                actionsPopup.style.display="none";
+            }
+            //resetting and hiding the report popup
+            reportReasonDropdown.children[0].selected = "selected";
+            reportPopup.style.display="none";
+        }
     });
 
     document.addEventListener("keydown",(event)=>{
         if (event.key=="Escape") {
-            actionsPopup.style.display="none";
+            if (reportPopup.style.display==="none") {
+                actionsPopup.style.display="none";
+            }
+            //resetting and hiding the report popup
+            reportReasonDropdown.children[0].selected = "selected";
+            reportPopup.style.display="none";
         }
     });
+
+    const reportReasonDropdown = document.getElementById("report-reason-dropdown");
+
+    const reportPopup = document.getElementById("report-popup")
+    const reportUserButtons = document.getElementById("report-user-button");
+    reportUserButtons.addEventListener("click",()=>{
+        reportPopup.style.display="flex";
+    });
+
+    const closeReportButton = document.getElementById("close-report-button");
+    closeReportButton.addEventListener("click",()=>{
+        //resetting and hiding the report popup
+        reportReasonDropdown.children[0].selected = "selected";
+        reportPopup.style.display="none";
+    });
+
+    const closeMenuButton = document.getElementById("close-menu-button");
+    closeMenuButton.addEventListener("click",()=>{
+        actionsPopup.style.display="none";
+        reportPopup.style.display="none";
+    })
 
     let timerState = timerStates.STOPPED;
 

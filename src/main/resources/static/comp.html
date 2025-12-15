@@ -17,7 +17,18 @@
     <button type="button" id="menu-button">Menu</button>
     <button type="button" id="report-button" class="report-button">Report</button>
     <div id="background-overlay">
-        <div id="actions-popup">
+        <div id="menu-popup">
+            <h1 class="menu-text">Menu</h1>
+            <div class="menu-buttons">
+                <button id="report-user-button" class="report-button">Report Opponent</button>
+                <button id="forfeit-button">Forfeit</button>
+            </div>
+            <button id="close-menu-button">Close</button>
+        </div>
+        <div id="report-popup">
+            <button id="close-report-button">
+                <img src="../static/images/x.svg">
+            </button>
             <h1 class="report-user-text">Report User</h1>
             <div class="report-section">
                 <h2 class="report-form-text">Report Reason</h2>

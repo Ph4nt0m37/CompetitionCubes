@@ -163,8 +163,19 @@ button {
 .fade-in-element { animation: fadeIn 2s; }
 
 @keyframes fadeIn {
-  0% { opacity: 0; }
+  0% { opacity: 0; 
+       display: flex;
+    }
   100% { opacity: 1; }
+}
+
+.fade-out-report { animation: fadeOut 0.15s; }
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0;
+         display: none;
+    }
 }
 
 #searching-div {
@@ -237,7 +248,7 @@ button {
     position: absolute;
     color: white;
     border-radius: 17.5px;
-    font-size: 1.75rem;
+    font-size: 2.25vw;
     font-weight: bold;
     background-color: var(--blue-button);
     padding: 12.5px 25px;
@@ -298,23 +309,28 @@ button {
     inset: 0;
     background: rgba(0, 0, 0, 0.25);
     display: none;
+    place-items: center;
     justify-content: center;
     align-items: center;
     z-index: 5;
+    grid-template-columns: 1fr;
 }
 
-#actions-popup {
+#report-popup {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     width: 22rem;
     height: 30rem;
-    display: flex;
+    display: none;
     background-color: var(--main-bg-color);
-    z-index: 3;
+    z-index: 4;
     border-radius: 12px;
     flex-direction: column;
     align-items: center;
     box-shadow: 0 8px 24px rgba(0,0,0,0.2);
     animation: fadeIn 0.15s ease-out;
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
 }
 
 .report-user-text {
@@ -409,4 +425,100 @@ button {
     scale: 0.85;
     position: relative;
     top: 2px;
+}
+
+#menu-popup {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 18rem;
+    height: 24rem;
+    display: flex;
+    background-color: var(--main-bg-color);
+    z-index: 3;
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: fadeIn 0.15s ease-out;
+    grid-row: 1;
+    grid-column: 1;
+}
+
+.menu-text {
+    color: rgb(36,36,36);
+    font-size: 1.8rem;
+    margin: 15px;
+}
+
+#report-user-button {
+    width: 250px;
+    padding: 10px 0px;
+    box-shadow: none;
+    background-color: var(--yellow-button);
+}
+
+#report-user-button:hover {
+    background-color: var(--yellow-button-hover);
+}
+
+#forfeit-button {
+    border: none;
+    color: white;
+    border-radius: 17.5px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    background-color: var(--dark-red-button);
+    width: 250px;
+    padding: 10px 0px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    display: block;
+}
+
+#forfeit-button:hover {
+    background-color: var(--dark-red-button-hover);
+}
+
+#forfeit-button:active {
+    transform: scale(0.97);
+}
+
+.menu-buttons {
+    flex-grow: 1;
+}
+
+.menu-buttons > button{
+    margin-bottom: 10px;
+}
+
+#close-menu-button {
+    border: none;
+    color: white;
+    border-radius: 17.5px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    background-color: var(--blue-button );
+    width: 250px;
+    padding: 10px 0px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    display: block;
+    margin: 10px 0px;
+}
+
+#close-menu-button:hover {
+    background-color: var(--blue-button-hover);
+}
+
+#close-menu-button:active {
+    scale: 0.97;
+}
+
+#close-report-button {
+    position: absolute;
+    right: 0px;
+    background-color: rgb(0,0,0,0);
+    padding: 0;
+    margin: 5px 7px;
+    padding: 2px
 }
