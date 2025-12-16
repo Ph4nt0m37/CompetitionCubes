@@ -130,7 +130,7 @@ export function endMatch(matchData) {
     let winner = matchData.winner['username'];
     let eloChange = matchData.eloChange;
     if (matchData.quitUser) {
-        scrambleText.innerHTML = `${matchData.quitUser['username']} has forfeit the match!<br>${winner} has won the match!`
+        scrambleText.innerHTML = `${matchData.quitUser['username']} forfeit the match!<br>${winner} has won the match!`
     }else {
         scrambleText.textContent = `${winner} has won the match!`;
     }

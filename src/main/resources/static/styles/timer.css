@@ -31,6 +31,8 @@ h1 {
     font-size: 3vw;
     margin: 15px;
     text-align: center;
+    max-width: 60rem;
+    max-height: 5.5rem;
 }
 
 #timer-main-div {

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class User {
     private int userId;
@@ -15,8 +16,8 @@ public class User {
     private HashMap<Event, Integer> elos = new HashMap<>();
     private HashMap<Event, Double> pbSingles = new HashMap<>();
     private HashMap<Event, Double> pbAverages = new HashMap<>();
-    private HashMap<Event, ArrayDeque<Double>> prevPbSingles = new HashMap<>();
-    private HashMap<Event, ArrayDeque<Double>> prevPbAverages = new HashMap<>();
+    private HashMap<Event, LinkedList<Double>> prevPbSingles = new HashMap<>();
+    private HashMap<Event, LinkedList<Double>> prevPbAverages = new HashMap<>();
     private HashMap<Event, Rank> ranks = new HashMap<>();
     private ArrayList<Integer> badges = new ArrayList<>();
     private ArrayList<Match> last10Matches = new ArrayList<>();
@@ -27,7 +28,7 @@ public class User {
         this.username = username;
     }
 
-    User(String username, String wcaId, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost, HashMap<Event, ArrayDeque<Double>> prevPbSingles, HashMap<Event, ArrayDeque<Double>> prevPbAverages) {
+    User(String username, String wcaId, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost, HashMap<Event, LinkedList<Double>> prevPbSingles, HashMap<Event, LinkedList<Double>> prevPbAverages) {
         this.username = username;
         this.wcaId = wcaId;
         this.elos = elos;
@@ -44,7 +45,7 @@ public class User {
     }
 
     //should only be used when loading from database
-    User(int userId, String username, String wcaId, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost, ArrayList<Match> last10Matches,  HashMap<Event, ArrayDeque<Double>> prevPbSingles, HashMap<Event, ArrayDeque<Double>> prevPbAverages) {
+    User(int userId, String username, String wcaId, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost, ArrayList<Match> last10Matches,  HashMap<Event, LinkedList<Double>> prevPbSingles, HashMap<Event, LinkedList<Double>> prevPbAverages) {
         this.userId = userId;
         this.username = username;
         this.wcaId = wcaId;
@@ -104,14 +105,16 @@ public class User {
 
     public void addSingle(Event event, double single) {
         prevPbSingles.get(event).offerFirst(single);
-        System.out.println("Head    "+ prevPbSingles.get(event).peekFirst());
+        Collections.sort(prevPbSingles.get(event));
         if (prevPbSingles.size()>5) {
             prevPbSingles.get(event).pollLast();
         }
+        System.out.println(prevPbSingles.get(event));
         setSingle(event, single);
     }
 
     public void removeSingle(Event event, double single) {
+        System.out.println(prevPbSingles.get(event));
         prevPbSingles.get(event).removeFirstOccurrence(single);
         Double lastPb = prevPbSingles.get(event).peekFirst();
         if (lastPb == null) {
@@ -121,8 +124,13 @@ public class User {
         }
     }
 
+    public double getLastStoredPbSingle(Event event) {
+        return prevPbSingles.get(event).get(4);
+    }
+
     public void addAverage(Event event, double average) {
         prevPbAverages.get(event).offerFirst(average);
+        Collections.sort(prevPbAverages.get(event));
         if (prevPbAverages.size()>5) {
             prevPbAverages.get(event).pollLast();
         }
@@ -139,6 +147,10 @@ public class User {
         }
     }
 
+    public double getLastStoredPbAverage(Event event) {
+        return prevPbAverages.get(event).get(4);
+    }
+
     public double getSingle(Event event) {
         return pbSingles.get(event);
     }
@@ -148,12 +160,7 @@ public class User {
     }
 
     public Double[] getAllSinglesArray(Event event) {
-        ArrayDeque<Double> eventSingles = prevPbSingles.get(event);
-        Double[] singlesArray = new Double[eventSingles.size()];
-        for (int i=0;i<eventSingles.size();i++) {
-            singlesArray[i] = eventSingles.pollFirst();
-        }
-        return singlesArray;
+        return prevPbSingles.get(event).toArray(new Double[0]);
     }
 
     public double getAverage(Event event) {
@@ -165,12 +172,7 @@ public class User {
     }
 
     public Double[] getAllAveragesArray(Event event) {
-        ArrayDeque<Double> eventAverages = prevPbAverages.get(event);
-        Double[] averagesArray = new Double[eventAverages.size()];
-        for (int i=0;i<eventAverages.size();i++) {
-            averagesArray[i] = eventAverages.pollFirst();
-        }
-        return averagesArray;
+        return prevPbAverages.get(event).toArray(new Double[0]);
     }
 
     public ArrayList<Match> getLast10Matches() {

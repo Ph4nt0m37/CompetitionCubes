@@ -14,9 +14,29 @@
 <body>
     <header id="header"></header>
 
+    <div id="background-overlay">
+        <div id="report-popup">
+            <button id="close-report-button">
+                <img src="/images/x.svg">
+            </button>
+            <h1 class="report-user-text">Report User</h1>
+            <div class="report-section">
+                <h2 class="report-form-text">Report Reason</h2>
+                <select id="report-reason-dropdown">
+                    <option value="selected" selected="selected">Report reason...</option>
+                    <option value="username">Username</option>
+                    <option value="time-wasting">Time Wasting</option>
+                </select>
+            </div>
+            <button id="confirm-report-button" class="report-button">Report</button>
+        </div>
+    </div>
 
     <div class="main-div">
         <div id="leaderboard-div">
+            <button id="report-flag">
+                <img src="/images/flag.svg">
+            </button>
             <div class="username-div">
                 <h1 id="username-text">User Name</h1>
                 <a id="wca-link">WCA Profile</a>

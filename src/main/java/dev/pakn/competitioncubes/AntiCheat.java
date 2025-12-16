@@ -1,10 +1,12 @@
 package dev.pakn.competitioncubes;
 
 import java.net.http.HttpResponse;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -82,7 +84,7 @@ public class AntiCheat {
 
     //3x3 ONLY. need to fix equation because it breaks down below 2s average
     public static boolean validateSolve(double time, double wcaAveragePb) {
-        if (Math.abs(time-(-1))<0.0001) {
+        if (time>0) {
             //percent error calculation. uses average because it is a better tell of what single is possible
             //double yVal = (-0.425*wcaAveragePb)+wcaAveragePb;
             double maxPercentDiff = 0.425; //0.425 seems like a good max single
@@ -100,7 +102,7 @@ public class AntiCheat {
 
     //3x3 ONLY
     public static boolean validateAverage(double time, double wcaAveragePb) {
-        if (Math.abs(time-(-1))<0.0001) {
+        if (time>0) {
             double maxPercentDiff = 0.25;
             double solveDiffPercent = -((time-wcaAveragePb)/wcaAveragePb);
             return solveDiffPercent < maxPercentDiff;
@@ -120,10 +122,15 @@ public class AntiCheat {
     }
 
     @PostMapping("/api/dnf-single")
-    public void dnfSingle(@RequestParam int userId, @RequestParam String event, @RequestParam double time) {
-        System.out.println("YOOO\nYOOOOOOOOOOO\nGRGTRGTRETRE\nFREREFEWQFEWQFEW\nREWQREWTFewq");
-        System.out.println(userId);
-        DBController.dnfSingle(userId, Event.eventIdToEvent(event), time);
+    public void dnfSingle(@RequestBody PostRequestClass.DNFTime dnfTime) {
+        int userId = dnfTime.getUserId();
+        String event = dnfTime.getEvent();
+        double time = dnfTime.getTime();
+        try {
+            DBController.dnfSingle(userId, Event.eventIdToEvent(event), time);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @PostMapping("/api/dnf-average")

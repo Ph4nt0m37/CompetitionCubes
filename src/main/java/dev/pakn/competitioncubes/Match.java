@@ -125,6 +125,11 @@ public class Match {
     public boolean addSolve(int userId, SolveData solve) {
         if (!solve.isValid()) 
             AntiCheat.addInvalidSingle(solve, TimeConversions.doubleToTime(getUserWcaPbSingle(userId)), TimeConversions.doubleToTime(getUserWcaPbAvg(userId)));
+
+        User user = DBController.getUserByIDList(userId);
+        if (solve.getPenalizedTime()<=user.getLastStoredPbSingle(event)) {
+            user.addSingle(event, solve.getPenalizedTime());
+        }
         return userSolves.get(userId).add(solve);
     }
 
@@ -205,6 +210,10 @@ public class Match {
         }
         double averageDouble = (Math.round((timeTotal/3.0)*100))/100.0;
         userAo5s.put(user, TimeConversions.doubleToTime(averageDouble));
+        User userObj = DBController.getUserByIDList(user);
+        if (averageDouble<=userObj.getLastStoredPbAverage(event)) {
+            userObj.addAverage(event, averageDouble);
+        }
         return averageDouble;
     }
 
@@ -224,15 +233,6 @@ public class Match {
                     }
                     eloChange=Math.abs(Math.max(5,Math.min(100, eloChange)));
                 }
-                //check pb single
-                double userSingle = loser.getSingle(event) < 0 ? Integer.MAX_VALUE : loser.getSingle(event);
-                if (userSolves.get(loserUserId).size()>0) {
-                    SolveData pbSolveData = Collections.min(userSolves.get(loserUserId));
-                    double matchPbSingle = pbSolveData.getPenalizedTime();
-                    if (Math.abs(Integer.MAX_VALUE-matchPbSingle) > 0.0001 && matchPbSingle<userSingle && pbSolveData.isValid()) {
-                        loser.addSingle(event, matchPbSingle);
-                    }
-                }
 
                 int loserNewElo = loserElo-eloChange;
                 //whoop whoop ternary operator :D
@@ -242,18 +242,6 @@ public class Match {
                 loser.saveUserData();
                 loser.setCurrentMatch(null);
                 DBController.saveDataForEvent(loserUserId, event, loserNewElo, loser.getSingle(event), loser.getAverage(event));
-            }
-        }
-        //check pb single
-        double userSingle = winner.getSingle(event) < 0 ? Integer.MAX_VALUE : winner.getSingle(event);
-        if (userSolves.get(userId).size()>0) {
-            SolveData pbSolveData = Collections.min(userSolves.get(userId));
-            double matchPbSingle = pbSolveData.getPenalizedTime();
-            if (!pbSolveData.isValid()) {
-                AntiCheat.addInvalidSingle(pbSolveData, TimeConversions.doubleToTime(userWcaSinglePbs.get(userId)), TimeConversions.doubleToTime(userWcaAveragePbs.get(userId)));
-            }
-            if (Math.abs(Integer.MAX_VALUE-matchPbSingle) > 0.0001 && matchPbSingle<userSingle) {
-                winner.addSingle(event, matchPbSingle);
             }
         }
 

@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -460,10 +461,10 @@ public class DBController {
         }
     }
 
-    private static HashMap<Event, ArrayDeque<Double>> getPrevSinglesByUserId(int userId, Connection conn) {
+    private static HashMap<Event, LinkedList<Double>> getPrevSinglesByUserId(int userId, Connection conn) {
         try {
             //creating elo map
-            HashMap<Event, ArrayDeque<Double>> userPrevSingles = new HashMap<>();
+            HashMap<Event, LinkedList<Double>> userPrevSingles = new HashMap<>();
 
             for (Event event:eventDBNames.keySet()) {
                 //checking for userId
@@ -478,11 +479,10 @@ public class DBController {
                 Array pbArr = usersFound.getArray(1);
                 if (pbArr!=null) {
                     Double[] prevPbsArrays = (Double[]) pbArr.getArray();
-                    ArrayDeque<Double> prevPbs = new ArrayDeque<>();
-                    for (double prevPb:prevPbsArrays) {
+                    LinkedList<Double> prevPbs = new LinkedList<>();
+                    for (Double prevPb:prevPbsArrays) {
                         prevPbs.offerLast(prevPb);
                     }
-
                     userPrevSingles.put(event, prevPbs);
                 }
             }
@@ -493,10 +493,10 @@ public class DBController {
         }
     }
 
-    private static HashMap<Event, ArrayDeque<Double>> getPrevAveragesByUserId(int userId, Connection conn) {
+    private static HashMap<Event, LinkedList<Double>> getPrevAveragesByUserId(int userId, Connection conn) {
         try {
             //creating elo map
-            HashMap<Event, ArrayDeque<Double>> userPrevAverages = new HashMap<>();
+            HashMap<Event, LinkedList<Double>> userPrevAverages = new HashMap<>();
 
             for (Event event:eventDBNames.keySet()) {
                 //checking for userId
@@ -511,8 +511,8 @@ public class DBController {
                 Array pbArr = usersFound.getArray(1);
                 if (pbArr!=null) {
                     Double[] prevPbsArrays = (Double[]) pbArr.getArray();
-                    ArrayDeque<Double> prevPbs = new ArrayDeque<>();
-                    for (double prevPb:prevPbsArrays) {
+                    LinkedList<Double> prevPbs = new LinkedList<>();
+                    for (Double prevPb:prevPbsArrays) {
                         prevPbs.offerLast(prevPb);
                     }
 

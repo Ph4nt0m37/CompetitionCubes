@@ -79,6 +79,12 @@ const sortingMethodMap = {
     AVERAGE: 3
 }
 
+const eloRankText = document.querySelector(".rankings-key.elo-text");
+const singleRankText = document.querySelector(".rankings-key.single-text");
+const avgRankText = document.querySelector(".rankings-key.avg-text");
+
+eloRankText.classList.add("rank-highlight");
+
 let currentSortingMethod = sortingMethodMap.ELO;
 
 fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
@@ -158,6 +164,7 @@ eloButton.addEventListener("click",()=>{
     if (currentSortingMethod!=sortingMethodMap.ELO) {
         clearOptionsColors();
         eloButton.style.backgroundColor="#3df188";
+        eloRankText.classList.add("rank-highlight");
         sortByRankList(rankList.elo);
         currentSortingMethod = sortingMethodMap.ELO;
     }
@@ -167,6 +174,7 @@ singleButton.addEventListener("click",()=>{
     if (currentSortingMethod!=sortingMethodMap.SINGLE) {
         clearOptionsColors();
         singleButton.style.backgroundColor="#3df188";
+        singleRankText.classList.add("rank-highlight");
         sortByRankList(rankList.single);
         currentSortingMethod = sortingMethodMap.SINGLE;
     }
@@ -176,6 +184,7 @@ averageButton.addEventListener("click",()=>{
     if (currentSortingMethod!=sortingMethodMap.AVERAGE) {
         clearOptionsColors();
         averageButton.style.backgroundColor="#3df188";
+        avgRankText.classList.add("rank-highlight");
         sortByRankList(rankList.average);
         currentSortingMethod = sortingMethodMap.AVERAGE;
     }
@@ -185,6 +194,9 @@ function clearOptionsColors() {
     eloButton.style.backgroundColor="#f7f7f7";
     singleButton.style.backgroundColor="#f7f7f7";
     averageButton.style.backgroundColor="#f7f7f7";
+    eloRankText.classList.remove("rank-highlight");
+    singleRankText.classList.remove("rank-highlight");
+    avgRankText.classList.remove("rank-highlight");
 }
 
 function updateUserStatistics(user) {
@@ -207,3 +219,41 @@ function updateUserStatistics(user) {
         winLossText.textContent=`Win-Loss %: N/A`;
     }
 }
+
+const reportReasonDropdown = document.getElementById("report-reason-dropdown");
+
+const reportPopup = document.getElementById("report-popup")
+
+const closeReportButton = document.getElementById("close-report-button");
+closeReportButton.addEventListener("click",()=>{
+    actionsPopup.style.display="none";
+    body.style.overflowY="visible";
+    //resetting and hiding the report popup
+    reportReasonDropdown.children[0].selected = "selected";
+});
+
+const flagButton = document.getElementById("report-flag");
+const actionsPopup = document.getElementById("background-overlay");
+const body = document.getElementsByTagName("body")[0];
+flagButton.addEventListener("click",()=>{
+    actionsPopup.style.display="grid";
+    body.style.overflowY="hidden";
+});
+
+actionsPopup.addEventListener("click",(event)=>{
+    if (event.target===event.currentTarget) {
+        actionsPopup.style.display="none";
+        body.style.overflowY="visible";
+        //resetting and hiding the report popup
+        reportReasonDropdown.children[0].selected = "selected";
+    }
+});
+
+document.addEventListener("keydown",(event)=>{
+    if (event.key=="Escape") {
+        actionsPopup.style.display="none";
+        body.style.overflowY="visible";
+        //resetting and hiding the report popup
+        reportReasonDropdown.children[0].selected = "selected";
+    }
+});
