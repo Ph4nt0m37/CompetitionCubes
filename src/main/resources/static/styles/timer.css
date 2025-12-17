@@ -31,8 +31,6 @@ h1 {
     font-size: 3vw;
     margin: 15px;
     text-align: center;
-    max-width: 60rem;
-    max-height: 5.5rem;
 }
 
 #timer-main-div {
@@ -570,17 +568,17 @@ button {
 }
 
 #forfeit-confirm {
-    background-color: var(--green-button);
-}
-
-#forfeit-confirm:hover {
-    background-color: var(--green-button-hover);
-}
-
-#forfeit-deny {
     background-color: var(--red-button);
 }
 
-#forfeit-deny:hover {
+#forfeit-confirm:hover {
     background-color: var(--red-button-hover);
+}
+
+#forfeit-deny {
+    background-color: var(--green-button);
+}
+
+#forfeit-deny:hover {
+    background-color: var(--green-button-hover);
 }

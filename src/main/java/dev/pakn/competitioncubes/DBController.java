@@ -746,7 +746,8 @@ public class DBController {
                 int userId = sortedUsersDB.getInt("userid");
                 String username = userList.get(userId).getUsername();
                 int userElo = sortedUsersDB.getInt("elo");
-                eloSortedUsers.add(new LeaderboardEntry(userId, username, event, userElo));
+                String eloString = String.valueOf(userElo);
+                eloSortedUsers.add(new LeaderboardEntry(userId, username, event, userElo, eloString));
                 usersFound++;
             }
             return eloSortedUsers;
@@ -764,7 +765,8 @@ public class DBController {
                 int userId = sortedUsersDB.getInt("userid");
                 String username = userList.get(userId).getUsername();
                 int userElo = sortedUsersDB.getInt("elo");
-                eloSortedUsers.add(new LeaderboardEntry(userId, username, event, userElo));
+                String eloString = String.valueOf(userElo);
+                eloSortedUsers.add(new LeaderboardEntry(userId, username, event, userElo, eloString));
             }
             return eloSortedUsers;
         }catch (Exception e) {
@@ -808,7 +810,8 @@ public class DBController {
                 if (userSingle>=0) {
                     int userId = sortedUsersDB.getInt("userid");
                     String username = userList.get(userId).getUsername();
-                    singleSortedUsers.add(new LeaderboardEntry(userId, username, event, userSingle));
+                    String singleString = TimeConversions.doubleToTime(userSingle);
+                    singleSortedUsers.add(new LeaderboardEntry(userId, username, event, userSingle, singleString));
                     usersFound++;
                 }
             }
@@ -827,7 +830,8 @@ public class DBController {
                 int userId = sortedUsersDB.getInt("userid");
                 String username = userList.get(userId).getUsername();
                 double userSingle = sortedUsersDB.getDouble("single");
-                singleSortedUsers.add(new LeaderboardEntry(userId, username, event, userSingle));
+                String singleString = TimeConversions.doubleToTime(userSingle);
+                singleSortedUsers.add(new LeaderboardEntry(userId, username, event, userSingle, singleString));
             }
             return singleSortedUsers;
         }catch (Exception e) {
@@ -871,7 +875,8 @@ public class DBController {
                 if (userAvg>=0) {
                     int userId = sortedUsersDB.getInt("userid");
                     String username = userList.get(userId).getUsername();
-                    averageSortedUsers.add(new LeaderboardEntry(userId, username, event, userAvg));
+                    String avgString = TimeConversions.doubleToTime(userAvg);
+                    averageSortedUsers.add(new LeaderboardEntry(userId, username, event, userAvg, avgString));
                     usersFound++;
                 }
             }
@@ -893,7 +898,8 @@ public class DBController {
                 int userId = sortedUsersDB.getInt("userid");
                 String username = userList.get(userId).getUsername();
                 double userAvg = sortedUsersDB.getDouble("average");
-                averageSortedUsers.add(new LeaderboardEntry(userId, username, event, userAvg));
+                String avgString = TimeConversions.doubleToTime(userAvg);
+                averageSortedUsers.add(new LeaderboardEntry(userId, username, event, userAvg, avgString));
             }
             return averageSortedUsers;
         }catch (Exception e) {

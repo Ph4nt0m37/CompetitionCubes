@@ -109,12 +109,10 @@ public class User {
         if (prevPbSingles.size()>5) {
             prevPbSingles.get(event).pollLast();
         }
-        System.out.println(prevPbSingles.get(event));
-        setSingle(event, single);
+        setSingle(event, prevPbSingles.get(event).peekFirst());
     }
 
     public void removeSingle(Event event, double single) {
-        System.out.println(prevPbSingles.get(event));
         prevPbSingles.get(event).removeFirstOccurrence(single);
         Double lastPb = prevPbSingles.get(event).peekFirst();
         if (lastPb == null) {
@@ -125,7 +123,7 @@ public class User {
     }
 
     public double getLastStoredPbSingle(Event event) {
-        return prevPbSingles.get(event).get(4);
+        return prevPbSingles.get(event).get(Math.min(prevPbSingles.get(event).size()-1, 4));
     }
 
     public void addAverage(Event event, double average) {
@@ -134,7 +132,7 @@ public class User {
         if (prevPbAverages.size()>5) {
             prevPbAverages.get(event).pollLast();
         }
-        setAverage(event, average);
+        setAverage(event, prevPbAverages.get(event).peekFirst());
     }
 
     public void removeAverage(Event event, double average) {
@@ -148,7 +146,7 @@ public class User {
     }
 
     public double getLastStoredPbAverage(Event event) {
-        return prevPbAverages.get(event).get(4);
+        return prevPbAverages.get(event).get(Math.min(prevPbAverages.get(event).size()-1, 4));
     }
 
     public double getSingle(Event event) {

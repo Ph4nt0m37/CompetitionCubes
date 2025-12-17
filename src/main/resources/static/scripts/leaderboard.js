@@ -126,7 +126,7 @@ function sortBySingle(selectedEvent) {
                     //editing username
                     userEntry.children[1].innerHTML=`<a href=/user/${singleSortedUsers[i]['userId']}>${singleSortedUsers[i]['username']}</a>`;
                     //editing elo
-                    userEntry.children[2].textContent=String(userSingle);
+                    userEntry.children[2].textContent=String(userSingle.toFixed(2));
                     //adding userEntry
                     leaderboardDiv.appendChild(userEntry);
                 }
@@ -161,7 +161,7 @@ function sortByAverage(selectedEvent) {
                     //editing username
                     userEntry.children[1].innerHTML=`<a href=/user/${averageSortedUsers[i]['userId']}>${averageSortedUsers[i]['username']}</a>`;
                     //editing elo
-                    userEntry.children[2].textContent=String(userAverage);
+                    userEntry.children[2].textContent=String(userAverage.toFixed(2));
                     //adding userEntry
                     leaderboardDiv.appendChild(userEntry);
                 }

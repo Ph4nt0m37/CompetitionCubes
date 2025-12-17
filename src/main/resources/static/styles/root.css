@@ -6,6 +6,7 @@
     --high-defecit-color: #d6d6d6;
     --h1-color: #36535e;
     --h2-color: #414141;
+    --dark-font: #202020;
     --green-button: #2ecc71;
     --green-button-hover: #29b866;
     --bright-green-button: #3df188;
@@ -27,6 +28,7 @@
     --ban-color: #bb1515;
     --success-color: #22eb51;
     --report-button: #d91919;
+    --notification-color: #b93535;
     /* Icon Color: #565656*/
 }
 

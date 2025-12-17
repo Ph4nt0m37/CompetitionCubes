@@ -122,19 +122,30 @@ public class AntiCheat {
     }
 
     @PostMapping("/api/dnf-single")
-    public void dnfSingle(@RequestBody PostRequestClass.DNFTime dnfTime) {
+    public boolean dnfSingle(@RequestBody PostRequestClass.DNFTime dnfTime) {
         int userId = dnfTime.getUserId();
         String event = dnfTime.getEvent();
         double time = dnfTime.getTime();
         try {
-            DBController.dnfSingle(userId, Event.eventIdToEvent(event), time);
+            DBController.dnfSingle(userId, Event.valueOf(event), time);
+            return true;
         }catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
 
     @PostMapping("/api/dnf-average")
-    public void dnfAverage(@RequestParam int userId, @RequestParam String event, @RequestParam double time) {
-        DBController.dnfAverage(userId, Event.eventIdToEvent(event), time);
+    public boolean dnfAverage(@RequestBody PostRequestClass.DNFTime dnfTime) {
+        int userId = dnfTime.getUserId();
+        String event = dnfTime.getEvent();
+        double time = dnfTime.getTime();
+        try {
+            DBController.dnfAverage(userId, Event.valueOf(event), time);
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

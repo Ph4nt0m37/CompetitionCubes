@@ -18,7 +18,7 @@ public class TimeConversions {
         if (minutes>0) {
             return String.valueOf(minutes)+":"+String.format("%05.2f",seconds).replace(' ', '0');
         }else {
-            return String.valueOf(seconds);
+            return String.format("%.2f",seconds);
         }
     }
 }
