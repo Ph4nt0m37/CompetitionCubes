@@ -21,6 +21,10 @@ public class User {
     private HashMap<Event, Rank> ranks = new HashMap<>();
     private ArrayList<Integer> badges = new ArrayList<>();
     private ArrayList<Match> last10Matches = new ArrayList<>();
+    private int strikes;
+    private int bans;
+
+    private PermissionLevel permissionLevel;
 
     private Match currMatch;
 
@@ -28,9 +32,10 @@ public class User {
         this.username = username;
     }
 
-    User(String username, String wcaId, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost, HashMap<Event, LinkedList<Double>> prevPbSingles, HashMap<Event, LinkedList<Double>> prevPbAverages) {
+    User(String username, String wcaId, int permLevel, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost, HashMap<Event, LinkedList<Double>> prevPbSingles, HashMap<Event, LinkedList<Double>> prevPbAverages, int strikes, int bans) {
         this.username = username;
         this.wcaId = wcaId;
+        this.permissionLevel = PermissionLevel.valueToPermissionLevel(permLevel);
         this.elos = elos;
         this.pbSingles = pbSingles;
         this.pbAverages = pbAverages;
@@ -39,16 +44,19 @@ public class User {
         this.badges = new ArrayList<>(Arrays.asList(badgesArray));
         this.matchesWon=matchesWon;
         this.matchesLost=matchesLost;
+        this.strikes = strikes;
+        this.bans = bans;
         for (Event event:elos.keySet()) {
             ranks.put(event, Rank.getRankByElo(elos.get(event)));
         }
     }
 
     //should only be used when loading from database
-    User(int userId, String username, String wcaId, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost, ArrayList<Match> last10Matches,  HashMap<Event, LinkedList<Double>> prevPbSingles, HashMap<Event, LinkedList<Double>> prevPbAverages) {
+    User(int userId, String username, String wcaId, int permLevel, HashMap<Event, Integer> elos, HashMap<Event, Double> pbSingles, HashMap<Event, Double> pbAverages, Integer[] badgesArray, int matchesWon, int matchesLost, ArrayList<Match> last10Matches,  HashMap<Event, LinkedList<Double>> prevPbSingles, HashMap<Event, LinkedList<Double>> prevPbAverages, int strikes, int bans) {
         this.userId = userId;
         this.username = username;
         this.wcaId = wcaId;
+        this.permissionLevel = PermissionLevel.valueToPermissionLevel(permLevel);
         this.elos = elos;
         this.pbSingles = pbSingles;
         this.pbAverages = pbAverages;
@@ -58,6 +66,8 @@ public class User {
         this.matchesWon=matchesWon;
         this.matchesLost=matchesLost;
         this.last10Matches = last10Matches;
+        this.strikes = strikes;
+        this.bans = bans;
         for (Event event:elos.keySet()) {
             ranks.put(event, Rank.getRankByElo(elos.get(event)));
         }
@@ -69,6 +79,10 @@ public class User {
 
     public void setUsername(String newUsername) {
         this.username = newUsername;
+    }
+
+    public PermissionLevel getPermissionLevel() {
+        return permissionLevel;
     }
 
     public HashMap<Event, Integer> getElos() {
@@ -226,6 +240,30 @@ public class User {
 
     public void addLoss() {
         matchesLost++;
+    }
+
+    public int getStrikes() {
+        return strikes;
+    }
+
+    public void setStrikes(int strikes) {
+        this.strikes = strikes;
+    }
+
+    public void addStrike() {
+        strikes++;
+    }
+
+    public int getBans() {
+        return bans;
+    }
+
+    public void setBans(int bans) {
+        this.bans = bans;
+    }
+
+    public void addBan() {
+        bans++;
     }
 
     public boolean saveUserData() {

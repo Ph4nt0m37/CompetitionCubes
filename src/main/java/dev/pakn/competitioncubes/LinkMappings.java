@@ -1,5 +1,6 @@
 package dev.pakn.competitioncubes;
 
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
@@ -28,7 +29,7 @@ public class LinkMappings {
                 }
             }
         }
-        return "forward:/error.html";
+        throw new HttpForbiddenException();
     }
 
     @RequestMapping("/")
@@ -77,7 +78,13 @@ public class LinkMappings {
     }
 
     @RequestMapping("/admin")
-    public String adminDashboard() {
-        return "admin-dashboard.html";
+    public String adminDashboard(@CookieValue(value="user_secret", required = false) String userSecret) {
+        if (userSecret!=null) {
+            //auto login here!
+            User user = DBController.getUserBySecret(userSecret);
+            //if login succeeded. if they somehow have user_secret cookie but it doesn't exist, user will be null
+            if (user!=null && user.getPermissionLevel().hasAdminDashboardAccess()) return "admin-dashboard.html";
+        }
+        throw new HttpForbiddenException();
     }
 }

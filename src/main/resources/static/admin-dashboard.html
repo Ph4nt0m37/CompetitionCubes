@@ -16,19 +16,29 @@
     </div>
     <div class="main">
         <h1>Admin Dashboard</h1>
-        <div id="dashboard-div">
-            <h3 id="loading-text">Loading...</h3>
-            <div class="solve-entry template">
-                <h2 class="solve-user">
-                    <a class="solve-user-link" target="_blank">Username</a>
-                </h2>
-                <h4 class="event-text"><span class="cubing-icon event-333"></span> 3x3 <span class="cubing-icon event-333"></span></h4>
-                <h3 class="solve-time">Single: 0.00</h3>
-                <h5 class="wca-pb">WCA Single: 00:00.00 | WCA Average: 00:00.00</h5>
-                <div class="buttons-div">
-                    <button class="ok-button">OK</button>
-                    <button class="dnf-button">DNF</button>
-                    <button class="ban-button">Ban</button>
+        <div id="main-info-div">
+            <aside id="left-navbar">
+                <h2 class="options-text">Options</h2>
+                <button class="options-button" id="reported-solves-button">Reported Solves</button>
+                <button class="options-button" id="reported-users-button">Reported Users</button>
+            </aside>
+            <div id="dashboard-div">
+                <div class="div-content">
+                    <h2>Reported Solves</h2>
+                    <h3 id="loading-text">Loading...</h3>
+                    <div class="solve-entry template">
+                        <h2 class="solve-user">
+                            <a class="solve-user-link" target="_blank">Username</a>
+                        </h2>
+                        <h4 class="event-text"><span class="cubing-icon event-333"></span> 3x3 <span class="cubing-icon event-333"></span></h4>
+                        <h3 class="solve-time">Single: 0.00</h3>
+                        <h5 class="wca-pb">WCA Single: 00:00.00 | WCA Average: 00:00.00</h5>
+                        <div class="buttons-div">
+                            <button class="ok-button">OK</button>
+                            <button class="dnf-button">DNF</button>
+                            <button class="ban-button">Ban</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

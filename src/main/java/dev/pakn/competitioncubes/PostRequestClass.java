@@ -5,10 +5,11 @@ public class PostRequestClass {
         private int userId;
         private String event;
         private double time;
+        private String scramble;
 
         public DNFTime() {};
 
-        public DNFTime(int userId, String event, double time) {
+        public DNFTime(int userId, String event, double time, String scramble) {
             this.userId = userId;
             this.event = event;
             this.time = time;
@@ -36,6 +37,14 @@ public class PostRequestClass {
 
         public void setTime(double time) {
             this.time = time;
+        }
+
+        public String getScramble() {
+            return scramble;
+        }
+
+        public void setScramble(String scramble) {
+            this.scramble = scramble;
         }
     }
 }

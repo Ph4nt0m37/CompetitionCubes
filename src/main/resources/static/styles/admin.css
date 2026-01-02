@@ -9,22 +9,97 @@ html, body {
     display: flex;
     align-items : center;
     flex-direction: column;
+    height: 100vh;
 }
 
 h1 {
     font-weight: bold;
 }
 
+#main-info-div {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    border-top: 4px solid var(--card-color);
+}
+
+#left-navbar {
+    background-color: var(--header-color);
+    width: 15rem;
+    border-right: 4px solid var(--card-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.options-text {
+    text-align: center;
+    color: var(--h2-color);
+    border-bottom: 4px solid var(--card-color);
+    padding-bottom: 30px;
+    width: 100%;
+}
+
+.options-button {
+    width: 14rem;
+    padding: 15px 0px;
+    margin: 2px 5px;
+    background-color: var(--header-color);
+    font-size: 1.25rem;
+    color: var(--h2-color);
+}
+
+.options-button:hover {
+    background-color: #d0d0d0;
+}
+
+.options-button:active {
+    scale: 0.97;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #dashboard-div {
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: 50rem;
     padding: 8px 20px;
-    margin: 20px;
-    background-color: var(--popup-color);
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgb(0,0,0,0.1);
+    flex-grow: 1;
+}
+
+#dashboard-div > .div-content {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
 }
 
 .solve-entry {
@@ -133,7 +208,7 @@ button {
     background-color: var(--notification-color);
     width: 15rem;
     text-align: center;
-    padding: 10px 0;
+    padding: 10px 10px;
     border-radius: 10px;
     border: 1px solid var(--h2-color);
     box-shadow: 0 4px 12px rgb(0,0,0,0.25);

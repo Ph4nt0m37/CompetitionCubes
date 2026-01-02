@@ -38,7 +38,7 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketDisconnectListener(final SessionDisconnectEvent event) {
         int userId = sessionUserIdMap.get(event.getSessionId());
-        CompController.removeFromWaitingList(userId);
+        MatchFinder.removeFromWaitingList(userId);
         System.out.println("removed "+userId+" from waiting list!");
         Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
         System.out.println(userMatch);

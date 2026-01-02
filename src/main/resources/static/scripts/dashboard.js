@@ -1,6 +1,18 @@
 const notificationTemplate = document.querySelector(".notification.template");
 const notificationBox = document.getElementById("notif-div");
 
+const reportedSolvesButton = document.getElementById("reported-solves-button");
+const reportedUsersButton = document.getElementById("reported-users-button");
+
+const reportingMethods = {
+    SOLVES: 1,
+    USERS: 2
+};
+
+let currReportMethod = reportingMethods.SOLVES;
+reportedSolvesButton.style.backgroundColor="#d0d0d0";
+
+
 fetch("/api/get-invalid-times").then((promise)=>{
     return promise.json();
 }).then((solves)=>{
@@ -30,13 +42,15 @@ fetch("/api/get-invalid-times").then((promise)=>{
             solve.querySelector(".dnf-button").addEventListener("click", async ()=>{
                 let success = false;
                 if (type==="Single") {
-                    success = await dnfSingle(solves[i]['userId'], solves[i]['event'], solves[i]['timeDouble']);
+                    success = await dnfSingle(solves[i]['userId'], solves[i]['event'], solves[i]['timeDouble'],solves[i]['scramble']);
                 }else if (type==="Average") {
                     success = await dnfAverage(solves[i]['userId'], solves[i]['event'], solves[i]['timeDouble']);
                 }
                 if (success) {
                     createNotification(`Successfully DNF'ed ${user}'s ${timeString}s solve`);
                     solve.remove();
+                }else {
+                    createNotification(`Something went wrong with this action. Please DM a developer to resolve it.`);
                 }
             });
 
@@ -47,13 +61,14 @@ fetch("/api/get-invalid-times").then((promise)=>{
     }
 });
 
-async function dnfSingle(userId, event, time) {
+async function dnfSingle(userId, event, time, scramble) {
     return fetch("/api/dnf-single", {
         method: "POST",
         body: JSON.stringify({
             userId: userId,
             event: event,
-            time: time
+            time: time,
+            scramble: scramble
         }),
         headers: {
             "Content-type": "application/json; charset=UTF-8"
@@ -61,6 +76,9 @@ async function dnfSingle(userId, event, time) {
     }).then((resp)=>{
         return resp.json();
     }).then((success)=>{
+        if (success) {
+            fetch()
+        }
         return success;
     });
 }
@@ -71,7 +89,8 @@ async function dnfAverage(userId, event, time) {
         body: JSON.stringify({
             userId: userId,
             event: event,
-            time: time
+            time: time,
+            scramble: null
         }),
         headers: {
             "Content-type": "application/json; charset=UTF-8"
@@ -92,6 +111,11 @@ function createNotification(text) {
         notif.classList.add("fade-out");
         setTimeout(()=>{
             notif.remove();
-        },2500);
+        },1500);
     },5000);
+}
+
+function clearAsideButtons() {
+    reportedSolvesButton.style.backgroundColor="#f5f5f5";
+    reportedUsersButton.style.backgroundColor="#f5f5f5";
 }

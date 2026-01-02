@@ -126,8 +126,9 @@ public class AntiCheat {
         int userId = dnfTime.getUserId();
         String event = dnfTime.getEvent();
         double time = dnfTime.getTime();
+        String scramble = dnfTime.getScramble();
         try {
-            DBController.dnfSingle(userId, Event.valueOf(event), time);
+            DBController.dnfSingle(userId, Event.valueOf(event), time, scramble);
             return true;
         }catch (Exception e) {
             e.printStackTrace();

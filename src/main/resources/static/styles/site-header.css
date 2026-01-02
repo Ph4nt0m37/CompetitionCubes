@@ -104,6 +104,7 @@ header {
 }
 
 #profile-button {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: none;
     justify-content: center;
     border: none;
@@ -187,4 +188,8 @@ header {
 
 #sign-in-button:active {
     transform: scale(0.97);
+}
+
+#admin-dropdown-link {
+    display: none;
 }

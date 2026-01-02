@@ -46,9 +46,7 @@ window.onload = ()=>{
         forfeitPopup.style.display="none";
         fetch("/api/forfeit-match", {
             method: "POST",
-            body: JSON.stringify({
-                userId: userId,
-            }),
+            body: JSON.stringify(Number(userId)),
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             }

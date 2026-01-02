@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-public class CompController {
+public class MatchFinder {
 
     private static ArrayList<WaitlistRequest> waitingList = new ArrayList<>();
 
@@ -72,19 +72,23 @@ public class CompController {
     }
 
     @PostMapping("/api/forfeit-match")
-    private void forfeitMatch(int userId) {
-        Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
-        if (userMatch!=null) {
-            for (int matchUserId:userMatch.getUsers()) {
-                if (matchUserId!=(int) userId) {
-                    User quitUser = DBController.getUsers().get(userId);
-                    userMatch.setQuitUser(quitUser);
-                    quitUser.setCurrentMatch(null);
-                    userMatch.setWinner(matchUserId);
-                    MatchController.sendMatchData(userMatch);
+    public void forfeitMatch(@RequestBody int userId) {
+        try {
+            Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
+            if (userMatch!=null) {
+                for (int matchUserId:userMatch.getUsers()) {
+                    if (matchUserId!=(int) userId) {
+                        User quitUser = DBController.getUsers().get(userId);
+                        userMatch.setQuitUser(quitUser);
+                        quitUser.setCurrentMatch(null);
+                        userMatch.setWinner(matchUserId);
+                        MatchController.sendMatchData(userMatch);
+                    }
                 }
+                
             }
-            
+        }catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

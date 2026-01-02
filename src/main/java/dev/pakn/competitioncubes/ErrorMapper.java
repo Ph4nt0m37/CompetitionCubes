@@ -17,9 +17,11 @@ public class ErrorMapper implements ErrorController {
         if (status!=null) {
             int code = Integer.parseInt(status.toString());
             if (code==HttpStatus.NOT_FOUND.value()) {
-                return "error-404.html";
+                return "error_pages/error-404.html";
             }else if (code==HttpStatus.INTERNAL_SERVER_ERROR.value()) {
-                return "error-500.html";
+                return "error_pages/error-500.html";
+            }else if (code==HttpStatus.FORBIDDEN.value()) {
+                return "error_pages/error-403.html";
             }
         }
         return "error.html";

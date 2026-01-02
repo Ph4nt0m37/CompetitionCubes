@@ -113,6 +113,10 @@ fetch("/header.html")
                     profileButton.style.display="none";
                     signInButton.style.display="block";
                 }
+
+                if (data['permissionLevel']['hasAdminDashboardAccess']) {
+                    document.getElementById("admin-dropdown-link").style.display="block";
+                }
             }).catch(function(err) {
                 //console.log('Failed to fetch!', err);
                 profileButton.style.display="none";

@@ -66,10 +66,11 @@ public class DBController {
                 int userId = userResultSet.getInt("userid");
                 String username = userResultSet.getString("username");
                 String wcaId = userResultSet.getString("wcaid");
+                int permLevel = userResultSet.getInt("permlevel");
                 int matchesWon = userResultSet.getInt("matcheswon");
                 int matchesLost = userResultSet.getInt("matcheslost");
                 Integer[] badgesArray = (Integer[]) userResultSet.getArray("badges").getArray();
-                userList.put(userId, new User(userId,username,wcaId,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn)));
+                userList.put(userId, new User(userId,username,wcaId,permLevel,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), 0, 0));
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -87,7 +88,7 @@ public class DBController {
                 String username = new JSONObject(userDataJSON).getString("username");
             
                 //creating sql query
-                String sqlQuery = "INSERT INTO users (wcaid, username, usersecret, matcheswon, matcheslost, badges) VALUES (?, ?, ?, ?, ?, ?);";
+                String sqlQuery = "INSERT INTO users (wcaid, username, usersecret, matcheswon, matcheslost, badges, permlevel) VALUES (?, ?, ?, ?, ?, ?, ?);";
                 PreparedStatement statement = conn.prepareStatement(sqlQuery);
                 statement.setString(1, userWcaId);
                 statement.setString(2, username);
@@ -95,6 +96,7 @@ public class DBController {
                 statement.setInt(4, 0);
                 statement.setInt(5, 0);
                 statement.setArray(6, conn.createArrayOf("INT", new Integer[0]));
+                statement.setInt(7, 0);
 
                 //sending sql query
                 statement.executeUpdate();
@@ -125,7 +127,7 @@ public class DBController {
                 }
 
                 //adding user to userList
-                userList.put(userId, new User(userId,username,userWcaId,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),new Integer[0],0,0,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn)));
+                userList.put(userId, new User(userId,username,userWcaId,0,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),new Integer[0],0,0,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), 0, 0));
 
                 conn.close();
                 return true;
@@ -162,13 +164,16 @@ public class DBController {
                 int userId = usersFound.getInt("userid");
                 String wcaId = usersFound.getString("wcaid");
                 String username = usersFound.getString("username");
+                int permLevel = usersFound.getInt("permlevel");
                 int matchesWon = usersFound.getInt("matcheswon");
                 int matchesLost = usersFound.getInt("matcheslost");
                 HashMap<Event, Integer> userElos = getElosByUserId(userId, conn);
                 HashMap<Event, Double> userSingles = getSinglesByUserId(userId, conn);
                 HashMap<Event, Double> userAverages = getAveragesByUserId(userId, conn);
                 Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
-                User newUser = new User(userId,username,wcaId,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn));
+                int strikes = usersFound.getInt("strikes");
+                int bans = usersFound.getInt("bans");
+                User newUser = new User(userId,username,wcaId,permLevel,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans);
                 conn.close();
                 return newUser;
             }else {
@@ -181,7 +186,7 @@ public class DBController {
         }
     }
 
-    //in theory useless since we have userList but I don't want to delete it because im scared smth will break
+    //should only use if you want to get directly from database, as databse updates more frequently than userList
     public static User getUserByID(int userId, Connection conn) {
         try {
             //getting resultset
@@ -190,13 +195,16 @@ public class DBController {
             if (usersFound.next()) {
                 String wcaId = usersFound.getString("wcaid");
                 String username = usersFound.getString("username");
+                int permLevel = usersFound.getInt("permlevel");
                 int matchesWon = usersFound.getInt("matcheswon");
                 int matchesLost = usersFound.getInt("matcheslost");
                 HashMap<Event, Integer> userElos = getElosByUserId(userId, conn);
                 HashMap<Event, Double> userSingles = getSinglesByUserId(userId, conn);
                 HashMap<Event, Double> userAverages = getAveragesByUserId(userId, conn);
                 Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
-                return new User(userId,username,wcaId,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn));
+                int strikes = usersFound.getInt("strikes");
+                int bans = usersFound.getInt("bans");
+                return new User(userId,username,wcaId,permLevel,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans);
             }else {
                 conn.close();
                 return null;
@@ -1062,13 +1070,68 @@ public class DBController {
         }
     }
 
-    public static void dnfSingle(int userId, Event event, double time) {
+    public static void dnfSingle(int userId, Event event, double time, String scramble) {
         User user = getUserByIDList(userId);
         user.removeSingle(event, time);
+
+        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+            String sqlQuerySingle = "DELETE FROM invalid_solves WHERE id=? AND single=? AND scramble=? AND event=?;";
+            PreparedStatement statementSingle = conn.prepareStatement(sqlQuerySingle);
+            statementSingle.setInt(1, userId);
+            statementSingle.setDouble(2, time);
+            statementSingle.setString(3, scramble);
+            statementSingle.setString(4, event.getEventId());
+
+            //sending sql update
+            statementSingle.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void dnfAverage(int userId, Event event, double time) {
         User user = getUserByIDList(userId);
         user.removeAverage(event, time);
+
+        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+            String sqlQuerySingle = "DELETE FROM invalid_solves WHERE id=? AND average=? AND event=?;";
+            PreparedStatement statementSingle = conn.prepareStatement(sqlQuerySingle);
+            statementSingle.setInt(1, userId);
+            statementSingle.setDouble(2, time);
+            statementSingle.setString(3, event.getEventId());
+
+            //sending sql update
+            statementSingle.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void refreshUser(int userId) {
+        try {
+            //connect to DB 
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+
+            //checking for userId
+            String findUsersQuery = "SELECT * FROM users WHERE userid=?";
+            PreparedStatement userQueryStatement = conn.prepareStatement(findUsersQuery);
+            userQueryStatement.setInt(1, userId);
+
+            //getting resultset
+            ResultSet userResultSet = userQueryStatement.executeQuery();
+            userResultSet.next();
+
+            String username = userResultSet.getString("username");
+            String wcaId = userResultSet.getString("wcaid");
+            int permLevel = userResultSet.getInt("permlevel");
+            int matchesWon = userResultSet.getInt("matcheswon");
+            int matchesLost = userResultSet.getInt("matcheslost");
+            Integer[] badgesArray = (Integer[]) userResultSet.getArray("badges").getArray();
+            userList.put(userId, new User(userId,username,wcaId,permLevel,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), 0, 0));
+
+            conn.close();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

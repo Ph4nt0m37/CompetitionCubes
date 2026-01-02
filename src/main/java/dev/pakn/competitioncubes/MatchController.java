@@ -34,7 +34,7 @@ public class MatchController {
     @SendTo("/room/found-match")
     public Match findMatch(WaitlistRequest waitlistRequest) {
         //cloning waitlist because we want to ignore userId and if we don't clone it we will accidentally remove userId from actual waitlist
-        ArrayList<WaitlistRequest> waitList = (ArrayList<WaitlistRequest>) CompController.getWaitingList().clone();
+        ArrayList<WaitlistRequest> waitList = (ArrayList<WaitlistRequest>) MatchFinder.getWaitingList().clone();
         for (int i=0;i<waitList.size();i++) {
             if (waitList.get(i).getUserId()==waitlistRequest.getUserId()) waitList.remove(i);
         }
@@ -45,8 +45,8 @@ public class MatchController {
             Event event = DBController.stringToEventMap.get(waitlistRequest.getEvent());
             if (oppReq.getEvent().equals(waitlistRequest.getEvent()) && Math.abs(user.getElo(event)-oppUser.getElo(event))<100) {
                 //fix
-                CompController.removeFromWaitingList(waitlistRequest.getUserId());
-                CompController.removeFromWaitingList(oppId);
+                MatchFinder.removeFromWaitingList(waitlistRequest.getUserId());
+                MatchFinder.removeFromWaitingList(oppId);
                 System.out.println("match found between "+waitlistRequest.getUserId()+" and "+oppId);
                 Match match = new Match(event,new int[]{waitlistRequest.getUserId(),oppId},(int)(Math.random()*9999999));
                 matches.add(match);
