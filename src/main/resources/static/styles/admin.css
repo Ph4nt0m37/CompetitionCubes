@@ -3,6 +3,7 @@ html, body {
     margin: 0;
     background-color: var(--main-bg-color);
     color: #333;
+    overflow: hidden;
 }
 
 .main {
@@ -95,18 +96,26 @@ h1 {
     flex-grow: 1;
 }
 
-#dashboard-div > .div-content {
+#div-content {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
-}
-
-.solve-entry {
+    overflow-y: auto;
+    height: 100%;
+    width: 80%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: var(--defecit-color);
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.entry {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--high-defecit-color);
     width: 21rem;
     border-radius: 10px;
     padding: 10px;
@@ -165,6 +174,18 @@ button {
     transform: scale(0.97);
 }
 
+.warn-button {
+    background-color: var(--yellow-button);
+}
+
+.warn-button:hover {
+    background-color: var(--yellow-button-hover);
+}
+
+.warn-button:active {
+    transform: scale(0.97);
+}
+
 .dnf-button {
     background-color: var(--error-color);
 }
@@ -188,12 +209,19 @@ button {
 .ban-button:active {
     transform: scale(0.97);
 }
+
 .template {
     display: none;
 }
 
 .solve-user-link {
     text-decoration: underline;
+}
+
+.notif-abs-div {
+  position: absolute;
+  right: 5px;
+  top: 20px;
 }
 
 #notif-div {

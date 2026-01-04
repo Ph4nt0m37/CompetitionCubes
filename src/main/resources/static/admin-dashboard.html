@@ -11,8 +11,10 @@
     <title>Admin Dashboard | Competition Cubes</title>
 </head>
 <body>
-    <div id="notif-div">
-        <p class="notification template">Notification</p>
+    <div class="notif-abs-div">
+        <div id="notif-div">
+            <p class="notification template">Notification</p>
+        </div>
     </div>
     <div class="main">
         <h1>Admin Dashboard</h1>
@@ -23,10 +25,10 @@
                 <button class="options-button" id="reported-users-button">Reported Users</button>
             </aside>
             <div id="dashboard-div">
-                <div class="div-content">
-                    <h2>Reported Solves</h2>
+                <div id="div-content">
+                    <h2 id="report-type-text">Reported Solves</h2>
                     <h3 id="loading-text">Loading...</h3>
-                    <div class="solve-entry template">
+                    <div class="entry solve-entry template">
                         <h2 class="solve-user">
                             <a class="solve-user-link" target="_blank">Username</a>
                         </h2>
@@ -36,6 +38,17 @@
                         <div class="buttons-div">
                             <button class="ok-button">OK</button>
                             <button class="dnf-button">DNF</button>
+                            <button class="ban-button">Ban</button>
+                        </div>
+                    </div>
+                    <div class="entry user-entry template">
+                        <h2 class="solve-user">
+                            <a class="solve-user-link" target="_blank">Username</a>
+                        </h2>
+                        <h3 class="solve-time report-reason">Reason: N/A</h3>
+                        <div class="buttons-div">
+                            <button class="ok-button">OK</button>
+                            <button class="warn-button">Warn</button>
                             <button class="ban-button">Ban</button>
                         </div>
                     </div>

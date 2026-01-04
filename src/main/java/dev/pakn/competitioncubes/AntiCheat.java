@@ -1,11 +1,13 @@
 package dev.pakn.competitioncubes;
 
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -121,6 +123,35 @@ public class AntiCheat {
         DBController.addInvalidAverage(user, event, avg, wcaSingle, wcaAverage);
     }
 
+    @PostMapping("/api/ok-single")
+    public boolean okSingle(@RequestBody PostRequestClass.DNFTime dnfTime) {
+        int userId = dnfTime.getUserId();
+        String event = dnfTime.getEvent();
+        double time = dnfTime.getTime();
+        String scramble = dnfTime.getScramble();
+        try {
+            DBController.removeSingle(userId, Event.valueOf(event), time, scramble);
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @PostMapping("/api/ok-average")
+    public boolean okAverage(@RequestBody PostRequestClass.DNFTime dnfTime) {
+        int userId = dnfTime.getUserId();
+        String event = dnfTime.getEvent();
+        double time = dnfTime.getTime();
+        try {
+            DBController.removeAverage(userId, Event.valueOf(event), time);
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     @PostMapping("/api/dnf-single")
     public boolean dnfSingle(@RequestBody PostRequestClass.DNFTime dnfTime) {
         int userId = dnfTime.getUserId();
@@ -147,6 +178,99 @@ public class AntiCheat {
         }catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @PostMapping("/api/report-user")
+    public boolean reportUser(@RequestBody PostRequestClass.UserReport userReport) {
+        try {
+            DBController.addUserReport(userReport.getUserId(), userReport.getReason());
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @PostMapping("/api/remove-user-report")
+    public boolean removeUserReport(@RequestBody ReportedUser reportedUser) {
+        try {
+            DBController.removeUserReport(reportedUser);
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @PostMapping("/api/warn-user")
+    public boolean warnUser(@RequestParam("id") int userId) {
+        try {
+            DBController.addUserWarning(userId);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+    }
+
+    @PostMapping("/api/set-user-warnings")
+    public boolean warnUser(@RequestParam("id") int userId, @RequestParam("warnings") int warnings) {
+        try {
+            DBController.setUserWarnings(userId, warnings);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+    }
+
+    @PostMapping("/api/ban-user")
+    public boolean banUser(@RequestBody PostRequestClass.UserBan userBan) {
+        int userId = userBan.getUserId();
+        long expirationDate = System.currentTimeMillis()+userBan.getDuration();
+
+        try {
+            DBController.addBannedUser(userId, expirationDate);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+    }
+
+    @PostMapping("/api/unban-user")
+    public boolean banUser(@RequestParam("id") int userId) {
+        try {
+            DBController.removeBannedUser(userId);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+    }
+
+
+
+
+
+
+
+
+
+    //Ban Timer. This is only removes the user from the database! If a user searched for a match, their ban timer will be calculated then as well
+    //This method is primarily for redundancy, as if a user never searches for a match, their ban will never be removed from the database. this method will ensure they are removed from the database
+    //This method also reloads the user bans directly from the database in case I added from there
+    @Scheduled(fixedRate = 3600000) //1 hour
+    private void unbanUsersCheck() {
+        //refresh from db
+        DBController.loadUserBans();
+
+        ArrayList<UserBan> userBans = DBController.getBannedUsers();
+        long currTimeMillis = System.currentTimeMillis();
+
+        //go through all users and check if the current time is past their expiration date
+        for (UserBan userBan:userBans) {
+            if (currTimeMillis>userBan.getExpirationDate()) {
+                //will only remove them from database!
+                DBController.removeBannedUser(userBan.getUserId());
+            }
         }
     }
 }

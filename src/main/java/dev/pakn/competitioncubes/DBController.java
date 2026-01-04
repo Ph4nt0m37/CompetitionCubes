@@ -45,6 +45,7 @@ public class DBController {
     private static String staticDbURL;
 
     private static HashMap<Integer, User> userList = new HashMap<>();
+    private static HashMap<Integer, UserBan> bannedUserList = new HashMap<>();
 
     private static HashMap<Event, String> eventDBNames = new HashMap<>();
     public static HashMap<String, Event> stringToEventMap = new HashMap<>();
@@ -61,7 +62,7 @@ public class DBController {
         try {
             //connect to DB 
             Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
-            ResultSet userResultSet = getAllUsers();
+            ResultSet userResultSet = getAllUsers(conn);
             while (userResultSet.next()) {
                 int userId = userResultSet.getInt("userid");
                 String username = userResultSet.getString("username");
@@ -72,6 +73,10 @@ public class DBController {
                 Integer[] badgesArray = (Integer[]) userResultSet.getArray("badges").getArray();
                 userList.put(userId, new User(userId,username,wcaId,permLevel,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), 0, 0));
             }
+
+            loadUserBans(conn);
+
+            conn.close();
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -534,11 +539,8 @@ public class DBController {
         }
     }
 
-    public ResultSet getAllUsers() {
+    public ResultSet getAllUsers(Connection conn) {
         try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
-
             //checking for userId
             String findUsersQuery = "SELECT * FROM users";
             PreparedStatement usersQueryStatement = conn.prepareStatement(findUsersQuery);
@@ -546,7 +548,6 @@ public class DBController {
             //getting resultset
             ResultSet usersFound = usersQueryStatement.executeQuery();
 
-            conn.close();
             return usersFound;
         }catch (Exception e) {
             e.printStackTrace();
@@ -1021,8 +1022,8 @@ public class DBController {
     }
 
     @GetMapping("/api/get-invalid-times")
-    public static ArrayList<InvalidTime> getInvalidTimes() {
-        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+    public ArrayList<InvalidTime> getInvalidTimes() {
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUsername, dbPassword)) {
             String sqlQuerySingle = "SELECT * FROM invalid_solves WHERE NOT single IS null;";
             PreparedStatement statementSingle = conn.prepareStatement(sqlQuerySingle);
 
@@ -1070,10 +1071,7 @@ public class DBController {
         }
     }
 
-    public static void dnfSingle(int userId, Event event, double time, String scramble) {
-        User user = getUserByIDList(userId);
-        user.removeSingle(event, time);
-
+    public static void removeSingle(int userId, Event event, double time, String scramble) {
         try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
             String sqlQuerySingle = "DELETE FROM invalid_solves WHERE id=? AND single=? AND scramble=? AND event=?;";
             PreparedStatement statementSingle = conn.prepareStatement(sqlQuerySingle);
@@ -1089,10 +1087,7 @@ public class DBController {
         }
     }
 
-    public static void dnfAverage(int userId, Event event, double time) {
-        User user = getUserByIDList(userId);
-        user.removeAverage(event, time);
-
+    public static void removeAverage(int userId, Event event, double time) {
         try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
             String sqlQuerySingle = "DELETE FROM invalid_solves WHERE id=? AND average=? AND event=?;";
             PreparedStatement statementSingle = conn.prepareStatement(sqlQuerySingle);
@@ -1105,6 +1100,18 @@ public class DBController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void dnfSingle(int userId, Event event, double time, String scramble) {
+        User user = getUserByIDList(userId);
+        user.removeSingle(event, time);
+        removeSingle(userId, event, time, scramble);
+    }
+
+    public static void dnfAverage(int userId, Event event, double time) {
+        User user = getUserByIDList(userId);
+        user.removeAverage(event, time);
+        removeAverage(userId, event, time);
     }
 
     public static void refreshUser(int userId) {
@@ -1131,6 +1138,218 @@ public class DBController {
 
             conn.close();
         }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @GetMapping("/api/get-reported-users")
+    public ArrayList<ReportedUser> getReportedUsers() {
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUsername, dbPassword)) {
+            String sqlQuerySingle = "SELECT * FROM reported_users";
+            PreparedStatement statementSingle = conn.prepareStatement(sqlQuerySingle);
+
+            //sending sql query
+            ResultSet usersSet = statementSingle.executeQuery();
+
+            ArrayList<ReportedUser> reportedUsers= new ArrayList<>();
+
+            while (usersSet.next()) {
+                int userId = usersSet.getInt("id");
+                String reason = usersSet.getString("reason");
+                reportedUsers.add(new ReportedUser(userId, getUserByIDList(userId).getUsername() ,reason));
+            }
+
+            return reportedUsers;
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    public static void addUserReport(int userId, String reason) {
+        //connect to DB
+        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+            String sqlQuery = "INSERT INTO reported_users (id, reason) VALUES (?, ?);";
+            PreparedStatement statement = conn.prepareStatement(sqlQuery);
+            statement.setInt(1, userId);
+            statement.setString(2, reason);
+
+            //sending sql query
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static void removeUserReport(ReportedUser reportedUser) {
+        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+            String sqlQuerySingle = "DELETE FROM reported_users WHERE id=? AND reason=?;";
+            PreparedStatement statementSingle = conn.prepareStatement(sqlQuerySingle);
+            statementSingle.setInt(1, reportedUser.getUserId());
+            statementSingle.setString(2, reportedUser.getReason());
+
+            //sending sql update
+            statementSingle.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean setUserWarnings(int userId, int strikes) {
+        try {
+            //connect to DB
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        
+            //creating sql query
+            String sqlQuery = "UPDATE users SET strikes=? WHERE userid=?";
+            PreparedStatement statement = conn.prepareStatement(sqlQuery);
+            statement.setInt(1, strikes);
+            statement.setInt(2, userId);
+
+            //sending sql query
+            statement.executeUpdate();
+
+            conn.close();
+            return true;
+        }catch (Exception e) {
+            System.out.println("Failed to connect to db!");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean addUserWarning(int userId) {
+        try {
+            //connect to DB
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        
+            //creating sql query
+            String sqlQuery = "UPDATE users SET strikes=strikes+1 WHERE userid=?";
+            PreparedStatement statement = conn.prepareStatement(sqlQuery);
+            statement.setInt(1, userId);
+
+            //sending sql query
+            statement.executeUpdate();
+
+            conn.close();
+            return true;
+        }catch (Exception e) {
+            System.out.println("Failed to connect to db!");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static void addBannedUser(int userId, long expirationDate) {
+        //connect to DB
+        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+            String sqlQuery = "INSERT INTO banned_users (id, expirationdate) VALUES (?, ?);";
+            PreparedStatement statement = conn.prepareStatement(sqlQuery);
+            statement.setInt(1, userId);
+            statement.setLong(2, expirationDate);
+
+            //sending sql query
+            statement.executeUpdate();
+
+            bannedUserList.put(userId, new UserBan(userId, expirationDate));
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static void removeBannedUser(int userId) {
+        //connect to DB
+        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+            String sqlQuery = "DELETE FROM banned_users WHERE id=?";
+            PreparedStatement statement = conn.prepareStatement(sqlQuery);
+            statement.setInt(1, userId);
+
+            //sending sql query
+            statement.executeUpdate();
+
+            bannedUserList.remove(userId);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static ArrayList<UserBan> getBannedUsers(Connection conn) {
+        try {
+            String sqlQuerySingle = "SELECT * FROM banned_users";
+            PreparedStatement statement = conn.prepareStatement(sqlQuerySingle);
+
+            //sending sql query
+            ResultSet usersSet = statement.executeQuery();
+
+            ArrayList<UserBan> userBans= new ArrayList<>();
+
+            while (usersSet.next()) {
+                int userId = usersSet.getInt("id");
+                long expirationDate = usersSet.getLong("expirationdate");
+                userBans.add(new UserBan(userId, expirationDate));
+            }
+
+            return userBans;
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static ArrayList<UserBan> getBannedUsers() {
+        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+            String sqlQuerySingle = "SELECT * FROM banned_users";
+            PreparedStatement statement = conn.prepareStatement(sqlQuerySingle);
+
+            //sending sql query
+            ResultSet usersSet = statement.executeQuery();
+
+            ArrayList<UserBan> userBans= new ArrayList<>();
+
+            while (usersSet.next()) {
+                int userId = usersSet.getInt("id");
+                long expirationDate = usersSet.getLong("expirationdate");
+                userBans.add(new UserBan(userId, expirationDate));
+            }
+
+            return userBans;
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @GetMapping("/api/get-banned-users")
+    public ArrayList<UserBan> getBannedUsersRequest() {
+        return getBannedUsers();
+    }
+
+    public static UserBan getBannedUser(int userId) {
+        return bannedUserList.get(userId);
+    }
+
+    private static void loadUserBans(Connection conn) {
+        ArrayList<UserBan> userBans = getBannedUsers(conn);
+        for (UserBan userBan:userBans) {
+            bannedUserList.put(userBan.getUserId(), userBan);
+        }
+    }
+
+    public static void loadUserBans() {
+        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);) {
+            loadUserBans(conn);
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

@@ -14,22 +14,34 @@ public class MatchFinder {
     private static ArrayList<WaitlistRequest> waitingList = new ArrayList<>();
 
     @PostMapping("/waiting-list")
-    private boolean addToWaitingList(@RequestBody String userIdJSON) {
+    private WaitlistResult addToWaitingList(@RequestBody String userIdJSON) {
         JSONObject requestJson = new JSONObject(userIdJSON);
         int userId = requestJson.getInt("userId");
         String event = requestJson.getString("event");
-        System.out.println("added "+userId+" to waiting list");
+
+        //check if the user is banned
+        UserBan userBan = DBController.getBannedUser(userId);
+        if (userBan != null) {
+            if (System.currentTimeMillis()>userBan.getExpirationDate()) {
+                //remove user from database and continue
+                DBController.removeBannedUser(userBan.getUserId());
+            }else {
+                return WaitlistResult.BANNED;
+            }
+        }
+        
         Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
         if (userMatch!=null) {
-            return false;
+            return WaitlistResult.IN_MATCH;
         }
         for (WaitlistRequest req:waitingList) {
             if (req.getUserId()==userId) {
-                return false;
+                return WaitlistResult.IN_MATCH;
             }
         }
         waitingList.add(new WaitlistRequest(userId, event));
-        return true;
+        System.out.println("added "+userId+" to waiting list");
+        return WaitlistResult.SUCCESS;
     }
 
     //Idk what i was doing when i wrote this lol

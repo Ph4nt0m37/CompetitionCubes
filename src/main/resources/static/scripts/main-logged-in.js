@@ -140,40 +140,47 @@ function startMatchSearch(stompClient) {
     }).then((result)=> {
         return result.json();
     }).then((data)=> {
-        if (!data) {
+        const waitlistResult = data;
+        if (waitlistResult==="SUCCESS") {
+            searchButton.textContent = "Cancel Search";
+            searchText.textContent = `Searching...`;
+            searchText.style.color="#555";
+            searchText.style.display="block";
+
+            stompClient.activate();
+
+            //searching for user interval. also controls dots
+            let dotCount = 1;
+            searchInt = setInterval(()=>{
+                //search
+                if (dotCount===3) {
+                    stompClient.publish({
+                        destination: "/app/find-match",
+                        body: JSON.stringify({
+                            'userId':userId,
+                            'event':'3x3'
+                        })
+                    });
+                }
+
+                //dots
+                searchText.textContent = `Searching${".".repeat(dotCount)}`;
+                dotCount++;
+                if (!(dotCount%4)) {
+                    dotCount=1;
+                }
+            },250);
+        }else {
             searchText.style.display="block";
             searchText.style.color="#e23333";
-            searchText.textContent = "You are already searching for (or are in) a match!"
-            return;
+            if (waitlistResult==="IN_MATCH") {
+                searchText.textContent = "You are already searching for (or are in) a match!"
+                return;
+            }else if (waitlistResult==="BANNED") {
+                searchText.textContent = "You have been banned from competing until 00:00:00";
+                return;
+            }
         }
-        searchButton.textContent = "Cancel Search";
-        searchText.textContent = `Searching...`;
-        searchText.style.color="#555";
-        searchText.style.display="block";
-
-        stompClient.activate();
-
-        //searching for user interval. also controls dots
-        let dotCount = 1;
-        searchInt = setInterval(()=>{
-            //search
-            if (dotCount===3) {
-                stompClient.publish({
-                    destination: "/app/find-match",
-                    body: JSON.stringify({
-                        'userId':userId,
-                        'event':'3x3'
-                    })
-                });
-            }
-
-            //dots
-            searchText.textContent = `Searching${".".repeat(dotCount)}`;
-            dotCount++;
-            if (!(dotCount%4)) {
-                dotCount=1;
-            }
-        },250);
     });
 }
 

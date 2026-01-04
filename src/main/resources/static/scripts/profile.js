@@ -252,6 +252,31 @@ closeReportButton.addEventListener("click",()=>{
     reportReasonDropdown.children[0].selected = "selected";
 });
 
+const reportButton = document.getElementById("confirm-report-button");
+reportButton.addEventListener("click",()=>{
+    const reportReason = reportReasonDropdown.value;
+    if (reportReason!=="default") {
+        fetch("/api/report-user", {
+            method: "POST",
+            body: JSON.stringify({
+                userId: userId,
+                reason: reportReasonDropdown.value,
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        }).then((resp)=>{
+            return resp.json();
+        }).then((data)=>{
+            actionsPopup.style.display="none";
+            createNotification(`Successfully reported user for ${reportReasonDropdown.value}`);
+            reportReasonDropdown.children[0].selected = "selected";
+        });
+    }else {
+        createNotification(`Please select a reason for reporting!`);
+    }
+});
+
 const flagButton = document.getElementById("report-flag");
 const actionsPopup = document.getElementById("background-overlay");
 const body = document.getElementsByTagName("body")[0];
@@ -277,3 +302,19 @@ document.addEventListener("keydown",(event)=>{
         reportReasonDropdown.children[0].selected = "selected";
     }
 });
+
+const notificationTemplate = document.querySelector(".notification.template");
+const notificationBox = document.getElementById("notif-div");
+
+function createNotification(text) {
+    const notif = notificationTemplate.cloneNode(true);
+    notif.textContent = text;
+    notif.classList.remove("template");
+    notificationBox.appendChild(notif);
+    setTimeout(()=>{
+        notif.classList.add("fade-out");
+        setTimeout(()=>{
+            notif.remove();
+        },1500);
+    },5000);
+}

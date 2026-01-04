@@ -47,4 +47,60 @@ public class PostRequestClass {
             this.scramble = scramble;
         }
     }
+
+    public static class UserReport {
+        private int userId;
+        private String reason;
+
+        public UserReport() {};
+
+        public UserReport(int userId, String reason) {
+            this.userId = userId;
+            this.reason = reason;
+        }
+
+        public int getUserId() {
+            return userId;
+        }
+
+        public String getReason() {
+            return reason;
+        }
+
+        public void setUserId(int userId) {
+            this.userId = userId;
+        }
+
+        public void setReason(String reason) {
+            this.reason = reason;
+        }
+    }
+
+    public static class UserBan {
+        private int userId;
+        private long duration;
+
+        public UserBan() {}
+
+        public UserBan(int userId, long duration) {
+            this.userId = userId;
+            this.duration = duration;
+        }
+
+        public int getUserId() {
+            return userId;
+        }
+
+        public void setUserId(int userId) {
+            this.userId = userId;
+        }
+
+        public long getDuration() {
+            return duration;
+        }
+
+        public void setDuration(long duration) {
+            this.duration = duration;
+        }
+    }
 }

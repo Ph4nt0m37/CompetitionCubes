@@ -492,3 +492,48 @@ button {
 .report-button:active {
     transform: scale(0.97);
 }
+
+.template {
+    display: none;
+}
+
+.notif-abs-div {
+  position: absolute;
+  right: 5px;
+  top: 90px;
+}
+
+#notif-div {
+  position: sticky;
+  margin-left: auto;
+  margin-right: 10px;
+  width: fit-content;
+  top: 10px;
+}
+
+.notification {
+    background-color: var(--notification-color);
+    width: 15rem;
+    text-align: center;
+    padding: 10px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--h2-color);
+    box-shadow: 0 4px 12px rgb(0,0,0,0.25);
+    color: var(--dark-font-color);
+    animation: fadeIn 0.15s ease-out;
+    z-index: 2;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; 
+       display: flex;
+    }
+  100% { opacity: 1; }
+}
+
+.fade-out { animation: fadeOut 2.5s; }
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
