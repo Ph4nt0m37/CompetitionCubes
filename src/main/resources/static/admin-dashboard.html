@@ -11,6 +11,57 @@
     <title>Admin Dashboard | Competition Cubes</title>
 </head>
 <body>
+    <div id="background-overlay">
+        <div id="ban-popup">
+            <button id="close-ban-button">
+                <img src="/images/x.svg">
+            </button>
+            <h1 class="ban-user-text">Ban User</h1>
+            <div class="ban-section">
+                <h2 class="ban-form-text">Report Reason</h2>
+                <select id="ban-reason-dropdown">
+                    <option value="default" selected="selected">Ban reason...</option>
+                    <option value="username">Username</option>
+                    <option value="smurfing">Smurfing</option>
+                </select>
+                <h2 class="ban-form-text">Ban Time</h2>
+                <div class="ban-time-div perma-ban-div">
+                    <input type="checkbox" id="perma-ban-check" name="perma-ban" value="Permanent Ban">
+                    <h3 class="ban-time-text">Permanent Ban</h3>
+                </div>
+                <div class="ban-times-div">
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-year" placeholder="Years" min="0" max="99999" autocomplete="off">
+                        <h3 class="ban-time-text">Years</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-month" placeholder="Months" min="0" max="12" autocomplete="off">
+                        <h3 class="ban-time-text">Months</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-day" placeholder="Days" min="0" max="31" autocomplete="off">
+                        <h3 class="ban-time-text">Days</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-hour" placeholder="Hours" min="0" max="24" autocomplete="off">
+                        <h3 class="ban-time-text">Hours</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-mins" placeholder="Minutes" min="0" max="60" autocomplete="off">
+                        <h3 class="ban-time-text">Minutes</h3>
+                    </div>
+                </div>
+            </div>
+            <button id="confirm-ban-button" class="ban-button">Ban</button>
+        </div>
+        <div id="ban-confirm-popup">
+            <p class="ban-confirm-text">Are you sure you want to forfeit?</p>
+            <div class="ban-buttons">
+                <button id="ban-confirm" class="ban-page-button">Yes</button>
+                <button id="ban-deny" class="ban-page-button">No</button>
+            </div>
+        </div>
+    </div>
     <div class="notif-abs-div">
         <div id="notif-div">
             <p class="notification template">Notification</p>

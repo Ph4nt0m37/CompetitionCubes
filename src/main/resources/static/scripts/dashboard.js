@@ -15,6 +15,85 @@ reportedSolvesButton.style.backgroundColor="#d0d0d0";;
 const reportTypeText = document.getElementById("report-type-text");
 const loadingText = document.getElementById("loading-text");
 
+const actionsPopup = document.getElementById("background-overlay");
+
+const banPopup = document.getElementById("ban-confirm-popup");
+banPopup.style.display="none";
+
+const yearTimeInput = document.getElementById("ban-time-year");
+const monthTimeInput = document.getElementById("ban-time-month");
+const dayTimeInput = document.getElementById("ban-time-day");
+const hourTimeInput = document.getElementById("ban-time-hour");
+const minuteTimeInput = document.getElementById("ban-time-mins");
+
+const banConfirmButton = document.getElementById("ban-confirm");
+banConfirmButton.addEventListener("click",()=>{
+    actionsPopup.style.display="none";
+    banPopup.style.display="none";
+    fetch("/api/ban-user", {
+        method: "POST",
+        body: JSON.stringify({
+            userId: 71,
+            //TODO: check valid input
+            duration: (yearTimeInput.value * 31557600000)+(monthTimeInput.value * 2629800000)+(dayTimeInput.value * 86400000)+(hourTimeInput.value * 3600000)+(minuteTimeInput.value * 60000)
+        }),
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    });
+});
+
+const banDenyButton = document.getElementById("forfeit-deny");
+banDenyButton.addEventListener("click",()=>{
+    banPopup.style.display="none";
+});
+
+actionsPopup.addEventListener("click",(event)=>{
+    if (event.target===event.currentTarget && banPopup.style.display==="none") {
+        if (banPopup.style.display==="none") {
+            actionsPopup.style.display="none";
+        }
+        //resetting and hiding the ban popup
+        banReasonDropdown.children[0].selected = "selected";
+        banPopup.style.display="none";
+    }
+});
+
+document.addEventListener("keydown",(event)=>{
+    if (event.key=="Escape" && banPopup.style.display==="none") {
+        if (banPopup.style.display==="none") {
+            actionsPopup.style.display="none";
+        }
+        //resetting and hiding the ban popup
+        banReasonDropdown.children[0].selected = "selected";
+        banPopup.style.display="none";
+    }
+});
+
+const banReasonDropdown = document.getElementById("ban-reason-dropdown");
+
+const banPopup = document.getElementById("ban-popup")
+const banUserButtons = document.getElementById("ban-user-button");
+banUserButtons.addEventListener("click",()=>{
+    if (banPopup.style.display==="none")
+        banPopup.style.display="flex";
+});
+
+const clsoeBanButton = document.getElementById("close-ban-button");
+clsoeBanButton.addEventListener("click",()=>{
+    //resetting and hiding the ban popup
+    banReasonDropdown.children[0].selected = "selected";
+    banPopup.style.display="none";
+});
+
+const closeMenuButton = document.getElementById("close-menu-button");
+closeMenuButton.addEventListener("click",()=>{
+    if (banPopup.style.display==="none") {
+        actionsPopup.style.display="none";
+        banPopup.style.display="none";
+    }
+});
+
 getInvalidTimes()
 
 reportedSolvesButton.addEventListener("click",()=>{

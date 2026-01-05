@@ -26,22 +26,22 @@ public class MatchFinder {
                 //remove user from database and continue
                 DBController.removeBannedUser(userBan.getUserId());
             }else {
-                return WaitlistResult.BANNED;
+                return new WaitlistResult(WaitlistCode.BANNED, userBan.getExpirationDate());
             }
         }
         
         Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
         if (userMatch!=null) {
-            return WaitlistResult.IN_MATCH;
+            return new WaitlistResult(WaitlistCode.IN_MATCH);
         }
         for (WaitlistRequest req:waitingList) {
             if (req.getUserId()==userId) {
-                return WaitlistResult.IN_MATCH;
+                return new WaitlistResult(WaitlistCode.IN_MATCH);
             }
         }
         waitingList.add(new WaitlistRequest(userId, event));
         System.out.println("added "+userId+" to waiting list");
-        return WaitlistResult.SUCCESS;
+        return new WaitlistResult(WaitlistCode.SUCCESS);
     }
 
     //Idk what i was doing when i wrote this lol

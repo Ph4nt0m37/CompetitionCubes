@@ -140,8 +140,9 @@ function startMatchSearch(stompClient) {
     }).then((result)=> {
         return result.json();
     }).then((data)=> {
-        const waitlistResult = data;
-        if (waitlistResult==="SUCCESS") {
+        const waitlistCode = data['waitlistCode'];
+        const expirationDate = data['expirationDate'].replace(" ",", ")+" UTC-5";
+        if (waitlistCode==="SUCCESS") {
             searchButton.textContent = "Cancel Search";
             searchText.textContent = `Searching...`;
             searchText.style.color="#555";
@@ -173,11 +174,11 @@ function startMatchSearch(stompClient) {
         }else {
             searchText.style.display="block";
             searchText.style.color="#e23333";
-            if (waitlistResult==="IN_MATCH") {
+            if (waitlistCode==="IN_MATCH") {
                 searchText.textContent = "You are already searching for (or are in) a match!"
                 return;
-            }else if (waitlistResult==="BANNED") {
-                searchText.textContent = "You have been banned from competing until 00:00:00";
+            }else if (waitlistCode==="BANNED") {
+                searchText.textContent = `You have been banned from competing until ${expirationDate}.`;
                 return;
             }
         }
