@@ -14,11 +14,18 @@ closeInfoX.addEventListener("click",()=>{
     body.style.overflowY="visible";
 });
 
+const currBannedText = document.getElementById("curr-banned-text");
+
 viewInfoButton.addEventListener("click",()=>{
     actionsPopup.style.display="grid";
     infoPopup.style.display = "flex";
     warningsText.textContent = `Warnings: ${user['strikes']}`;
     bansText.textContent = `Bans: ${user['bans']}`;
+    const userBan = user['userBan'];
+    if (userBan) {
+        currBannedText.style.display="block";
+        currBannedText.textContent = `Currently banned until ${new Date(userBan['expirationDate']).toLocaleString()} (local time) for "${userBan['reason']}"`;
+    }
     body.style.overflowY="hidden";
 });
 

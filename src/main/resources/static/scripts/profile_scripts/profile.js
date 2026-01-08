@@ -3,8 +3,6 @@ const usernameText = document.getElementById("username-text");
 const wcaLink = document.getElementById("wca-link");
 const eloText = document.getElementById("elo-text");
 
-let pathname = window.location.pathname.split("/");
-
 const EVENTS = [
     "TWO_BY_TWO",
     "THREE_BY_THREE",
@@ -74,6 +72,7 @@ const rankEnumToRankText = {
     "CHAMPION":"Champion",
 }
 
+let pathname = window.location.pathname.split("/");
 let userId = pathname[pathname.length-1];
 
 //if I switch back to event buttons i'll use this

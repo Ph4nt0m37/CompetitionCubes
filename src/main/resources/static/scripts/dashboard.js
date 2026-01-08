@@ -73,6 +73,11 @@ const banUserText = document.getElementById("ban-user-text");
 
 const banConfirmButton = document.getElementById("ban-confirm");
 banConfirmButton.addEventListener("click",()=>{
+    if (banReasonDropdown.value==="default") {
+        createNotification("Please select a ban reason");
+        return;
+    }
+
     actionsPopup.style.display="none";
     banConfirmPopup.style.display="none";
 
@@ -97,9 +102,9 @@ banConfirmButton.addEventListener("click",()=>{
         return resp.json();
     }).then(async success=>{
         if (success) {
-            createNotification(`Successfully banned ${currUserReport.username} for "${currUserReport.reason}"`);
+            createNotification(`Successfully banned ${currUserReport.username} for "${reason}"`);
             currAction.remove();
-            await removeReport(currUserReport.userId, currUserReport.username, currUserReport.reason);
+            await removeReport(currUserReport.userId, currUserReport.username, reason);
             if (currReportMethod==reportingMethods.SOLVES) getInvalidTimes();
             if (currReportMethod==reportingMethods.USERS) getReportedUsers();
         }

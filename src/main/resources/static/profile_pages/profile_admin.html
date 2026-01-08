@@ -46,15 +46,70 @@
                     <p class="warnings-text" id="warnings-text">Warnings: N/A</p>
                     <p class="bans-text" id="bans-text">Bans: N/A</p>
                 </div>
+                <p id="curr-banned-text">Currently banned until [unknown] for [unknown]</p>
                 <h1 class="report-form-text">Admin Actions</h1>
                 <div class="admin-buttons-div">
-                    <button class="warn-button">Warn</button>
-                    <button class="ban-button">Ban</button>
+                    <button class="warn-button" id="warn-button">Warn</button>
+                    <button class="ban-button" id="ban-button">Ban</button>
                 </div>
             </div>
             <!--
             <button id="close-info-button" class="close-info-button">Close</button>
             -->
+        </div>
+        <div id="ban-popup">
+            <button id="close-ban-button">
+                <img src="/images/x.svg" draggable="false">
+            </button>
+            <h1 class="ban-user-text" id="ban-user-text">Ban User</h1>
+            <div class="ban-section">
+                <h2 class="ban-form-text">Report Reason</h2>
+                <select id="ban-reason-dropdown">
+                    <option value="default" selected="selected">Ban reason...</option>
+                    <option value="username">Username</option>
+                    <option value="smurfing">Smurfing</option>
+                    <option value="other">Other</option>
+                </select>
+                <div id="other-reason-div">
+                    <h2 class="ban-form-text other-reason">Other Reason</h2>
+                    <input type="text" class="ban-time-input other-reason" id="other-ban-reason" placeholder="Other reason..." maxlength="250" autocomplete="off">
+                </div>
+                <h2 class="ban-form-text">Ban Time</h2>
+                <div class="ban-time-div perma-ban-div">
+                    <input type="checkbox" id="perma-ban-check" name="perma-ban" value="Permanent Ban">
+                    <h3 class="ban-time-text">Permanent Ban</h3>
+                </div>
+                <div class="ban-times-div">
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-year" placeholder="Years" min="0" max="99999" autocomplete="off">
+                        <h3 class="ban-time-text">Years</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-month" placeholder="Months" min="0" max="12" autocomplete="off">
+                        <h3 class="ban-time-text">Months</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-day" placeholder="Days" min="0" max="31" autocomplete="off">
+                        <h3 class="ban-time-text">Days</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-hour" placeholder="Hours" min="0" max="24" autocomplete="off">
+                        <h3 class="ban-time-text">Hours</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-mins" placeholder="Minutes" min="0" max="60" autocomplete="off">
+                        <h3 class="ban-time-text">Minutes</h3>
+                    </div>
+                </div>
+            </div>
+            <button id="confirm-ban-button" class="confirm-ban-button">Ban</button>
+        </div>
+        <div id="ban-confirm-popup">
+            <p class="ban-confirm-text">Are you sure you want to ban this user?</p>
+            <div class="ban-buttons">
+                <button id="ban-confirm" class="ban-page-button">Yes</button>
+                <button id="ban-deny" class="ban-page-button">No</button>
+            </div>
         </div>
     </div>
 
@@ -149,4 +204,5 @@
 <script type="module" src="/scripts/navbar.js"></script>
 <script type="module" src="/scripts/profile_scripts/profile.js"></script>
 <script type="module" src="/scripts/profile_scripts/profile_user.js"></script>
+<script type="module" src="/scripts/profile_scripts/profile_admin.js"></script>
 </html>

@@ -476,7 +476,7 @@ button {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     width: 22rem;
     height: 8.5rem;
-    display: flex;
+    display: none;
     background-color: var(--main-bg-color);
     z-index: 5;
     border-radius: 12px;
@@ -533,9 +533,17 @@ button {
 }
 
 .confirm-ban-button {
-    background-color: var(--ban-color);
+    background-color: var(--dark-red-button);
     font-size: 1.25rem;
     padding: 10px 35px;
+}
+
+.confirm-ban-button:hover {
+    background-color: var(--dark-red-button-hover);
+}
+
+.confirm-ban-button:active {
+    scale: 0.97;
 }
 
 #other-reason-div {

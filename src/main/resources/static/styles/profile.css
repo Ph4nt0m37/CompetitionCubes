@@ -564,7 +564,7 @@ button {
 #info-popup {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   width: 16rem;
-  height: 16rem;
+  min-height: 14rem;
   display: none;
   background-color: var(--main-bg-color);
   z-index: 5;
@@ -636,6 +636,7 @@ button {
     display: flex;
     justify-content: center;
     gap: 0.75rem;
+    margin-bottom: 5px;
 }
 
 .admin-buttons-div > button {
@@ -672,4 +673,302 @@ button {
 
 .ban-button:active {
     transform: scale(0.97);
+}
+
+#curr-banned-text {
+  color: var(--ban-color);
+  text-align: center;
+  margin: 0;
+  width: 95%;
+  display: none;
+}
+
+#ban-popup {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 22rem;
+    height: 34rem;
+    display: none;
+    background-color: var(--main-bg-color);
+    z-index: 5;
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: fadeIn 0.15s ease-out;
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+}
+
+.ban-user-text {
+    color: var(--ban-color);
+    font-size: 1.8rem;
+    margin: 15px;
+}
+
+.ban-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.ban-form-text {
+    color: black;
+    font-size: 1.2rem;
+}
+
+#ban-reason-dropdown {
+    font-weight: 700;
+    border: #555 2px solid;
+    padding: 3px 35px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 5px;
+    color: black;
+    transition: background-color 0.3s ease;
+}
+
+#ban-reason-dropdown, ::picker(select) {
+    appearance: base-select;
+}
+
+#ban-reason-dropdown:hover {
+    background-color: var(--high-defecit-color);
+}
+
+#ban-reason-dropdown::picker-icon {
+    position: relative;
+    top: 3px;
+    content: url("../images/chevron-down-gray.svg");
+    transform-origin: center 12px;
+    transition: 0.15s rotate;
+    transform: scale(0.85);
+}
+
+#ban-reason-dropdown:open::picker-icon {
+  rotate: 180deg;
+}
+
+#ban-reason-dropdown > option {
+    border: 2px solid #555;
+    background-color: var(--defecit-color);
+    font-weight: 100;
+    outline: none;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+#ban-reason-dropdown > option:first-of-type {
+  border-radius: 4px 4px 0 0;
+}
+
+#ban-reason-dropdown > option:last-of-type {
+  border-radius: 0 0 4px 4px;
+}
+
+::picker(select) {
+  border-radius: 4px;
+  border: none;
+}
+
+#ban-reason-dropdown > option:not(option:last-of-type) {
+  border-bottom: none;
+}
+
+#ban-reason-dropdown > option:checked {
+    font-weight: bold;
+}
+
+#ban-reason-dropdown > option:hover {
+    background-color: var(--high-defecit-color);
+}
+
+#ban-reason-dropdown > option::checkmark {
+    order: 1;
+    margin-left: auto;
+    content: url("../images/check_gray.svg");
+    scale: 0.85;
+    position: relative;
+    top: 2px;
+}
+
+#close-ban-button {
+    position: absolute;
+    right: 0px;
+    background-color: rgb(0,0,0,0);
+    padding: 0;
+    margin: 5px 7px;
+    padding: 2px;
+    border: none;
+}
+
+#other-ban-reason {
+    width: 90%;
+}
+
+.ban-time-input {
+    padding: 6px;
+    width: 4rem;
+    max-height: 1.1rem;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--h2-color);
+    margin: 0;
+    transition: box-shadow 0.2s ease;
+}
+
+.ban-time-input:focus {
+    outline: none;
+    box-shadow: 0 0 6px #a4a4a4;
+    border-color: #a4a4a4;
+}
+
+.ban-time-input::placeholder {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--h2-color);
+}
+
+/* Chrome, Safari, Edge, Opera */
+.ban-time-input::-webkit-outer-spin-button,
+.ban-time-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.ban-time-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.ban-time-div {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+}
+
+.ban-time-text {
+    font-size: 1.25rem;
+    color: var(--h2-color);
+    text-align: center;
+    margin: 0;
+}
+
+.ban-times-div {
+    display: flex;
+    max-width: 20rem;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.perma-ban-div {
+    margin-bottom: 8px;
+    margin-top: -8px;
+}
+
+#perma-ban-check {
+    background-color: #fff;
+    margin: 0;
+    font: inherit;
+    color: #f8f8f8;
+    width: 1em;
+    height: 1em;
+    border: 2px solid #424242;
+    border-radius: 0.3em;
+    transform: translateY(-0.075em);
+}
+
+#ban-confirm-popup {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 22rem;
+    height: 8.5rem;
+    display: none;
+    background-color: var(--main-bg-color);
+    z-index: 5;
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: fadeIn 0.15s ease-out;
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+}
+
+.ban-buttons {
+    display: flex;
+}
+
+.ban-confirm-text {
+    font-size: 1.15rem;
+    margin-bottom: 22.5px;
+}
+
+.ban-page-button {
+    border: none;
+    color: white;
+    border-radius: 12.5px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    width: 75px;
+    padding: 10px 0px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    display: block;
+    margin: 0px 20px;
+}
+
+.ban-page-button:active {
+    scale: 0.97;
+}
+
+#ban-confirm {
+    background-color: var(--red-button);
+}
+
+#ban-confirm:hover {
+    background-color: var(--red-button-hover);
+}
+
+#ban-deny {
+    background-color: var(--green-button);
+}
+
+#ban-deny:hover {
+    background-color: var(--green-button-hover);
+}
+
+.confirm-ban-button {
+    background-color: var(--ban-color);
+    font-size: 1.25rem;
+    padding: 10px 35px;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 10px 0 5px 0;
+    color: #1a1a1a;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+} 
+
+.confirm-ban-button:hover {
+    background-color: var(--dark-red-button-hover);
+}
+
+.confirm-ban-button:active {
+    scale: 0.97;
+}
+
+#other-reason-div {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
