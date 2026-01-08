@@ -1,5 +1,5 @@
 package dev.pakn.competitioncubes;
 
 public enum WaitlistCode {
-    SUCCESS, IN_MATCH, BANNED
+    SUCCESS, IN_MATCH, BANNED, BANNED_PERMANENTLY
 }

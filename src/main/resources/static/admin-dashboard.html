@@ -14,16 +14,21 @@
     <div id="background-overlay">
         <div id="ban-popup">
             <button id="close-ban-button">
-                <img src="/images/x.svg">
+                <img src="/images/x.svg" draggable="false">
             </button>
-            <h1 class="ban-user-text">Ban User</h1>
+            <h1 class="ban-user-text" id="ban-user-text">Ban User</h1>
             <div class="ban-section">
                 <h2 class="ban-form-text">Report Reason</h2>
                 <select id="ban-reason-dropdown">
                     <option value="default" selected="selected">Ban reason...</option>
                     <option value="username">Username</option>
                     <option value="smurfing">Smurfing</option>
+                    <option value="other">Other</option>
                 </select>
+                <div id="other-reason-div">
+                    <h2 class="ban-form-text other-reason">Other Reason</h2>
+                    <input type="text" class="ban-time-input other-reason" id="other-ban-reason" placeholder="Other reason..." maxlength="250" autocomplete="off">
+                </div>
                 <h2 class="ban-form-text">Ban Time</h2>
                 <div class="ban-time-div perma-ban-div">
                     <input type="checkbox" id="perma-ban-check" name="perma-ban" value="Permanent Ban">
@@ -52,10 +57,10 @@
                     </div>
                 </div>
             </div>
-            <button id="confirm-ban-button" class="ban-button">Ban</button>
+            <button id="confirm-ban-button" class="confirm-ban-button">Ban</button>
         </div>
         <div id="ban-confirm-popup">
-            <p class="ban-confirm-text">Are you sure you want to forfeit?</p>
+            <p class="ban-confirm-text">Are you sure you want to ban this user?</p>
             <div class="ban-buttons">
                 <button id="ban-confirm" class="ban-page-button">Yes</button>
                 <button id="ban-deny" class="ban-page-button">No</button>

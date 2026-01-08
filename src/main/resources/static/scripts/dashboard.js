@@ -9,6 +9,32 @@ const reportingMethods = {
     USERS: 2
 };
 
+class UserReport {
+    #userId;
+    #username;
+    #reason;
+    constructor(userId, username, reason) {
+        this.#userId=userId;
+        this.#username=username;
+        this.#reason=reason;
+    }
+
+    get userId() {
+        return this.#userId;
+    }
+
+    get username() {
+        return this.#username;
+    }
+
+    get reason() {
+        return this.#reason;
+    }
+}
+
+let currUserReport = null;
+let currAction = null;
+
 let currReportMethod = reportingMethods.SOLVES;
 reportedSolvesButton.style.backgroundColor="#d0d0d0";;
 
@@ -17,8 +43,8 @@ const loadingText = document.getElementById("loading-text");
 
 const actionsPopup = document.getElementById("background-overlay");
 
-const banPopup = document.getElementById("ban-confirm-popup");
-banPopup.style.display="none";
+const banConfirmPopup = document.getElementById("ban-confirm-popup");
+banConfirmPopup.style.display="none";
 
 const yearTimeInput = document.getElementById("ban-time-year");
 const monthTimeInput = document.getElementById("ban-time-month");
@@ -26,71 +52,120 @@ const dayTimeInput = document.getElementById("ban-time-day");
 const hourTimeInput = document.getElementById("ban-time-hour");
 const minuteTimeInput = document.getElementById("ban-time-mins");
 
+const permaBanCheckbox = document.getElementById("perma-ban-check");
+
+const otherReasonDiv = document.getElementById("other-reason-div");
+
+const banReasonDropdown = document.getElementById("ban-reason-dropdown");
+banReasonDropdown.addEventListener("change",(event)=>{
+    if (event.target.value==="other") {
+        otherReasonDiv.style.display = "flex";
+    }else {
+        otherReasonDiv.style.display = "none";
+    }
+});
+
+const otherBanReason = document.getElementById("other-ban-reason");
+
+const banInputs = [yearTimeInput, monthTimeInput, dayTimeInput, hourTimeInput, minuteTimeInput];
+
+const banUserText = document.getElementById("ban-user-text");
+
 const banConfirmButton = document.getElementById("ban-confirm");
 banConfirmButton.addEventListener("click",()=>{
     actionsPopup.style.display="none";
-    banPopup.style.display="none";
+    banConfirmPopup.style.display="none";
+
+    const duration = (Math.max(0,yearTimeInput.value) * 31557600000)+(Math.max(0,monthTimeInput.value) * 2629800000)+(Math.max(0,dayTimeInput.value) * 86400000)+(Math.max(0,hourTimeInput.value) * 3600000)+(Math.max(0,minuteTimeInput.value) * 60000);
+    let reason = banReasonDropdown.value;
+    if (reason==="other") {
+        reason = otherBanReason.value;
+        if (reason==="") reason = "other (not specified)"
+    }
+
     fetch("/api/ban-user", {
         method: "POST",
         body: JSON.stringify({
-            userId: 71,
-            //TODO: check valid input
-            duration: (yearTimeInput.value * 31557600000)+(monthTimeInput.value * 2629800000)+(dayTimeInput.value * 86400000)+(hourTimeInput.value * 3600000)+(minuteTimeInput.value * 60000)
+            userId: currUserReport.userId,
+            duration: permaBanCheckbox.checked ? -1 : duration,
+            reason: reason
         }),
         headers: {
             "Content-type": "application/json; charset=UTF-8"
         }
+    }).then(resp=>{
+        return resp.json();
+    }).then(async success=>{
+        if (success) {
+            createNotification(`Successfully banned ${currUserReport.username} for "${currUserReport.reason}"`);
+            currAction.remove();
+            await removeReport(currUserReport.userId, currUserReport.username, currUserReport.reason);
+            if (currReportMethod==reportingMethods.SOLVES) getInvalidTimes();
+            if (currReportMethod==reportingMethods.USERS) getReportedUsers();
+        }
     });
+
+    banReasonDropdown.children[0].selected = "selected";
+    otherBanReason.value = "";
+    otherReasonDiv.style.display = "none";
+
+    resetBanTimeInputs();
 });
 
-const banDenyButton = document.getElementById("forfeit-deny");
+const banButton = document.getElementById("confirm-ban-button");
+banButton.addEventListener("click",()=>{
+    banConfirmPopup.style.display="flex";
+});
+
+const banDenyButton = document.getElementById("ban-deny");
 banDenyButton.addEventListener("click",()=>{
-    banPopup.style.display="none";
+    banConfirmPopup.style.display="none";
 });
 
 actionsPopup.addEventListener("click",(event)=>{
-    if (event.target===event.currentTarget && banPopup.style.display==="none") {
-        if (banPopup.style.display==="none") {
+    if (event.target===event.currentTarget && banConfirmPopup.style.display==="none") {
+        if (banConfirmPopup.style.display==="none") {
             actionsPopup.style.display="none";
         }
         //resetting and hiding the ban popup
         banReasonDropdown.children[0].selected = "selected";
+        otherBanReason.value = "";
+        otherReasonDiv.style.display = "none";
+        resetBanTimeInputs();
         banPopup.style.display="none";
     }
 });
 
 document.addEventListener("keydown",(event)=>{
-    if (event.key=="Escape" && banPopup.style.display==="none") {
-        if (banPopup.style.display==="none") {
+    if (event.key=="Escape" && banConfirmPopup.style.display==="none") {
+        if (banConfirmPopup.style.display==="none") {
             actionsPopup.style.display="none";
         }
         //resetting and hiding the ban popup
         banReasonDropdown.children[0].selected = "selected";
+        otherBanReason.value = "";
+        otherReasonDiv.style.display = "none";
+        resetBanTimeInputs();
         banPopup.style.display="none";
     }
 });
 
-const banReasonDropdown = document.getElementById("ban-reason-dropdown");
-
 const banPopup = document.getElementById("ban-popup")
-const banUserButtons = document.getElementById("ban-user-button");
-banUserButtons.addEventListener("click",()=>{
-    if (banPopup.style.display==="none")
-        banPopup.style.display="flex";
-});
 
-const clsoeBanButton = document.getElementById("close-ban-button");
-clsoeBanButton.addEventListener("click",()=>{
+const closeBanButton = document.getElementById("close-ban-button");
+closeBanButton.addEventListener("click",()=>{
     //resetting and hiding the ban popup
     banReasonDropdown.children[0].selected = "selected";
-    banPopup.style.display="none";
+    otherBanReason.value = "";
+    otherReasonDiv.style.display = "none";
+    resetBanTimeInputs();
+    actionsPopup.style.display="none";
 });
 
-const closeMenuButton = document.getElementById("close-menu-button");
-closeMenuButton.addEventListener("click",()=>{
-    if (banPopup.style.display==="none") {
-        actionsPopup.style.display="none";
-        banPopup.style.display="none";
+permaBanCheckbox.addEventListener('change', function() {
+    const checked = permaBanCheckbox.checked;
+    for (const input of banInputs) {
+        input.disabled = checked;
     }
 });
 
@@ -110,6 +185,7 @@ reportedUsersButton.addEventListener("click",()=>{
 
 function getInvalidTimes() {
     clearReports();
+    currReportMethod=reportingMethods.SOLVES;
     reportTypeText.textContent = "Reported Solves";
     fetch("/api/get-invalid-times").then((promise)=>{
         return promise.json();
@@ -142,6 +218,7 @@ function getInvalidTimes() {
                     if (success) {
                         createNotification(`Successfully OK'ed ${user}'s ${timeString}s solve`);
                         solve.remove();
+                        getInvalidTimes();
                     }else {
                         createNotification(`Something went wrong with this action. Please DM a developer to resolve it.`);
                     }
@@ -163,6 +240,10 @@ function getInvalidTimes() {
                     }
                 });
 
+                solve.querySelector(".ban-button").addEventListener("click", ()=>{
+                    openBanPopup(solves[i]['userId'],user);
+                });
+
                 dashboardDivContent.appendChild(solve);
             }
         }else {
@@ -173,6 +254,7 @@ function getInvalidTimes() {
 
 function getReportedUsers() {
     clearReports();
+    currReportMethod=reportingMethods.USERS;
     reportTypeText.textContent = "Reported Users";
     fetch("/api/get-reported-users").then((promise)=>{
         return promise.json();
@@ -191,7 +273,7 @@ function getReportedUsers() {
                 user.classList.remove("template");
 
                 user.querySelector(".ok-button").addEventListener("click",async ()=>{
-                    let success = await okReport(users[i]['userId'], username, reason);
+                    let success = await removeReport(users[i]['userId'], username, reason);
                     if (success) {
                         createNotification(`Successfully resolved ${username}'s report`);
                         user.remove();
@@ -199,6 +281,13 @@ function getReportedUsers() {
                     }else {
                         createNotification(`Something went wrong with this action. Please DM a developer to resolve it.`);
                     }
+                });
+
+                user.querySelector(".ban-button").addEventListener("click", ()=>{
+                    document.querySelector(`option[value=${String(reason).toLowerCase()}]`).selected = "selected";
+                    currUserReport = new UserReport(users[i]['userId'], username, reason);
+                    currAction = user;
+                    openBanPopup(currUserReport);
                 });
 
                 dashboardDivContent.appendChild(user);
@@ -209,7 +298,7 @@ function getReportedUsers() {
     });
 }
 
-async function okReport(userId, username, reason) {
+async function removeReport(userId, username, reason) {
     return fetch("/api/remove-user-report",{
         method: "POST",
         body: JSON.stringify({
@@ -332,4 +421,22 @@ function clearReports() {
     for (let i=reportsList.length-1;i>=0;i--) {
         reportsList[i].remove();
     }
+}
+
+function openBanPopup(userReport) {
+    actionsPopup.style.display="grid";
+    banPopup.style.display="flex";
+    banUserText.textContent = `Ban ${userReport.username}`;
+}
+
+function clamp(min, max, x) {
+    return Math.max(min, Math.min(x,max));
+}
+
+function resetBanTimeInputs() {
+    for (const input of banInputs) {
+        input.disabled = false;
+        input.value = "";
+    }
+    permaBanCheckbox.checked = false;
 }

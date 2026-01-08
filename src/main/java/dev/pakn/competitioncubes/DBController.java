@@ -62,6 +62,7 @@ public class DBController {
         try {
             //connect to DB 
             Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+            loadUserBans(conn);
             ResultSet userResultSet = getAllUsers(conn);
             while (userResultSet.next()) {
                 int userId = userResultSet.getInt("userid");
@@ -70,11 +71,13 @@ public class DBController {
                 int permLevel = userResultSet.getInt("permlevel");
                 int matchesWon = userResultSet.getInt("matcheswon");
                 int matchesLost = userResultSet.getInt("matcheslost");
+                int strikes = userResultSet.getInt("strikes");
+                int bans = userResultSet.getInt("bans");
                 Integer[] badgesArray = (Integer[]) userResultSet.getArray("badges").getArray();
-                userList.put(userId, new User(userId,username,wcaId,permLevel,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), 0, 0));
+                User user = new User(userId,username,wcaId,permLevel,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans);
+                user.setUserBan(bannedUserList.get(user.getUserId()));
+                userList.put(userId, user);
             }
-
-            loadUserBans(conn);
 
             conn.close();
         }catch (Exception e) {
@@ -1133,8 +1136,10 @@ public class DBController {
             int permLevel = userResultSet.getInt("permlevel");
             int matchesWon = userResultSet.getInt("matcheswon");
             int matchesLost = userResultSet.getInt("matcheslost");
+            int strikes = userResultSet.getInt("strikes");
+            int bans = userResultSet.getInt("bans");
             Integer[] badgesArray = (Integer[]) userResultSet.getArray("badges").getArray();
-            userList.put(userId, new User(userId,username,wcaId,permLevel,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), 0, 0));
+            userList.put(userId, new User(userId,username,wcaId,permLevel,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans));
 
             conn.close();
         }catch (Exception e) {
@@ -1237,6 +1242,7 @@ public class DBController {
             statement.executeUpdate();
 
             conn.close();
+            userList.get(userId).addStrike();
             return true;
         }catch (Exception e) {
             System.out.println("Failed to connect to db!");
@@ -1245,18 +1251,23 @@ public class DBController {
         }
     }
 
-    public static void addBannedUser(int userId, long expirationDate) {
+    public static void addBannedUser(int userId, long expirationDate, String reason) {
         //connect to DB
         try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
-            String sqlQuery = "INSERT INTO banned_users (id, expirationdate) VALUES (?, ?);";
+            String sqlQuery = "INSERT INTO banned_users (id, expirationdate, reason) VALUES (?, ?, ?);";
             PreparedStatement statement = conn.prepareStatement(sqlQuery);
             statement.setInt(1, userId);
             statement.setLong(2, expirationDate);
+            statement.setString(3, reason);
 
             //sending sql query
             statement.executeUpdate();
 
-            bannedUserList.put(userId, new UserBan(userId, expirationDate));
+            UserBan userBan = new UserBan(userId, expirationDate, reason);
+            bannedUserList.put(userId, userBan);
+            User user = userList.get(userId);
+            user.addBan();
+            user.setUserBan(userBan);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -1274,6 +1285,7 @@ public class DBController {
             statement.executeUpdate();
 
             bannedUserList.remove(userId);
+            userList.get(userId).setUserBan(null);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -1293,7 +1305,8 @@ public class DBController {
             while (usersSet.next()) {
                 int userId = usersSet.getInt("id");
                 long expirationDate = usersSet.getLong("expirationdate");
-                userBans.add(new UserBan(userId, expirationDate));
+                String reason = usersSet.getString("reason");
+                userBans.add(new UserBan(userId, expirationDate, reason));
             }
 
             return userBans;
@@ -1318,7 +1331,8 @@ public class DBController {
             while (usersSet.next()) {
                 int userId = usersSet.getInt("id");
                 long expirationDate = usersSet.getLong("expirationdate");
-                userBans.add(new UserBan(userId, expirationDate));
+                String reason = usersSet.getString("reason");
+                userBans.add(new UserBan(userId, expirationDate, reason));
             }
 
             return userBans;

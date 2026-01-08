@@ -141,7 +141,9 @@ function startMatchSearch(stompClient) {
         return result.json();
     }).then((data)=> {
         const waitlistCode = data['waitlistCode'];
-        const expirationDate = data['expirationDate'].replace(" ",", ")+" UTC-5";
+        let expirationDate = data['expirationDate'];
+        console.log(expirationDate)
+        if (expirationDate) expirationDate = expirationDate.replace(" "," (dd/MM/yyyy), ")+" UTC-5";
         if (waitlistCode==="SUCCESS") {
             searchButton.textContent = "Cancel Search";
             searchText.textContent = `Searching...`;
@@ -178,7 +180,10 @@ function startMatchSearch(stompClient) {
                 searchText.textContent = "You are already searching for (or are in) a match!"
                 return;
             }else if (waitlistCode==="BANNED") {
-                searchText.textContent = `You have been banned from competing until ${expirationDate}.`;
+                searchText.innerHTML = `You have been banned from competing until ${expirationDate}.<br>Appeal your ban on our <a href="https://discord.gg/NsaFuasMrV" target="_blank">Discord</a> or at this <a href="mailto:compcube@pakn.dev">email</a>.`;
+                return;
+            }else if (waitlistCode==="BANNED_PERMANENTLY") {
+                searchText.innerHTML = `You have been permanently banned from competing.<br>Appeal your ban on our <a href="https://discord.gg/NsaFuasMrV" target="_blank">Discord</a> or at this <a href="mailto:compcube@pakn.dev">email</a>.`;
                 return;
             }
         }

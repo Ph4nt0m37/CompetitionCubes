@@ -1,3 +1,4 @@
+export let user = null;
 const usernameText = document.getElementById("username-text");
 const wcaLink = document.getElementById("wca-link");
 const eloText = document.getElementById("elo-text");
@@ -110,7 +111,7 @@ let currentSortingMethod = sortingMethodMap.ELO;
 fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
     return response.json();
     }).then(function(data) {
-        let user = data;
+        user = data;
         console.log(data);
         usernameText.textContent=user.username;
         wcaLink.href=`https://www.worldcubeassociation.org/persons/${user["wcaId"]}`;
@@ -247,6 +248,7 @@ const reportPopup = document.getElementById("report-popup")
 const closeReportButton = document.getElementById("close-report-button");
 closeReportButton.addEventListener("click",()=>{
     actionsPopup.style.display="none";
+    reportPopup.style.display="none";
     body.style.overflowY="visible";
     //resetting and hiding the report popup
     reportReasonDropdown.children[0].selected = "selected";
@@ -269,6 +271,7 @@ reportButton.addEventListener("click",()=>{
             return resp.json();
         }).then((data)=>{
             actionsPopup.style.display="none";
+            reportPopup.style.display="none";
             createNotification(`Successfully reported user for ${reportReasonDropdown.value}`);
             reportReasonDropdown.children[0].selected = "selected";
         });
@@ -282,12 +285,14 @@ const actionsPopup = document.getElementById("background-overlay");
 const body = document.getElementsByTagName("body")[0];
 flagButton.addEventListener("click",()=>{
     actionsPopup.style.display="grid";
+    reportPopup.style.display = "flex";
     body.style.overflowY="hidden";
 });
 
 actionsPopup.addEventListener("click",(event)=>{
     if (event.target===event.currentTarget) {
         actionsPopup.style.display="none";
+        reportPopup.style.display="none";
         body.style.overflowY="visible";
         //resetting and hiding the report popup
         reportReasonDropdown.children[0].selected = "selected";

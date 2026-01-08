@@ -79,12 +79,14 @@ public class PostRequestClass {
     public static class UserBan {
         private int userId;
         private long duration;
+        private String reason;
 
         public UserBan() {}
 
-        public UserBan(int userId, long duration) {
+        public UserBan(int userId, long duration, String reason) {
             this.userId = userId;
             this.duration = duration;
+            this.reason = reason;
         }
 
         public int getUserId() {
@@ -101,6 +103,14 @@ public class PostRequestClass {
 
         public void setDuration(long duration) {
             this.duration = duration;
+        }
+
+        public String getReason() {
+            return reason;
+        }
+
+        public void setReason(String reason) {
+            this.reason = reason;
         }
     }
 }

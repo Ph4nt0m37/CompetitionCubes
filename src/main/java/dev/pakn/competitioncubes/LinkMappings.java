@@ -54,9 +54,18 @@ public class LinkMappings {
     }
 
     @RequestMapping("/user/{userId}")
-    public String userPage(@PathVariable int userId) {
+    public String userPage(@CookieValue(value="user_secret", required = false) String userSecret, @PathVariable int userId) {
+        User user = DBController.getUserBySecret(userSecret);
         if (DBController.userExists(userId)) {
-            return "forward:/profile.html";
+            if (user == null) {
+                return "forward:/profile_pages/profile.html";
+            }else {
+                if (user.getPermissionLevel().hasBanAccess())
+                    return "forward:/profile_pages/profile_admin.html";
+                if (user.getPermissionLevel().hasUserInfoAccess() || user.getUserId()==userId)
+                    return "forward:/profile_pages/profile_user.html";
+            }
+            return "forward:/profile_pages/profile.html";
         }else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

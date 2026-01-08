@@ -23,6 +23,8 @@ public class User {
     private ArrayList<Match> last10Matches = new ArrayList<>();
     private int strikes;
     private int bans;
+    
+    private UserBan ban;
 
     private PermissionLevel permissionLevel;
 
@@ -264,6 +266,14 @@ public class User {
 
     public void addBan() {
         bans++;
+    }
+
+    public void setUserBan(UserBan ban) {
+        this.ban = ban;
+    }
+
+    public UserBan getUserBan() {
+        return ban;
     }
 
     public boolean saveUserData() {

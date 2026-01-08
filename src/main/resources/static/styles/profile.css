@@ -318,13 +318,19 @@ button {
   color: var(--dark-blue-color);
 }
 
-#report-flag {
+.profile-buttons {
+  display: flex;
+  flex-direction: row;
   position: absolute;
+  right: 8px;
+  gap: 5px;
+}
+
+#report-flag {
   border: none;
   border-radius: 5px;
   background-color: var(--report-button);
   padding: 6px 6px 4px 7px;
-  right: 8px;
 }
 
 #report-flag:hover {
@@ -351,7 +357,7 @@ button {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     width: 22rem;
     height: 30rem;
-    display: flex;
+    display: none;
     background-color: var(--main-bg-color);
     z-index: 5;
     border-radius: 12px;
@@ -380,6 +386,7 @@ button {
 .report-form-text {
     color: black;
     font-size: 1.2rem;
+    margin: 0;
 }
 
 #report-reason-dropdown {
@@ -393,6 +400,7 @@ button {
     border-radius: 5px;
     color: black;
     transition: background-color 0.3s ease;
+    margin: 10px 0px;
 }
 
 #report-reason-dropdown, ::picker(select) {
@@ -536,4 +544,132 @@ button {
 @keyframes fadeOut {
   0% { opacity: 1; }
   100% { opacity: 0; }
+}
+
+#view-info-button {
+  border: none;
+  border-radius: 5px;
+  background-color: var(--blue-button);
+  padding: 6px 6px 4px 6px;
+}
+
+#view-info-button:hover {
+  background-color: var(--blue-button-hover);
+}
+
+#view-info-button:active {
+  scale: 0.95;
+}
+
+#info-popup {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 16rem;
+  height: 16rem;
+  display: none;
+  background-color: var(--main-bg-color);
+  z-index: 5;
+  border-radius: 12px;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  animation: fadeIn 0.15s ease-out;
+  grid-row: 1;
+  grid-column: 1;
+  position: relative;
+}
+
+#close-info-x {
+    position: absolute;
+    right: 0px;
+    background-color: rgb(0,0,0,0);
+    padding: 0;
+    margin: 5px 7px;
+    padding: 2px;
+    border: none;
+}
+
+.info-stats-div {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.info-user-text {
+    color: var(--blue-button);
+    font-size: 1.8rem;
+    margin: 15px;
+}
+
+.warnings-text {
+  color: var(--warning-color-text);
+}
+
+.bans-text {
+  color: var(--ban-color);
+}
+
+.close-info-button {
+  border: none;
+  color: white;
+  border-radius: 12.5px;
+  font-size: 1.25rem;
+  padding: 10px 20px;
+  font-weight: bold;
+  background-color: var(--blue-button);
+  padding: 12.5px 22.5px;
+  cursor: pointer;
+  margin: 5px;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: block;
+}
+
+.close-info-button:hover {
+    background-color: var(--blue-button-hover);
+}
+
+.close-info-button:active {
+    scale: 0.97;
+}
+
+.admin-buttons-div {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.admin-buttons-div > button {
+  border-radius: 10px;
+  border: none;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 6px 10px;
+  margin: 10px 0 5px 0;
+  color: #1a1a1a;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.warn-button {
+    background-color: var(--yellow-button);
+}
+
+.warn-button:hover {
+    background-color: var(--yellow-button-hover);
+}
+
+.warn-button:active {
+    transform: scale(0.97);
+}
+
+.ban-button {
+    background-color: var(--ban-color);
+}
+
+.ban-button:hover {
+    background-color: #a81313;
+}
+
+.ban-button:active {
+    transform: scale(0.97);
 }

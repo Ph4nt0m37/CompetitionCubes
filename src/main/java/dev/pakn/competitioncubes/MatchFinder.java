@@ -22,6 +22,7 @@ public class MatchFinder {
         //check if the user is banned
         UserBan userBan = DBController.getBannedUser(userId);
         if (userBan != null) {
+            if (userBan.getExpirationDate()<0) return new WaitlistResult(WaitlistCode.BANNED_PERMANENTLY, userBan.getExpirationDate());
             if (System.currentTimeMillis()>userBan.getExpirationDate()) {
                 //remove user from database and continue
                 DBController.removeBannedUser(userBan.getUserId());

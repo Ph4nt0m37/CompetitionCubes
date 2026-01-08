@@ -227,9 +227,14 @@ public class AntiCheat {
     public boolean banUser(@RequestBody PostRequestClass.UserBan userBan) {
         int userId = userBan.getUserId();
         long expirationDate = System.currentTimeMillis()+userBan.getDuration();
+        String reason = userBan.getReason();
 
         try {
-            DBController.addBannedUser(userId, expirationDate);
+            if (userBan.getDuration()<0) {
+                DBController.addBannedUser(userId, -1, reason);
+            }else {
+                DBController.addBannedUser(userId, expirationDate, reason);
+            }
             return true;
         } catch (Exception e){
             return false;

@@ -1,31 +1,57 @@
 package dev.pakn.competitioncubes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 //this class is not an enum because jackson serialization of enums only allows for one json value
 public class PermissionLevel {
-    public final static PermissionLevel USER = new PermissionLevel(0, false);
-    public final static PermissionLevel MODERATOR = new PermissionLevel(1, true);
-    public final static PermissionLevel ADMIN = new PermissionLevel(2, true);
-    public final static PermissionLevel OWNER = new PermissionLevel(3, true);
+    public final static PermissionLevel USER = new PermissionLevel(false, false, false);
+    public final static PermissionLevel TRAINEE = new PermissionLevel(false, false, true);
+    public final static PermissionLevel MODERATOR = new PermissionLevel(true, true, true);
+    public final static PermissionLevel ADMIN = new PermissionLevel(true, true, true);
+    public final static PermissionLevel OWNER = new PermissionLevel(true, true, true);
+
+    private static int currLevelVal = 0;
 
     private int levelVal = 0;
 
     //permissions
+    @JsonProperty
     private boolean hasAdminDashboardAccess = false;
+    @JsonProperty
+    private boolean hasBanAccess = false;
+    @JsonProperty
+    private boolean hasUserInfoAccess = false;
 
-    private PermissionLevel(int levelVal, boolean hasAdminDashboardAccess) {
+    private PermissionLevel(int levelVal, boolean hasAdminDashboardAccess, boolean hasBanAccess, boolean hasUserInfoAccess) {
         this.levelVal = levelVal;
         this.hasAdminDashboardAccess = hasAdminDashboardAccess;
+        this.hasBanAccess = hasBanAccess;
+        this.hasUserInfoAccess = hasUserInfoAccess;
     }
 
+    private PermissionLevel(boolean hasAdminDashboardAccess, boolean hasBanAccess, boolean hasUserInfoAccess) {
+        this.levelVal = currLevelVal++; //post increment so that levelVal starts at 0
+        this.hasAdminDashboardAccess = hasAdminDashboardAccess;
+        this.hasBanAccess = hasBanAccess;
+        this.hasUserInfoAccess = hasUserInfoAccess;
+    }
+
+    @JsonIgnore
     public int getPermissionValue() {
         return levelVal;
     }
 
-    @JsonProperty()
     public boolean hasAdminDashboardAccess() {
         return hasAdminDashboardAccess;
+    }
+
+    public boolean hasBanAccess() {
+        return hasBanAccess;
+    }
+
+    public boolean hasUserInfoAccess() {
+        return hasUserInfoAccess;
     }
 
     public static PermissionLevel valueToPermissionLevel(int value) {
@@ -33,10 +59,12 @@ public class PermissionLevel {
             case 0:
                 return USER;
             case 1:
-                return MODERATOR;
+                return TRAINEE;
             case 2:
-                return ADMIN;
+                return MODERATOR;
             case 3:
+                return ADMIN;
+            case 4:
                 return OWNER;
             default:
                 return USER;
