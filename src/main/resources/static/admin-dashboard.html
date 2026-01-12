@@ -18,14 +18,14 @@
             </button>
             <h1 class="ban-user-text" id="ban-user-text">Ban User</h1>
             <div class="ban-section">
-                <h2 class="ban-form-text">Report Reason</h2>
-                <select id="ban-reason-dropdown">
+                <h2 class="ban-form-text">Ban Reason</h2>
+                <select class="select-reason-dropdown" id="ban-reason-dropdown">
                     <option value="default" selected="selected">Ban reason...</option>
                     <option value="username">Username</option>
                     <option value="smurfing">Smurfing</option>
                     <option value="other">Other</option>
                 </select>
-                <div id="other-reason-div">
+                <div class="other-reason-div" id="other-ban-reason-div">
                     <h2 class="ban-form-text other-reason">Other Reason</h2>
                     <input type="text" class="ban-time-input other-reason" id="other-ban-reason" placeholder="Other reason..." maxlength="250" autocomplete="off">
                 </div>
@@ -64,6 +64,35 @@
             <div class="ban-buttons">
                 <button id="ban-confirm" class="ban-page-button">Yes</button>
                 <button id="ban-deny" class="ban-page-button">No</button>
+            </div>
+        </div>
+
+        <div id="warn-popup">
+            <button id="close-warn-button">
+                <img src="/images/x.svg" draggable="false">
+            </button>
+            <h1 class="ban-user-text" id="warn-user-text">Warn User</h1>
+            <div class="ban-section">
+                <h2 class="ban-form-text">Warn Reason</h2>
+                <select class="select-reason-dropdown" id="warn-reason-dropdown">
+                    <option value="default" selected="selected">Warn reason...</option>
+                    <option value="username">Username</option>
+                    <option value="smurfing">Smurfing</option>
+                    <option value="wasting">Time Wasting</option>
+                    <option value="other">Other</option>
+                </select>
+                <div class="other-reason-div" id="other-warn-reason-div">
+                    <h2 class="ban-form-text other-reason">Other Reason</h2>
+                    <input type="text" class="ban-time-input other-reason" id="other-warn-reason" placeholder="Other reason..." maxlength="250" autocomplete="off">
+                </div>
+            </div>
+            <button id="confirm-warn-button" class="confirm-warn-button">Warn</button>
+        </div>
+        <div id="warn-confirm-popup">
+            <p class="ban-confirm-text">Are you sure you want to warn this user?</p>
+            <div class="ban-buttons">
+                <button id="warn-confirm" class="ban-page-button">Yes</button>
+                <button id="warn-deny" class="ban-page-button">No</button>
             </div>
         </div>
     </div>

@@ -3,6 +3,7 @@ package dev.pakn.competitioncubes;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -204,9 +205,13 @@ public class AntiCheat {
     }
 
     @PostMapping("/api/warn-user")
-    public boolean warnUser(@RequestParam("id") int userId) {
+    public boolean warnUser(@RequestBody PostRequestClass.UserWarningReq userWarning) {
+        int userId = userWarning.getUserId();
+        long expirationDate = System.currentTimeMillis()+2629800000l;
+        String reason = userWarning.getReason();
+
         try {
-            DBController.addUserWarning(userId);
+            DBController.addUserWarning(userId, expirationDate, reason);
             return true;
         } catch (Exception e){
             return false;
@@ -241,6 +246,21 @@ public class AntiCheat {
         }
     }
 
+    public static boolean banUser(int userId, long duration, String reason) {
+        long expirationDate = System.currentTimeMillis()+duration;
+
+        try {
+            if (duration<0) {
+                DBController.addBannedUser(userId, -1, reason);
+            }else {
+                DBController.addBannedUser(userId, expirationDate, reason);
+            }
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+    }
+
     @PostMapping("/api/unban-user")
     public boolean banUser(@RequestParam("id") int userId) {
         try {
@@ -251,6 +271,15 @@ public class AntiCheat {
         }
     }
 
+    @PostMapping("/api/rename-user-random")
+    public boolean renameUserRandom(@RequestParam("id") int userId) {
+        String[] adjectives = {"Fast","Speedy","Average","Smooth","Dry","Sandy","Tough","Smart","Nimble","Goofy","Focused","Ready","Broken","Bent","Chipped"};
+        String[] nouns = {"Cube","Plastic","DNF","Corner","Edge","Center","Screw","Timer","Mat","Cover","Puzzle","Judge","Winner","Podium"};
+        Random rand = new Random();
+        String generatedUsername = adjectives[rand.nextInt(adjectives.length)] + nouns[rand.nextInt(nouns.length)] + String.format("%02d",rand.nextInt(99)+1);
+        System.out.println(generatedUsername);
+        return DBController.changeUsername(userId, generatedUsername);
+    }
 
 
 
@@ -259,11 +288,12 @@ public class AntiCheat {
 
 
 
-    //Ban Timer. This is only removes the user from the database! If a user searched for a match, their ban timer will be calculated then as well
-    //This method is primarily for redundancy, as if a user never searches for a match, their ban will never be removed from the database. this method will ensure they are removed from the database
+
+    //Checks durations for warnings and bans
+    //This method is primarily for redundancy, as if a user never searches for a match, their ban/warning will never be removed from the database. this method will ensure they are removed from the database
     //This method also reloads the user bans directly from the database in case I added from there
     @Scheduled(fixedRate = 3600000) //1 hour
-    private void unbanUsersCheck() {
+    private void checkDurations() {
         //refresh from db
         DBController.loadUserBans();
 
@@ -272,7 +302,7 @@ public class AntiCheat {
 
         //go through all users and check if the current time is past their expiration date
         for (UserBan userBan:userBans) {
-            if (currTimeMillis>userBan.getExpirationDate()) {
+            if (userBan.getExpirationDate()>=0 && currTimeMillis>userBan.getExpirationDate()) {
                 //will only remove them from database!
                 DBController.removeBannedUser(userBan.getUserId());
             }

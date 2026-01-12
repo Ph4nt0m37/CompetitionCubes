@@ -46,6 +46,9 @@ const actionsPopup = document.getElementById("background-overlay");
 const banConfirmPopup = document.getElementById("ban-confirm-popup");
 banConfirmPopup.style.display="none";
 
+const warnConfirmPopup = document.getElementById("warn-confirm-popup");
+warnConfirmPopup.style.display="none";
+
 const yearTimeInput = document.getElementById("ban-time-year");
 const monthTimeInput = document.getElementById("ban-time-month");
 const dayTimeInput = document.getElementById("ban-time-day");
@@ -54,31 +57,45 @@ const minuteTimeInput = document.getElementById("ban-time-mins");
 
 const permaBanCheckbox = document.getElementById("perma-ban-check");
 
-const otherReasonDiv = document.getElementById("other-reason-div");
+const otherBanReasonDiv = document.getElementById("other-ban-reason-div");
 
 const banReasonDropdown = document.getElementById("ban-reason-dropdown");
 banReasonDropdown.addEventListener("change",(event)=>{
     if (event.target.value==="other") {
-        otherReasonDiv.style.display = "flex";
+        otherBanReasonDiv.style.display = "flex";
     }else {
-        otherReasonDiv.style.display = "none";
+        otherBanReasonDiv.style.display = "none";
+    }
+});
+
+const otherWarnReasonDiv = document.getElementById("other-warn-reason-div");
+
+const warnReasonDropdown = document.getElementById("warn-reason-dropdown");
+warnReasonDropdown.addEventListener("change",(event)=>{
+    if (event.target.value==="other") {
+        otherWarnReasonDiv.style.display = "flex";
+    }else {
+        otherWarnReasonDiv.style.display = "none";
     }
 });
 
 const otherBanReason = document.getElementById("other-ban-reason");
+const otherWarnReason = document.getElementById("other-warn-reason");
 
 const banInputs = [yearTimeInput, monthTimeInput, dayTimeInput, hourTimeInput, minuteTimeInput];
 
 const banUserText = document.getElementById("ban-user-text");
+const warnUserText = document.getElementById("warn-user-text");
 
 const banConfirmButton = document.getElementById("ban-confirm");
-banConfirmButton.addEventListener("click",()=>{
+banConfirmButton.addEventListener("click", async ()=>{
     if (banReasonDropdown.value==="default") {
         createNotification("Please select a ban reason");
         return;
     }
 
     actionsPopup.style.display="none";
+    banPopup.style.display="none";
     banConfirmPopup.style.display="none";
 
     const duration = (Math.max(0,yearTimeInput.value) * 31557600000)+(Math.max(0,monthTimeInput.value) * 2629800000)+(Math.max(0,dayTimeInput.value) * 86400000)+(Math.max(0,hourTimeInput.value) * 3600000)+(Math.max(0,minuteTimeInput.value) * 60000);
@@ -88,7 +105,22 @@ banConfirmButton.addEventListener("click",()=>{
         if (reason==="") reason = "other (not specified)"
     }
 
-    fetch("/api/ban-user", {
+    if (reason==="username") {
+        await fetch(`/api/rename-user-random?id=${currUserReport.userId}`, {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        }).then(resp=>{
+            return resp.json();
+        }).then(success=>{
+            if (!success) {
+                createNotification(`Something went wrong renaming this user. Please try renaming manually or contact a developer.`);
+            }
+        });
+    }
+
+    await fetch("/api/ban-user", {
         method: "POST",
         body: JSON.stringify({
             userId: currUserReport.userId,
@@ -107,12 +139,76 @@ banConfirmButton.addEventListener("click",()=>{
             await removeReport(currUserReport.userId, currUserReport.username, reason);
             if (currReportMethod==reportingMethods.SOLVES) getInvalidTimes();
             if (currReportMethod==reportingMethods.USERS) getReportedUsers();
+        }else {
+            createNotification(`Something went wrong with this action. Please DM a developer to resolve it.`);
         }
     });
 
     banReasonDropdown.children[0].selected = "selected";
     otherBanReason.value = "";
-    otherReasonDiv.style.display = "none";
+    otherBanReasonDiv.style.display = "none";
+
+    resetBanTimeInputs();
+});
+
+const warnConfirmButton = document.getElementById("warn-confirm");
+warnConfirmButton.addEventListener("click", async ()=>{
+    if (warnReasonDropdown.value==="default") {
+        createNotification("Please select a ban reason");
+        return;
+    }
+
+    actionsPopup.style.display="none";
+    warnPopup.style.display="none";
+    warnConfirmPopup.style.display="none";
+
+    const duration = 2629800000;
+    let reason = warnReasonDropdown.value;
+    if (reason==="other") {
+        reason = otherWarnReason.value;
+        if (reason==="") reason = "other (not specified)"
+    }
+
+    if (reason==="username") {
+        await fetch(`/api/rename-user-random?id=${currUserReport.userId}`, {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        }).then(resp=>{
+            return resp.json();
+        }).then(success=>{
+            if (!success) {
+                createNotification(`Something went wrong renaming this user. Please try renaming manually or contact a developer.`);
+            }
+        });
+    }
+
+    await fetch("/api/warn-user", {
+        method: "POST",
+        body: JSON.stringify({
+            userId: currUserReport.userId,
+            duration: duration,
+            reason: reason
+        }),
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    }).then(resp=>{
+        return resp.json();
+    }).then(async success=>{
+        if (success) {
+            createNotification(`Successfully warned ${currUserReport.username} for "${reason}"`);
+            currAction.remove();
+            await removeReport(currUserReport.userId, currUserReport.username, reason);
+            if (currReportMethod==reportingMethods.SOLVES) getInvalidTimes();
+            if (currReportMethod==reportingMethods.USERS) getReportedUsers();
+        }
+    });
+
+    warnReasonDropdown.children[0].selected = "selected";
+    otherWarnReason.value = "";
+    otherWarnReasonDiv.style.display = "none";
 
     resetBanTimeInputs();
 });
@@ -127,44 +223,75 @@ banDenyButton.addEventListener("click",()=>{
     banConfirmPopup.style.display="none";
 });
 
+const warnButton = document.getElementById("confirm-warn-button");
+warnButton.addEventListener("click",()=>{
+    warnConfirmPopup.style.display="flex";
+});
+
+const warnDenyButton = document.getElementById("warn-deny");
+warnDenyButton.addEventListener("click",()=>{
+    warnConfirmPopup.style.display="none";
+});
+
 actionsPopup.addEventListener("click",(event)=>{
-    if (event.target===event.currentTarget && banConfirmPopup.style.display==="none") {
-        if (banConfirmPopup.style.display==="none") {
+    if (event.target===event.currentTarget) {
+        if (banConfirmPopup.style.display==="none" && warnConfirmPopup.style.display==="none") {
             actionsPopup.style.display="none";
+            banPopup.style.display="none";
         }
         //resetting and hiding the ban popup
         banReasonDropdown.children[0].selected = "selected";
         otherBanReason.value = "";
-        otherReasonDiv.style.display = "none";
+        otherBanReasonDiv.style.display = "none";
+        warnReasonDropdown.children[0].selected = "selected";
+        otherWarnReason.value = "";
+        otherWarnReasonDiv.style.display = "none";
         resetBanTimeInputs();
         banPopup.style.display="none";
     }
 });
 
 document.addEventListener("keydown",(event)=>{
-    if (event.key=="Escape" && banConfirmPopup.style.display==="none") {
-        if (banConfirmPopup.style.display==="none") {
+    if (event.key=="Escape") {
+        if (banConfirmPopup.style.display==="none" && warnConfirmPopup.style.display==="none") {
             actionsPopup.style.display="none";
+            banPopup.style.display="none";
         }
         //resetting and hiding the ban popup
         banReasonDropdown.children[0].selected = "selected";
         otherBanReason.value = "";
-        otherReasonDiv.style.display = "none";
+        otherBanReasonDiv.style.display = "none";
+        warnReasonDropdown.children[0].selected = "selected";
+        otherWarnReason.value = "";
+        otherWarnReasonDiv.style.display = "none";
         resetBanTimeInputs();
         banPopup.style.display="none";
     }
 });
 
 const banPopup = document.getElementById("ban-popup")
+const warnPopup = document.getElementById("warn-popup")
 
 const closeBanButton = document.getElementById("close-ban-button");
 closeBanButton.addEventListener("click",()=>{
     //resetting and hiding the ban popup
     banReasonDropdown.children[0].selected = "selected";
     otherBanReason.value = "";
-    otherReasonDiv.style.display = "none";
+    otherBanReasonDiv.style.display = "none";
     resetBanTimeInputs();
     actionsPopup.style.display="none";
+    banPopup.style.display="none";
+});
+
+const closeWarnButton = document.getElementById("close-warn-button");
+closeWarnButton.addEventListener("click",()=>{
+    //resetting and hiding the ban popup
+    warnReasonDropdown.children[0].selected = "selected";
+    otherWarnReason.value = "";
+    otherWarnReasonDiv.style.display = "none";
+    resetBanTimeInputs();
+    actionsPopup.style.display="none";
+    warnPopup.style.display="none";
 });
 
 permaBanCheckbox.addEventListener('change', function() {
@@ -288,8 +415,15 @@ function getReportedUsers() {
                     }
                 });
 
+                user.querySelector(".warn-button").addEventListener("click",async ()=>{
+                    document.querySelector(`#warn-reason-dropdown > option[value=${String(reason).toLowerCase()}]`).selected = "selected";
+                    currUserReport = new UserReport(users[i]['userId'], username, reason);
+                    currAction = user;
+                    openWarnPopup(currUserReport);
+                });
+
                 user.querySelector(".ban-button").addEventListener("click", ()=>{
-                    document.querySelector(`option[value=${String(reason).toLowerCase()}]`).selected = "selected";
+                    document.querySelector(`#ban-reason-dropdown > option[value=${String(reason).toLowerCase()}]`).selected = "selected";
                     currUserReport = new UserReport(users[i]['userId'], username, reason);
                     currAction = user;
                     openBanPopup(currUserReport);
@@ -374,9 +508,6 @@ async function dnfSingle(userId, event, time, scramble) {
     }).then((resp)=>{
         return resp.json();
     }).then((success)=>{
-        if (success) {
-            fetch()
-        }
         return success;
     });
 }
@@ -396,6 +527,19 @@ async function dnfAverage(userId, event, time) {
     }).then((resp)=>{
         return resp.json();
     }).then((success)=>{
+        return success;
+    });
+}
+
+async function warnUser(userId) {
+    return fetch(`/api/warn-user?id=${userId}`,{
+        method: "POST",
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    }).then(promise=>{
+        return promise.json();
+    }).then(success=>{
         return success;
     });
 }
@@ -432,6 +576,12 @@ function openBanPopup(userReport) {
     actionsPopup.style.display="grid";
     banPopup.style.display="flex";
     banUserText.textContent = `Ban ${userReport.username}`;
+}
+
+function openWarnPopup(userReport) {
+    actionsPopup.style.display="grid";
+    warnPopup.style.display="flex";
+    warnUserText.textContent = `Ban ${userReport.username}`;
 }
 
 function clamp(min, max, x) {

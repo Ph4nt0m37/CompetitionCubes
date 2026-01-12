@@ -885,7 +885,7 @@ button {
     transform: translateY(-0.075em);
 }
 
-#ban-confirm-popup {
+.confirm-popup {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     width: 22rem;
     height: 8.5rem;
@@ -929,19 +929,19 @@ button {
     scale: 0.97;
 }
 
-#ban-confirm {
+.confirm-button {
     background-color: var(--red-button);
 }
 
-#ban-confirm:hover {
+.confirm-button:hover {
     background-color: var(--red-button-hover);
 }
 
-#ban-deny {
+.deny-button {
     background-color: var(--green-button);
 }
 
-#ban-deny:hover {
+.deny-button:hover {
     background-color: var(--green-button-hover);
 }
 
@@ -966,9 +966,182 @@ button {
     scale: 0.97;
 }
 
-#other-reason-div {
+.other-reason-div {
     display: none;
     flex-direction: column;
     align-items: center;
     width: 100%;
+}
+
+#unban-button {
+  display: none;
+}
+
+#warn-popup {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 22rem;
+    height: 22rem;
+    display: none;
+    background-color: var(--main-bg-color);
+    z-index: 5;
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: fadeIn 0.15s ease-out;
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+}
+
+.select-reason-dropdown {
+    font-weight: 700;
+    border: #555 2px solid;
+    padding: 3px 35px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 5px;
+    color: black;
+    transition: background-color 0.3s ease;
+}
+
+.select-reason-dropdown, ::picker(select) {
+    appearance: base-select;
+}
+
+.select-reason-dropdown:hover {
+    background-color: var(--high-defecit-color);
+}
+
+.select-reason-dropdown::picker-icon {
+    position: relative;
+    top: 3px;
+    content: url("../images/chevron-down-gray.svg");
+    transform-origin: center 12px;
+    transition: 0.15s rotate;
+    transform: scale(0.85);
+}
+
+.select-reason-dropdown:open::picker-icon {
+  rotate: 180deg;
+}
+
+.select-reason-dropdown > option {
+    border: 2px solid #555;
+    background-color: var(--defecit-color);
+    font-weight: 100;
+    outline: none;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.select-reason-dropdown > option:first-of-type {
+  border-radius: 4px 4px 0 0;
+}
+
+.select-reason-dropdown > option:last-of-type {
+  border-radius: 0 0 4px 4px;
+}
+
+::picker(select) {
+  border-radius: 4px;
+  border: none;
+}
+
+.select-reason-dropdown > option:not(option:last-of-type) {
+  border-bottom: none;
+}
+
+.select-reason-dropdown > option:checked {
+    font-weight: bold;
+}
+
+.select-reason-dropdown > option:hover {
+    background-color: var(--high-defecit-color);
+}
+
+.select-reason-dropdown > option::checkmark {
+    order: 1;
+    margin-left: auto;
+    content: url("../images/check_gray.svg");
+    scale: 0.85;
+    position: relative;
+    top: 2px;
+}
+
+#close-ban-button {
+    position: absolute;
+    right: 0px;
+    background-color: rgb(0,0,0,0);
+    padding: 0;
+    margin: 5px 7px;
+    padding: 2px;
+    border: none;
+}
+
+#close-warn-button {
+    position: absolute;
+    right: 0px;
+    background-color: rgb(0,0,0,0);
+    padding: 0;
+    margin: 5px 7px;
+    padding: 2px;
+    border: none;
+}
+
+#other-ban-reason {
+    width: 90%;
+}
+
+.confirm-warn-button {
+    background-color: var(--yellow-button);
+    font-size: 1.25rem;
+    padding: 10px 35px;
+}
+
+.confirm-warn-button:hover {
+    background-color: var(--yellow-button-hover);
+}
+
+.confirm-warn-button:active {
+    scale: 0.97;
+}
+
+#warn-confirm-popup {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 22rem;
+    height: 8.5rem;
+    display: none;
+    background-color: var(--main-bg-color);
+    z-index: 5;
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: fadeIn 0.15s ease-out;
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+}
+
+#warn-user-text {
+    color: var(--warning-color);
+}
+
+#warn-confirm {
+    background-color: var(--red-button);
+}
+
+#warn-confirm:hover {
+    background-color: var(--red-button-hover);
+}
+
+#warn-deny {
+    background-color: var(--green-button);
+}
+
+#warn-deny:hover {
+    background-color: var(--green-button-hover);
 }

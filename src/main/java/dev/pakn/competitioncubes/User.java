@@ -24,6 +24,7 @@ public class User {
     private int strikes;
     private int bans;
     
+    private ArrayList<UserWarning> warnings = new ArrayList<>();
     private UserBan ban;
 
     private PermissionLevel permissionLevel;
@@ -254,6 +255,27 @@ public class User {
 
     public void addStrike() {
         strikes++;
+        if (bans==0) {
+            if (strikes==4) {
+                AntiCheat.banUser(userId, 259200000l, "Getting 4 warnings.");
+            }else if (strikes==5) {
+                AntiCheat.banUser(userId, 604800000l, "Getting 5 warnings.");
+            }else if (strikes==6) {
+                AntiCheat.banUser(userId, 2629800000l, "Getting 6 warnings.");
+            }
+        }else if (bans==1) {
+            if (strikes==4) {
+                AntiCheat.banUser(userId, 604800000l, "Getting 4 warnings and 1 ban.");
+            }else if (strikes==5) {
+                AntiCheat.banUser(userId, 1209600000l, "Getting 5 warnings and 1 ban.");
+            }else if (strikes==6) {
+                AntiCheat.banUser(userId, 2629800000l, "Getting 6 warnings and 1 ban.");
+            }
+        }else if (bans>=2) {
+            if (strikes==4) {
+                AntiCheat.banUser(userId, -1, "Getting 4 warnings and 2+ bans.");
+            }
+        }
     }
 
     public int getBans() {
@@ -266,6 +288,22 @@ public class User {
 
     public void addBan() {
         bans++;
+    }
+
+    public void setUserWarnings(ArrayList<UserWarning> userWarnings) {
+        this.warnings = userWarnings;
+    }
+
+    public void addUserWarning(UserWarning userWarning) {
+        this.warnings.add(userWarning);
+    }
+
+    public void removeUserWarning(UserWarning userWarning) {
+        this.warnings.remove(userWarning);
+    }
+
+    public ArrayList<UserWarning> getUserWarnings() {
+        return warnings;
     }
 
     public void setUserBan(UserBan ban) {

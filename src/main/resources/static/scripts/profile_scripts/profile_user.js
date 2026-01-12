@@ -24,7 +24,11 @@ viewInfoButton.addEventListener("click",()=>{
     const userBan = user['userBan'];
     if (userBan) {
         currBannedText.style.display="block";
-        currBannedText.textContent = `Currently banned until ${new Date(userBan['expirationDate']).toLocaleString()} (local time) for "${userBan['reason']}"`;
+        if (userBan['expirationDate']>=0) {
+            currBannedText.textContent = `Currently banned until ${new Date(userBan['expirationDate']).toLocaleString()} (local time) for "${userBan['reason']}"`;
+        }else {
+            currBannedText.textContent = `Permanently banned for "${userBan['reason']}"`;
+        }
     }
     body.style.overflowY="hidden";
 });

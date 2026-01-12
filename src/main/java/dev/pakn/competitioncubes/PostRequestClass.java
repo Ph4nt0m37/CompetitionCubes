@@ -113,4 +113,42 @@ public class PostRequestClass {
             this.reason = reason;
         }
     }
+
+    public static class UserWarningReq {
+        private int userId;
+        private long duration;
+        private String reason;
+
+        public UserWarningReq() {}
+
+        public UserWarningReq(int userId, long duration, String reason) {
+            this.userId = userId;
+            this.duration = duration;
+            this.reason = reason;
+        }
+
+        public int getUserId() {
+            return userId;
+        }
+
+        public void setUserId(int userId) {
+            this.userId = userId;
+        }
+
+        public long getDuration() {
+            return duration;
+        }
+
+        public void setDuration(long duration) {
+            this.duration = duration;
+        }
+
+        public String getReason() {
+            return reason;
+        }
+
+        public void setReason(String reason) {
+            this.reason = reason;
+        }
+    }
 }

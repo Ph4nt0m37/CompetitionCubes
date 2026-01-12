@@ -5,6 +5,39 @@ const notificationBox = document.getElementById("notif-div");
 
 const warnButton = document.getElementById("warn-button");
 const banButton = document.getElementById("ban-button");
+const unbanButton = document.getElementById("unban-button");
+
+const unbanConfirmPopup = document.getElementById("unban-confirm-popup");
+unbanConfirmPopup.style.display="none";
+
+const unbanConfirmButton = document.getElementById("unban-confirm");
+unbanConfirmButton.addEventListener("click",()=>{
+    fetch(`/api/unban-user?id=${user['userId']}`,{
+        method: "POST",
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    }).then(resp=>{
+        return resp.json();
+    }).then(async success=>{
+        if (success) {
+            createNotification(`Successfully unbanned ${user['username']}`);
+            actionsPopup.style.display="none";
+            unbanConfirmPopup.style.display="none";
+        }else {
+            createNotification(`Something went wrong with this action. Please DM a developer to resolve it.`);
+        }
+    });
+});
+
+const unbanDenyButton = document.getElementById("unban-deny");
+unbanDenyButton.addEventListener("click",()=>{
+    unbanConfirmPopup.style.display="none";
+});
+
+unbanButton.addEventListener("click",()=>{
+    unbanConfirmPopup.style.display="flex";
+});
 
 const banPopup = document.getElementById("ban-popup");
 
@@ -53,10 +86,6 @@ banConfirmButton.addEventListener("click",()=>{
         return;
     }
 
-    actionsPopup.style.display="none";
-    banPopup.style.display="none"
-    banConfirmPopup.style.display="none";
-
     const duration = (Math.max(0,yearTimeInput.value) * 31557600000)+(Math.max(0,monthTimeInput.value) * 2629800000)+(Math.max(0,dayTimeInput.value) * 86400000)+(Math.max(0,hourTimeInput.value) * 3600000)+(Math.max(0,minuteTimeInput.value) * 60000);
     let reason = banReasonDropdown.value;
     if (reason==="other") {
@@ -79,14 +108,19 @@ banConfirmButton.addEventListener("click",()=>{
     }).then(async success=>{
         if (success) {
             createNotification(`Successfully banned ${user['username']} for "${reason}"`);
+            actionsPopup.style.display="none";
+            banPopup.style.display="none"
+            banConfirmPopup.style.display="none";
+
+            banReasonDropdown.children[0].selected = "selected";
+            otherBanReason.value = "";
+            otherReasonDiv.style.display = "none";
+
+            resetBanTimeInputs();
+        }else {
+            createNotification(`Something went wrong with this action. Please DM a developer to resolve it.`);
         }
     });
-
-    banReasonDropdown.children[0].selected = "selected";
-    otherBanReason.value = "";
-    otherReasonDiv.style.display = "none";
-
-    resetBanTimeInputs();
 });
 
 const confirmBanButton = document.getElementById("confirm-ban-button");
@@ -135,6 +169,16 @@ permaBanCheckbox.addEventListener('change', function() {
     const checked = permaBanCheckbox.checked;
     for (const input of banInputs) {
         input.disabled = checked;
+    }
+});
+
+const viewInfoButton = document.getElementById("view-info-button");
+viewInfoButton.addEventListener("click",()=>{
+    const userBan = user['userBan'];
+    if (userBan) {
+        banButton.style.display="none";
+        warnButton.style.display="none";
+        unbanButton.style.display="block";
     }
 });
 

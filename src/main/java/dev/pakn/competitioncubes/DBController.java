@@ -79,6 +79,8 @@ public class DBController {
                 userList.put(userId, user);
             }
 
+            loadUserWarnings();
+
             conn.close();
         }catch (Exception e) {
             e.printStackTrace();
@@ -96,7 +98,7 @@ public class DBController {
                 String username = new JSONObject(userDataJSON).getString("username");
             
                 //creating sql query
-                String sqlQuery = "INSERT INTO users (wcaid, username, usersecret, matcheswon, matcheslost, badges, permlevel) VALUES (?, ?, ?, ?, ?, ?, ?);";
+                String sqlQuery = "INSERT INTO users (wcaid, username, usersecret, matcheswon, matcheslost, badges, strikes, bans, permlevel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
                 PreparedStatement statement = conn.prepareStatement(sqlQuery);
                 statement.setString(1, userWcaId);
                 statement.setString(2, username);
@@ -105,6 +107,8 @@ public class DBController {
                 statement.setInt(5, 0);
                 statement.setArray(6, conn.createArrayOf("INT", new Integer[0]));
                 statement.setInt(7, 0);
+                statement.setInt(8, 0);
+                statement.setInt(9, 0);
 
                 //sending sql query
                 statement.executeUpdate();
@@ -1228,14 +1232,22 @@ public class DBController {
         }
     }
 
-    public static boolean addUserWarning(int userId) {
+    public static boolean addUserWarning(int userId, long expirationDate, String reason) {
         try {
             //connect to DB
             Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+            String sqlQuery = "INSERT INTO user_warnings (id, expirationdate, reason) VALUES (?, ?, ?);";
+            PreparedStatement statement = conn.prepareStatement(sqlQuery);
+            statement.setInt(1, userId);
+            statement.setLong(2, expirationDate);
+            statement.setString(3, reason);
+
+            //sending sql query
+            statement.executeUpdate();
         
             //creating sql query
-            String sqlQuery = "UPDATE users SET strikes=strikes+1 WHERE userid=?";
-            PreparedStatement statement = conn.prepareStatement(sqlQuery);
+            sqlQuery = "UPDATE users SET strikes=strikes+1 WHERE userid=?";
+            statement = conn.prepareStatement(sqlQuery);
             statement.setInt(1, userId);
 
             //sending sql query
@@ -1263,6 +1275,13 @@ public class DBController {
             //sending sql query
             statement.executeUpdate();
 
+            sqlQuery = "UPDATE users SET bans=bans+1 WHERE userid=?";
+            statement = conn.prepareStatement(sqlQuery);
+            statement.setInt(1, userId);
+
+            //sending sql query
+            statement.executeUpdate();
+ 
             UserBan userBan = new UserBan(userId, expirationDate, reason);
             bannedUserList.put(userId, userBan);
             User user = userList.get(userId);
@@ -1365,6 +1384,44 @@ public class DBController {
             loadUserBans(conn);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void loadUserWarnings() {
+        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+            String sqlQuerySingle = "SELECT * FROM user_warnings";
+            PreparedStatement statement = conn.prepareStatement(sqlQuerySingle);
+
+            //sending sql query
+            ResultSet usersSet = statement.executeQuery();
+
+            while (usersSet.next()) {
+                int userId = usersSet.getInt("id");
+                long expirationDate = usersSet.getLong("expirationdate");
+                String reason = usersSet.getString("reason");
+                userList.get(userId).addUserWarning(new UserWarning(userId, expirationDate, reason));
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean changeUsername(int userId, String newUsername) {
+        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+            String sqlQuerySingle = "UPDATE users SET username=? WHERE userid=?;";
+            PreparedStatement statement = conn.prepareStatement(sqlQuerySingle);
+            statement.setString(1, newUsername);
+            statement.setInt(2, userId);
+
+            //sending sql update
+            statement.executeUpdate();
+            userList.get(userId).setUsername(newUsername);
+            return true;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
         }
     }
 }
