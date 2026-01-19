@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class AntiCheat {
@@ -182,10 +183,28 @@ public class AntiCheat {
         }
     }
 
+    @PostMapping("/api/report-solve")
+    public void reportUser(@RequestParam("userId") int userId) {
+        try {
+            Match userMatch = DBController.getUserByIDList(userId).getCurrentMatch();
+            ArrayList<SolveData> userSolves = userMatch.getUserSolves().get(userId);
+            if (userSolves.size()>0) {
+                userSolves.get(userSolves.size()-1).setValidity(false);
+            }else {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+        }catch (ResponseStatusException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PostMapping("/api/report-user")
     public boolean reportUser(@RequestBody PostRequestClass.UserReport userReport) {
         try {
-            DBController.addUserReport(userReport.getUserId(), userReport.getReason());
+            DBController.addUserReport(userReport.getUserId(), userReport.getReason(), userReport.getInfo());
             return true;
         }catch (Exception e) {
             e.printStackTrace();

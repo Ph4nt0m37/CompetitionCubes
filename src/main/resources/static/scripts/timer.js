@@ -1,5 +1,5 @@
 import { stompClient } from "./comp_connect.js";
-import { currentScramble, roomId, userId } from "./competition.js";
+import { currentScramble, roomId, userId, oppId } from "./competition.js";
 export const timerStates = {
     TIMING: 0,
     INSPECTION: 1,
@@ -58,6 +58,58 @@ window.onload = ()=>{
         forfeitPopup.style.display="none";
     });
 
+    const reportButton = document.getElementById("confirm-report-button");
+    reportButton.addEventListener("click",()=>{
+        const reportReason = reportReasonDropdown.value;
+        if (reportReason!=="default") {
+            if (reportReason!=="time-wasting") {
+                fetch("/api/report-user", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        userId: oppId,
+                        reason: reportReasonDropdown.value,
+                    }),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8"
+                    }
+                }).then((resp)=>{
+                    return resp.json();
+                }).then((data)=>{
+                    actionsPopup.style.display="none";
+                    reportPopup.style.display="none";
+                    createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`);
+                    reportReasonDropdown.children[0].selected = "selected";
+                });
+            }else {
+                fetch(`/api/get-inactivity-time/${oppId}`)
+                .then(resp=>{
+                    return resp.json();
+                }).then(inactivityTime=>{
+                    fetch("/api/report-user", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            userId: oppId,
+                            reason: reportReasonDropdown.value,
+                            info: inactivityTime['time']
+                        }),
+                        headers: {
+                            "Content-type": "application/json; charset=UTF-8"
+                        }
+                    }).then((resp)=>{
+                        return resp.json();
+                    }).then((data)=>{
+                        actionsPopup.style.display="none";
+                        reportPopup.style.display="none";
+                        createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`);
+                        reportReasonDropdown.children[0].selected = "selected";
+                    });
+                })
+            }
+        }else {
+            createNotification(`Please select a reason for reporting!`);
+        }
+    });
+
     actionsPopup.addEventListener("click",(event)=>{
         if (event.target===event.currentTarget && forfeitPopup.style.display==="none") {
             if (reportPopup.style.display==="none") {
@@ -102,6 +154,23 @@ window.onload = ()=>{
             actionsPopup.style.display="none";
             reportPopup.style.display="none";
         }
+    });
+
+    const reportSolveButton = document.getElementById("report-solve-button");
+    reportSolveButton.addEventListener("click",()=>{
+        reportSolveButton.blur();
+        fetch(`/api/report-solve?userId=${oppId}`, {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        }).then(resp=>{
+            if (resp.status==200) {
+                createNotification("Successfully reported this solve.");
+            }else {
+                createNotification("Something went wrong reporting this solve!");
+            }
+        });
     });
 
     let timerState = timerStates.STOPPED;
@@ -365,4 +434,20 @@ window.onload = ()=>{
             });
         }, 100);
     }
+}
+
+const notificationTemplate = document.querySelector(".notification.template");
+const notificationBox = document.getElementById("notif-div");
+
+function createNotification(text) {
+    const notif = notificationTemplate.cloneNode(true);
+    notif.textContent = text;
+    notif.classList.remove("template");
+    notificationBox.appendChild(notif);
+    setTimeout(()=>{
+        notif.classList.add("fade-out");
+        setTimeout(()=>{
+            notif.remove();
+        },1500);
+    },5000);
 }

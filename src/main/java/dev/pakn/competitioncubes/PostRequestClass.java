@@ -1,5 +1,7 @@
 package dev.pakn.competitioncubes;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class PostRequestClass {
     public static class DNFTime {
         private int userId;
@@ -51,12 +53,20 @@ public class PostRequestClass {
     public static class UserReport {
         private int userId;
         private String reason;
+        private String info;
 
         public UserReport() {};
 
         public UserReport(int userId, String reason) {
             this.userId = userId;
             this.reason = reason;
+            this.info=null;
+        }
+
+        public UserReport(int userId, String reason, int inactivityTime) {
+            this.userId = userId;
+            this.reason = reason;
+            this.info = String.valueOf(inactivityTime);
         }
 
         public int getUserId() {
@@ -73,6 +83,14 @@ public class PostRequestClass {
 
         public void setReason(String reason) {
             this.reason = reason;
+        }
+
+        public String getInfo() {
+            return info;
+        }
+
+        public void setInfo(String info) {
+            this.info = info;
         }
     }
 

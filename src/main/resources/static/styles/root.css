@@ -68,3 +68,33 @@ p {
   font-family: "Segoe UI";
   src: url("/src/main/resources/static/fonts/segoe_ui/segoeui.ttf");
 }
+
+.notif-abs-div {
+  position: absolute;
+  right: 5px;
+  top: 20px;
+}
+
+#notif-div {
+    position: sticky;
+    margin-left: auto;
+    margin-right: 10px;
+    width: fit-content;
+    top: 10px;
+}
+
+.notification {
+    background-color: var(--notification-color);
+    width: 15rem;
+    text-align: center;
+    padding: 10px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--h2-color);
+    box-shadow: 0 4px 12px rgb(0,0,0,0.25);
+    color: var(--dark-font-color);
+    animation: fadeIn 0.15s ease-out;
+}
+
+.template {
+    display: none;
+}

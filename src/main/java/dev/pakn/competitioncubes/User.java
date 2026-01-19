@@ -140,7 +140,7 @@ public class User {
     }
 
     public double getLastStoredPbSingle(Event event) {
-        return prevPbSingles.get(event).get(Math.min(prevPbSingles.get(event).size()-1, 4));
+        return prevPbSingles.get(event).size() > 0 ? prevPbSingles.get(event).get(Math.min(prevPbSingles.get(event).size()-1, 4)) : Integer.MAX_VALUE;
     }
 
     public void addAverage(Event event, double average) {
@@ -163,7 +163,7 @@ public class User {
     }
 
     public double getLastStoredPbAverage(Event event) {
-        return prevPbAverages.get(event).get(Math.min(prevPbAverages.get(event).size()-1, 4));
+        return prevPbAverages.get(event).size() > 0 ? prevPbAverages.get(event).get(Math.min(prevPbAverages.get(event).size()-1, 4)) : Integer.MAX_VALUE;
     }
 
     public double getSingle(Event event) {
@@ -172,6 +172,7 @@ public class User {
 
     public void setSingle(Event event, double newSingle) {
         pbSingles.put(event,newSingle);
+        saveSingleForEvent(event, newSingle);
     }
 
     public Double[] getAllSinglesArray(Event event) {
@@ -184,6 +185,7 @@ public class User {
 
     public void setAverage(Event event, double newAverage) {
         pbAverages.put(event,newAverage);
+        saveAverageForEvent(event, newAverage);
     }
 
     public Double[] getAllAveragesArray(Event event) {
@@ -316,6 +318,14 @@ public class User {
 
     public boolean saveUserData() {
         return DBController.saveUserData(this);
+    }
+
+    public void saveSingleForEvent(Event event, double newSingle) {
+        DBController.saveSingleForEvent(userId,event, newSingle);
+    }
+
+    public void saveAverageForEvent(Event event, double newAverage) {
+        DBController.saveAverageForEvent(userId,event, newAverage);
     }
 
     public boolean loadUserData() {

@@ -22,7 +22,7 @@ export let matchData;
 
 export let currentScramble = "";
 
-let oppId = null;
+export let oppId = null;
 
 let matchWinner = null;
 

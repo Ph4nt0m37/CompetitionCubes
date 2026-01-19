@@ -529,7 +529,7 @@ button {
     box-shadow: 0 4px 12px rgb(0,0,0,0.25);
     color: var(--dark-font-color);
     animation: fadeIn 0.15s ease-out;
-    z-index: 2;
+    z-index: 3;
 }
 
 @keyframes fadeIn {

@@ -43,7 +43,9 @@ public class LinkMappings {
             //auto login here!
             User user = DBController.getUserBySecret(userSecret);
             //if login succeeded. if they somehow have user_secret cookie but it doesn't exist, user will be null
-            if (user!=null) return "main-logged-in.html";
+            if (user!=null) {
+                return "main-logged-in.html";
+            }
         }
         return "main.html";
     }

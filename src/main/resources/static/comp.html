@@ -15,7 +15,14 @@
     <audio id="12s-audio" src="./audios/12-seconds.mp3"></audio>
     <button type="button" id="home-button">Home</button>
     <button type="button" id="menu-button">Menu</button>
-    <button type="button" id="report-button" class="report-button">Report</button>
+    <button id="report-solve-button">
+        <img src="/images/flag.svg" draggable="false">
+    </button>
+    <div class="notif-abs-div">
+        <div id="notif-div">
+            <p class="notification template">Notification</p>
+        </div>
+    </div>
     <div id="background-overlay">
         <div id="menu-popup">
             <h1 class="menu-text">Menu</h1>
@@ -33,7 +40,7 @@
             <div class="report-section">
                 <h2 class="report-form-text">Report Reason</h2>
                 <select id="report-reason-dropdown">
-                    <option value="selected" selected="selected">Report reason...</option>
+                    <option value="default" selected="selected">Report reason...</option>
                     <option value="username">Username</option>
                     <option value="time-wasting">Time Wasting</option>
                 </select>
@@ -84,7 +91,6 @@
         <h1 class="elo-change-text" id="opp-elo-change-text">ELO: 100>>100</h1>
     </div>
 </body>
-<script type="module" src="scripts/competition.js"></script>
 <script type="module" src="scripts/competition.js"></script>
 <script type="module" src="scripts/comp_connect.js"></script>
 <script type="module" src="scripts/next_match_search.js"></script>

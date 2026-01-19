@@ -1,11 +1,12 @@
-body {
-    font-family: 'Trebuchet MS', monospace;
+html, body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     flex-direction: column;
     background-color: var(--main-bg-color);
     margin: 0;
     padding: 0;
     overflow: hidden;
+    height: 100%;
 }
 
 
@@ -14,9 +15,9 @@ body {
 }
 
 h1 {
-    font-size: 2vw;
+    font-size: 2.4rem;
     text-align: center;
-    margin: 1.5vh;
+    margin: 1.125rem;
 }
 
 #scramble-div {
@@ -28,7 +29,7 @@ h1 {
 
 #scramble-text {
     color: var(--timer-color);
-    font-size: 3vw;
+    font-size: 3.6rem;
     margin: 15px;
     text-align: center;
 }
@@ -37,37 +38,42 @@ h1 {
     overflow: hidden;
     display: flex;
     /*border: 10px solid rgb(255, 0, 0);*/
-    height: 85vh;
+    height: 100%;
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
 }
 
 .timer-div {
-    display: block;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 50%;
     height: 100%;
-    /*border: 10px solid black;*/
-    align-content: center;
+    justify-content: center;
     text-align: center;
+    flex-grow: 1;
 }
 
 .timer {
-    font-size: 7vw;
+    font-size: 8.4rem;
     /*border: 10px solid black;*/
     color: var(--timer-color);
 }
 
 .ao5 {
-    font-size: 2.75vw;
+    font-size: 3.3rem;
     /*border: 10px solid black;*/
     color: var(--timer-color);
+    padding: 0;
+    margin: 1rem;
 }
 
 .winsText {
-    font-size: 2.75vw;
+    font-size: 3.3rem;
     transition: color 2s ease-out;
     color: var(--timer-color);
+    margin: 0;
+    padding: 0;
 }
 
 .winsText.wonRound {
@@ -81,8 +87,10 @@ h1 {
 }
 
 .username {
-    font-size: 2.9vw;
+    font-size: 3.48rem;
     color: var(--dark-blue-color);
+    margin-bottom: 2rem;
+    padding: 0;
 }
 
 #penalties-div {
@@ -92,10 +100,10 @@ h1 {
 }
 
 button {
-    border-radius: 1.2vw;
+    border-radius: 1.44rem;
     border: none;
     font-weight: bold;
-    font-size: 2.25vw;
+    font-size: 2.7rem;
     cursor: pointer;
     padding: 6px 10px;
     transition: background-color 0.3s ease, transform 0.1s ease;
@@ -139,8 +147,8 @@ button {
 
 .penalty-text {
     color: var(--timer-color);
-    margin: -1vh;
-    font-size: 2.75vw;
+    margin: -0.75rem;
+    font-size: 3.3rem;
     display: none;
 }
 
@@ -155,7 +163,7 @@ button {
     align-items: center;
     bottom: 0;
     padding: 20px 0px;
-    width: 100vw;
+    width: 120rem;
     background-color: var(--header-color);
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
 }
@@ -248,7 +256,7 @@ button {
     position: absolute;
     color: white;
     border-radius: 17.5px;
-    font-size: 2.25vw;
+    font-size: 2.7rem;
     font-weight: bold;
     background-color: var(--blue-button);
     padding: 12.5px 25px;
@@ -266,12 +274,6 @@ button {
 
 #menu-button:active {
     transform: scale(0.97);
-}
-
-#report-button {
-    position: absolute;
-    bottom: 0;
-    right: 0;
 }
 
 #confirm-report-button {
@@ -581,4 +583,64 @@ button {
 
 #forfeit-deny:hover {
     background-color: var(--green-button-hover);
+}
+
+.notif-abs-div {
+  position: absolute;
+  right: 5px;
+  top: 90px;
+}
+
+#notif-div {
+  position: sticky;
+  margin-left: auto;
+  margin-right: 10px;
+  width: fit-content;
+  top: 10px;
+}
+
+.notification {
+    background-color: var(--notification-color);
+    width: 15rem;
+    text-align: center;
+    padding: 10px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--h2-color);
+    box-shadow: 0 4px 12px rgb(0,0,0,0.25);
+    color: var(--dark-font-color);
+    animation: fadeIn 0.15s ease-out;
+    z-index: 2;
+}
+
+.template {
+    display: none;
+}
+
+#report-solve-button {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--report-button);
+  padding: 6px 6px 4px 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0.3rem;
+}
+
+#report-solve-button > img {
+  width: 2rem;
+  height: 2rem;
+}
+
+#report-solve-button:hover {
+  background-color: #c31717;
+}
+
+#report-solve-button:active {
+  scale: 0.95;
 }

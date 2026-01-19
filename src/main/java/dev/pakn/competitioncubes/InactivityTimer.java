@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +34,16 @@ public class InactivityTimer {
                 userInactivityTimers.remove(i);
             }
         }
+    }
+
+    @GetMapping("/api/get-inactivity-time/{userId}")
+    public UserInactivity getInactivityTimer(@PathVariable int userId) {
+        for (int i=0;i<userInactivityTimers.size();i++) {
+            if (userInactivityTimers.get(i).getUserId()==userId) {
+                return userInactivityTimers.get(i);
+            }
+        }
+        return null;
     }
 
     @Scheduled(fixedRate = 1000)

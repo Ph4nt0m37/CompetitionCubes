@@ -271,7 +271,7 @@ reportButton.addEventListener("click",()=>{
         }).then((data)=>{
             actionsPopup.style.display="none";
             reportPopup.style.display="none";
-            createNotification(`Successfully reported user for ${reportReasonDropdown.value}`);
+            createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`);
             reportReasonDropdown.children[0].selected = "selected";
         });
     }else {

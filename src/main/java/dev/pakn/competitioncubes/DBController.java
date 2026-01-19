@@ -174,20 +174,7 @@ public class DBController {
             
             if (usersFound.next()) {
                 int userId = usersFound.getInt("userid");
-                String wcaId = usersFound.getString("wcaid");
-                String username = usersFound.getString("username");
-                int permLevel = usersFound.getInt("permlevel");
-                int matchesWon = usersFound.getInt("matcheswon");
-                int matchesLost = usersFound.getInt("matcheslost");
-                HashMap<Event, Integer> userElos = getElosByUserId(userId, conn);
-                HashMap<Event, Double> userSingles = getSinglesByUserId(userId, conn);
-                HashMap<Event, Double> userAverages = getAveragesByUserId(userId, conn);
-                Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
-                int strikes = usersFound.getInt("strikes");
-                int bans = usersFound.getInt("bans");
-                User newUser = new User(userId,username,wcaId,permLevel,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans);
-                conn.close();
-                return newUser;
+                return userList.get(userId);
             }else {
                 conn.close();
                 return null;
@@ -431,12 +418,13 @@ public class DBController {
             Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
         
             //creating sql query
-            String sqlQuery = "UPDATE users SET username=?,matcheswon=?,matcheslost=? WHERE userid=?";
+            String sqlQuery = "UPDATE users SET username=?,matcheswon=?,matcheslost=?,badges=? WHERE userid=?";
             PreparedStatement statement = conn.prepareStatement(sqlQuery);
             statement.setString(1, user.getUsername());
             statement.setInt(2, user.getMatchesWon());
             statement.setInt(3, user.getMatchesLost());
-            statement.setInt(4, user.getUserId());
+            statement.setArray(4, conn.createArrayOf("INT",user.getBadges().toArray()));
+            statement.setInt(5, user.getUserId());
 
             //sending sql query
             statement.executeUpdate();
@@ -468,6 +456,62 @@ public class DBController {
             statement.setArray(5, conn.createArrayOf("DOUBLE PRECISION",user.getAllAveragesArray(event)));
 
             statement.setInt(6, userId);
+
+            //sending sql query
+            statement.executeUpdate();
+
+            conn.close();
+            return true;
+        }catch (Exception e) {
+            System.out.println("Failed to connect to db!");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean saveSingleForEvent(int userId, Event event, double newSingle) {
+        try {
+            //connect to DB
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        
+            //creating sql query
+            String sqlQuery = "UPDATE "+eventDBNames.get(event)+" SET single=?, old_singles=? WHERE userid=?";
+            PreparedStatement statement = conn.prepareStatement(sqlQuery);
+            statement.setDouble(1, newSingle);
+
+            User user = getUserByIDList(userId);
+
+            statement.setArray(2, conn.createArrayOf("DOUBLE PRECISION",user.getAllSinglesArray(event)));
+
+            statement.setInt(3, userId);
+
+            //sending sql query
+            statement.executeUpdate();
+
+            conn.close();
+            return true;
+        }catch (Exception e) {
+            System.out.println("Failed to connect to db!");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean saveAverageForEvent(int userId, Event event, double newAverage) {
+        try {
+            //connect to DB
+            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        
+            //creating sql query
+            String sqlQuery = "UPDATE "+eventDBNames.get(event)+" SET average=?, old_averages=? WHERE userid=?";
+            PreparedStatement statement = conn.prepareStatement(sqlQuery);
+            statement.setDouble(1, newAverage);
+
+            User user = getUserByIDList(userId);
+
+            statement.setArray(2, conn.createArrayOf("DOUBLE PRECISION",user.getAllAveragesArray(event)));
+
+            statement.setInt(3, userId);
 
             //sending sql query
             statement.executeUpdate();
@@ -1165,7 +1209,8 @@ public class DBController {
             while (usersSet.next()) {
                 int userId = usersSet.getInt("id");
                 String reason = usersSet.getString("reason");
-                reportedUsers.add(new ReportedUser(userId, getUserByIDList(userId).getUsername() ,reason));
+                String info = usersSet.getString("info");
+                reportedUsers.add(new ReportedUser(userId, getUserByIDList(userId).getUsername() ,reason, info));
             }
 
             return reportedUsers;
@@ -1178,13 +1223,14 @@ public class DBController {
     }
 
 
-    public static void addUserReport(int userId, String reason) {
+    public static void addUserReport(int userId, String reason, String info) {
         //connect to DB
         try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
-            String sqlQuery = "INSERT INTO reported_users (id, reason) VALUES (?, ?);";
+            String sqlQuery = "INSERT INTO reported_users (id, reason, info) VALUES (?, ?, ?);";
             PreparedStatement statement = conn.prepareStatement(sqlQuery);
             statement.setInt(1, userId);
             statement.setString(2, reason);
+            statement.setString(3, info);
 
             //sending sql query
             statement.executeUpdate();
@@ -1255,6 +1301,7 @@ public class DBController {
 
             conn.close();
             userList.get(userId).addStrike();
+            userList.get(userId).addUserWarning(new UserWarning(userId, expirationDate, reason));
             return true;
         }catch (Exception e) {
             System.out.println("Failed to connect to db!");

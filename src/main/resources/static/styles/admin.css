@@ -282,6 +282,12 @@ h1 {
     color: #414141;
 }
 
+.report-info {
+    margin: 0;
+    color: #414141;
+    font-size: 1rem;
+}
+
 .buttons-div {
     display: flex;
     justify-content: center;
@@ -354,32 +360,6 @@ button {
 
 .solve-user-link {
     text-decoration: underline;
-}
-
-.notif-abs-div {
-  position: absolute;
-  right: 5px;
-  top: 20px;
-}
-
-#notif-div {
-    position: sticky;
-    margin-left: auto;
-    margin-right: 10px;
-    width: fit-content;
-    top: 10px;
-}
-
-.notification {
-    background-color: var(--notification-color);
-    width: 15rem;
-    text-align: center;
-    padding: 10px 10px;
-    border-radius: 10px;
-    border: 1px solid var(--h2-color);
-    box-shadow: 0 4px 12px rgb(0,0,0,0.25);
-    color: var(--dark-font-color);
-    animation: fadeIn 0.15s ease-out;
 }
 
 @keyframes fadeIn {

@@ -373,7 +373,7 @@ function getInvalidTimes() {
                 });
 
                 solve.querySelector(".ban-button").addEventListener("click", ()=>{
-                    openBanPopup(solves[i]['userId'],user);
+                    openBanPopupUsername(user);
                 });
 
                 dashboardDivContent.appendChild(solve);
@@ -399,9 +399,17 @@ function getReportedUsers() {
                 let user = template.cloneNode(true);
                 const username = users[i]['username'];
                 const reason = users[i]['reason'];
+                const info = users[i]['info'];
+                console.log(users[i]);
                 user.querySelector(".solve-user-link").textContent = username;
                 user.querySelector(".solve-user-link").href = `/user/${users[i]['userId']}`;
                 user.querySelector(".report-reason").textContent = `Reason: ${String(reason).charAt(0).toUpperCase() + String(reason).slice(1)}`;
+                if (reason==="time-wasting") {
+                    const time = parseInt(info);
+                    const timeInfo = user.querySelector(".report-info");
+                    timeInfo.textContent=`Time: ${time}s`;
+                    timeInfo.classList.remove("template");
+                }
                 user.classList.remove("template");
 
                 user.querySelector(".ok-button").addEventListener("click",async ()=>{
@@ -576,6 +584,12 @@ function openBanPopup(userReport) {
     actionsPopup.style.display="grid";
     banPopup.style.display="flex";
     banUserText.textContent = `Ban ${userReport.username}`;
+}
+
+function openBanPopupUsername(username) {
+    actionsPopup.style.display="grid";
+    banPopup.style.display="flex";
+    banUserText.textContent = `Ban ${username}`;
 }
 
 function openWarnPopup(userReport) {

@@ -239,6 +239,7 @@ public class Match {
                 loserNewElo = loserNewElo>=0 ? loserNewElo : 0;
                 loser.setElo(event, loserNewElo);
                 loser.addLoss();
+                BadgeController.calculateAndGrantBadges(this);
                 loser.saveUserData();
                 loser.setCurrentMatch(null);
                 DBController.saveDataForEvent(loserUserId, event, loserNewElo, loser.getSingle(event), loser.getAverage(event));
@@ -248,10 +249,10 @@ public class Match {
         int winnerNewElo = winnerElo+eloChange;
         winner.setElo(event, winnerNewElo);
         winner.addWin();
-        winner.saveUserData();
         winner.setCurrentMatch(null);
         BadgeController.calculateAndGrantBadges(this);
         DBController.saveDataForEvent(userId, event, winnerNewElo, winner.getSingle(event), winner.getAverage(event));
+        winner.saveUserData();
         MatchController.getMatches().remove(this);
     }
 }

@@ -23,6 +23,32 @@ onload = (event)=>{
             user=data;
             userId=user.userId;
 
+            //notification system
+            const warnings = getCookie("warnings");
+            if (warnings!="") {
+                const strikes = user['strikes'];
+                if (strikes>parseInt(warnings)) {
+                    const userWarnings = user['userWarnings'];
+                    createNotification(`You have been warned for "${userWarnings[userWarnings.length-1]}". This warning will expire in a month.`);   
+                }
+                document.cookie = `warnings=${strikes};`;
+            }else {
+                document.cookie = `warnings=${user['strikes']};`;
+            }
+
+            //notification system
+            const bans = getCookie("bans");
+            if (bans!="") {
+                const bansRealNum = user['bans'];
+                if (bansRealNum>parseInt(bans)) {
+                    const userBan = user['userBan'];
+                    createNotification(`You have been banned for "${userBan['reason']}". Check your profile for more information.`);   
+                }
+                document.cookie = `bans=${bansRealNum};`;
+            }else {
+                document.cookie = `bans=${user['bans']};`;
+            }
+
             //client stuff
             const stompClient = new StompJs.Client({
                 brokerURL: `wss://${window.location.host}/user-connect`,
@@ -94,13 +120,8 @@ onload = (event)=>{
 
             let tutorial_complete = false;
             //cookie example: tutorial_complete=false
-            const cookies = document.cookie.split("=");
-            for (let i=0;i<cookies.length;i+=2) {
-                //if the cookie is/includes 'tutorial_complete', then we know the next index is the value
-                if (cookies[i].includes("tutorial_complete")) {
-                    tutorial_complete = cookies[i+1]==="true";
-                }
-            }
+            const tutorialCompleteCookie = getCookie("tutorial_complete");
+            tutorial_complete = (tutorialCompleteCookie==="true");
 
             if (!tutorial_complete) {
                 tutorialDiv.style.display="flex";
@@ -205,4 +226,36 @@ function cancelMatchSearch(stompClient) {
     });
     searchText.style.display="none";
     clearInterval(searchInt);
+}
+
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+const notificationTemplate = document.querySelector(".notification.template");
+const notificationBox = document.getElementById("notif-div");
+
+function createNotification(text) {
+    const notif = notificationTemplate.cloneNode(true);
+    notif.textContent = text;
+    notif.classList.remove("template");
+    notificationBox.appendChild(notif);
+    setTimeout(()=>{
+        notif.classList.add("fade-out");
+        setTimeout(()=>{
+            notif.remove();
+        },1500);
+    },5000);
 }
