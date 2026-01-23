@@ -24,8 +24,6 @@ public class SolveController {
             for (Match currMatch:matches) {
                 if (currMatch.getRoomId()==data.getRoomId()) {
                     SolveData solveData = new SolveData(currMatch.getEvent(),data.getTime(),data.getScramble(),Penalty.stringToPenalty(data.getPenalty()),data.getUserId());
-                    solveData.setValidity(AntiCheat.validateSolve(solveData.getPenalizedTime(), currMatch.getUserWcaPbAvg(data.getUserId())));
-                    System.out.println("Solve: "+solveData.getPenalizedTime()+" | Validity: "+solveData.isValid());
                     currMatch.addSolve(data.getUserId(),solveData);
                 }
             }
