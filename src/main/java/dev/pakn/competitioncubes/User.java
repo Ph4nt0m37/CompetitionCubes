@@ -259,23 +259,23 @@ public class User {
         strikes++;
         if (bans==0) {
             if (strikes==4) {
-                AntiCheat.banUser(userId, 259200000l, "Getting 4 warnings.");
+                AntiCheat.banUser(userId, 259200000l, "Getting 4 warnings");
             }else if (strikes==5) {
-                AntiCheat.banUser(userId, 604800000l, "Getting 5 warnings.");
+                AntiCheat.banUser(userId, 604800000l, "Getting 5 warnings");
             }else if (strikes==6) {
-                AntiCheat.banUser(userId, 2629800000l, "Getting 6 warnings.");
+                AntiCheat.banUser(userId, 2629800000l, "Getting 6 warnings");
             }
         }else if (bans==1) {
             if (strikes==4) {
-                AntiCheat.banUser(userId, 604800000l, "Getting 4 warnings and 1 ban.");
+                AntiCheat.banUser(userId, 604800000l, "Getting 4 warnings and 1 ban");
             }else if (strikes==5) {
-                AntiCheat.banUser(userId, 1209600000l, "Getting 5 warnings and 1 ban.");
+                AntiCheat.banUser(userId, 1209600000l, "Getting 5 warnings and 1 ban");
             }else if (strikes==6) {
-                AntiCheat.banUser(userId, 2629800000l, "Getting 6 warnings and 1 ban.");
+                AntiCheat.banUser(userId, 2629800000l, "Getting 6 warnings and 1 ban");
             }
         }else if (bans>=2) {
             if (strikes==4) {
-                AntiCheat.banUser(userId, -1, "Getting 4 warnings and 2+ bans.");
+                AntiCheat.banUser(userId, -1, "Getting 4 warnings and 2+ bans");
             }
         }
     }

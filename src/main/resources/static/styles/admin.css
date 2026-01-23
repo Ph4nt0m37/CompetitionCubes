@@ -32,6 +32,7 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
+    z-index: 2;
 }
 
 .options-text {
@@ -241,12 +242,13 @@ h1 {
     text-align: center;
     overflow-y: auto;
     height: 100%;
-    width: 80%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     -ms-overflow-style: none;
     scrollbar-width: none;
+    z-index: 1;
 }
 
 .entry {

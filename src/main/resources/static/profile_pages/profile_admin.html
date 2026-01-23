@@ -81,7 +81,7 @@
                     <option value="cheating">Cheating</option>
                     <option value="other">Other</option>
                 </select>
-                <div id="other-reason-div">
+                <div class="other-reason-div" id="other-reason-div">
                     <h2 class="ban-form-text other-reason">Other Reason</h2>
                     <input type="text" class="ban-time-input other-reason" id="other-ban-reason" placeholder="Other reason..." maxlength="250" autocomplete="off">
                 </div>
@@ -123,7 +123,7 @@
             </div>
         </div>
         <div id="warn-popup">
-            <button id="close-warn-button">
+            <button id="close-warn-x">
                 <img src="/images/x.svg" draggable="false">
             </button>
             <h1 class="ban-user-text" id="warn-user-text">Warn User</h1>
@@ -172,6 +172,9 @@
                     <h3>Badges</h3>
                     <div id="badges-div">
                         <div class="badge badge-template owner-badge">Owner</div>
+                        <div class="badge badge-template admin-badge">Admin</div>
+                        <div class="badge badge-template mod-badge">Moderator</div>
+                        <div class="badge badge-template jr-mod-badge">Jr. Moderator</div>
                         <div class="badge badge-template early-tester-badge">Early Tester</div>
                         <div class="badge badge-template tester-badge">Tester</div>
                         <div class="badge badge-template creator-badge">Creator</div>

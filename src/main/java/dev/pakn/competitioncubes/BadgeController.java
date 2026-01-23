@@ -2,14 +2,17 @@ package dev.pakn.competitioncubes;
 
 public class BadgeController {
     public static final int OWNER_BADGE = 0;
-    public static final int EARLY_TESTER_BADGE = 1;
-    public static final int TESTER_BADGE = 2;
-    public static final int CREATOR_BADGE = 3;
-    public static final int DIAMOND_BADGE = 4;
-    public static final int GOLD_BADGE = 5;
-    public static final int SILVER_BADGE = 6;
-    public static final int BRONZE_BADGE = 7;
-    public static final int SNS_FALL_25_BADGE = 8;
+    public static final int ADMIN_BADGE = 1;
+    public static final int MODERATOR_BADGE = 2;
+    public static final int JR_MODERATOR_BADGE = 3;
+    public static final int EARLY_TESTER_BADGE = 4;
+    public static final int TESTER_BADGE = 5;
+    public static final int CREATOR_BADGE = 6;
+    public static final int DIAMOND_BADGE = 7;
+    public static final int GOLD_BADGE = 8;
+    public static final int SILVER_BADGE = 9;
+    public static final int BRONZE_BADGE = 10;
+    public static final int SNS_FALL_25_BADGE = 11;
 
     public static void calculateAndGrantBadges(Match match) {
         for (int userId:match.getUsers()) {
