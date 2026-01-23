@@ -11,7 +11,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.sql.DataSource;
+
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +42,9 @@ public class DBController {
 
     @Value("${postgres.url}")
     private String dbURL;
+
+    @Autowired
+    DataSource dataSource;
 
     private static String staticDbUsername;
     private static String staticDbPassword;
