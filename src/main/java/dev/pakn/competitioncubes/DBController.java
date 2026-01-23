@@ -11,7 +11,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.sql.DataSource;
+
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +34,7 @@ import jakarta.servlet.http.Cookie;
 @RestController
 public class DBController {
 
-    @Value("${postgres.username}")
+    /*@Value("${postgres.username}")
     private String dbUsername;
 
     @Value("${postgres.password}")
@@ -42,9 +45,12 @@ public class DBController {
 
     private static String staticDbUsername;
     private static String staticDbPassword;
-    private static String staticDbURL;
+    private static String staticDbURL;*/
 
-    
+    @Autowired
+    DataSource dataSource;
+
+    public static DataSource staticDataSource;
 
     private static HashMap<Integer, User> userList = new HashMap<>();
     private static HashMap<Integer, UserBan> bannedUserList = new HashMap<>();
@@ -54,16 +60,16 @@ public class DBController {
 
     @PostConstruct
     public void init() {
-        staticDbURL=dbURL;
+        /*staticDbURL=dbURL;
         staticDbUsername=dbUsername;
-        staticDbPassword=dbPassword;
+        staticDbPassword=dbPassword;*/
+
+        staticDataSource = dataSource;
 
         eventDBNames.put(Event.THREE_BY_THREE, "threestats");
         stringToEventMap.put("3x3", Event.THREE_BY_THREE);
 
-        try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = dataSource.getConnection();) {
             loadUserBans(conn);
             ResultSet userResultSet = getAllUsers(conn);
             while (userResultSet.next()) {
@@ -83,7 +89,6 @@ public class DBController {
 
             loadUserWarnings();
 
-            conn.close();
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,9 +96,7 @@ public class DBController {
     
     @PostMapping("/api/create-user")
     public boolean createUser(@RequestBody String userDataJSON, @CookieValue(value="wca_access_token", required = false) String accessToken, @CookieValue(value="user_secret", required = false) String userSecret) {
-        try {
-            //connect to DB
-            Connection conn = DriverManager.getConnection(dbURL, dbUsername, dbPassword);
+        try (Connection conn = dataSource.getConnection();) {
 
             if (accessToken!=null) {
                 String userWcaId = AuthController.getWCAId(accessToken);
@@ -167,9 +170,7 @@ public class DBController {
     }
 
     public static User getUserBySecret(String userSecret) {
-        try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
 
             //getting resultset
             ResultSet usersFound = getUserDataBySecret(userSecret);
@@ -221,9 +222,7 @@ public class DBController {
     }
 
     public static boolean userExists(String userSecret) {
-        try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
 
             //checking for userSecret
             String findUserSecretQuery = "SELECT * FROM users WHERE usersecret=?";
@@ -242,9 +241,7 @@ public class DBController {
     }
 
     public static boolean userExists(int userId) {
-        try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
 
             //checking for userSecret
             String findUserSecretQuery = "SELECT * FROM users WHERE userid=?";
@@ -263,9 +260,7 @@ public class DBController {
     }
 
     public static ResultSet getUserDataBySecret(String userSecret) {
-        try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
 
             //checking for userSecret
             String findUserSecretQuery = "SELECT * FROM users WHERE usersecret=?";
@@ -284,9 +279,7 @@ public class DBController {
     }
 
     public static ResultSet getUserDataByWCAId(String wcaId) {
-        try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
 
             //checking for userSecret
             String findUserSecretQuery = "SELECT * FROM users WHERE wcaid=?";
@@ -322,9 +315,7 @@ public class DBController {
     }
 
     public static boolean setUserSecretByWCAId(String wcaId, String newSecret) {
-        try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
 
             //checking for userSecret
             String findUserSecretQuery = "UPDATE users SET usersecret=? WHERE wcaid=?";
@@ -415,9 +406,7 @@ public class DBController {
 
 
     public static boolean saveUserData(User user) {
-        try {
-            //connect to DB
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
         
             //creating sql query
             String sqlQuery = "UPDATE users SET username=?,matcheswon=?,matcheslost=?,badges=? WHERE userid=?";
@@ -441,9 +430,7 @@ public class DBController {
     }
 
     public static boolean saveDataForEvent(int userId, Event event, int newElo, double newSingle, double newAverage) {
-        try {
-            //connect to DB
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
         
             //creating sql query
             String sqlQuery = "UPDATE "+eventDBNames.get(event)+" SET elo=?, single=?, average=?, old_singles=?, old_averages=? WHERE userid=?";
@@ -472,9 +459,7 @@ public class DBController {
     }
 
     public static boolean saveSingleForEvent(int userId, Event event, double newSingle) {
-        try {
-            //connect to DB
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
         
             //creating sql query
             String sqlQuery = "UPDATE "+eventDBNames.get(event)+" SET single=?, old_singles=? WHERE userid=?";
@@ -500,9 +485,7 @@ public class DBController {
     }
 
     public static boolean saveAverageForEvent(int userId, Event event, double newAverage) {
-        try {
-            //connect to DB
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
         
             //creating sql query
             String sqlQuery = "UPDATE "+eventDBNames.get(event)+" SET average=?, old_averages=? WHERE userid=?";
@@ -780,9 +763,7 @@ public class DBController {
     }
 
     private static ResultSet getSortedUsersByEloDB(Event event) {
-        try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
 
             //checking for userId
             String findUsersQuery = "SELECT * FROM "+eventDBNames.get(event)+" ORDER BY elo DESC;";
@@ -843,9 +824,7 @@ public class DBController {
     }
 
     private static ResultSet getSortedUsersBySingleDB(Event event) {
-        try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
 
             //checking for userId
             String findUsersQuery = "SELECT * FROM "+eventDBNames.get(event)+" ORDER BY single;";
@@ -908,9 +887,7 @@ public class DBController {
     }
 
     private static ResultSet getSortedUsersByAverageDB(Event event) {
-        try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
 
             //checking for userId
             String findUsersQuery = "SELECT * FROM "+eventDBNames.get(event)+" ORDER BY average;";
@@ -972,10 +949,8 @@ public class DBController {
 
     @GetMapping("/api/search/{query}")
     private ArrayList<SearchResult> getUsersByQuery(@PathVariable("query") String queryStr) {
-        try {
+        try (Connection conn = dataSource.getConnection();) {
             ArrayList<SearchResult> searchResults = new ArrayList<>();
-
-            Connection conn = DriverManager.getConnection(staticDbURL,staticDbUsername,staticDbPassword);
 
             //search results by userId
             try {
@@ -1033,7 +1008,7 @@ public class DBController {
     //AntiCheat methods
     public static void addInvalidSingle(SolveData solve, String wcaSingle, String wcaAverage) {
         //connect to DB
-        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+        try (Connection conn = staticDataSource.getConnection()) {
             String sqlQuery = "INSERT INTO invalid_solves (id, username, scramble, single, event, wca_single, wca_average) VALUES (?, ?, ?, ?, ?, ?, ?);";
             PreparedStatement statement = conn.prepareStatement(sqlQuery);
             statement.setInt(1, solve.getUserId());
@@ -1055,7 +1030,7 @@ public class DBController {
 
     public static void addInvalidAverage(User user, Event event, double average, String wcaSingle, String wcaAverage) {
         //connect to DB
-        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+        try (Connection conn = staticDataSource.getConnection()) {
             String sqlQuery = "INSERT INTO invalid_solves (id, username, average, event, wca_single, wca_average) VALUES (?, ?, ?, ?, ?, ?);";
             PreparedStatement statement = conn.prepareStatement(sqlQuery);
             statement.setInt(1, user.getUserId());
@@ -1076,7 +1051,7 @@ public class DBController {
 
     @GetMapping("/api/get-invalid-times")
     public ArrayList<InvalidTime> getInvalidTimes() {
-        try (Connection conn = DriverManager.getConnection(dbURL, dbUsername, dbPassword)) {
+        try (Connection conn = dataSource.getConnection()) {
             String sqlQuerySingle = "SELECT * FROM invalid_solves WHERE NOT single IS null;";
             PreparedStatement statementSingle = conn.prepareStatement(sqlQuerySingle);
 
@@ -1125,7 +1100,7 @@ public class DBController {
     }
 
     public static void removeSingle(int userId, Event event, double time, String scramble) {
-        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+        try (Connection conn = staticDataSource.getConnection()) {
             String sqlQuerySingle = "DELETE FROM invalid_solves WHERE id=? AND single=? AND scramble=? AND event=?;";
             PreparedStatement statementSingle = conn.prepareStatement(sqlQuerySingle);
             statementSingle.setInt(1, userId);
@@ -1141,7 +1116,7 @@ public class DBController {
     }
 
     public static void removeAverage(int userId, Event event, double time) {
-        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+        try (Connection conn = staticDataSource.getConnection()) {
             String sqlQuerySingle = "DELETE FROM invalid_solves WHERE id=? AND average=? AND event=?;";
             PreparedStatement statementSingle = conn.prepareStatement(sqlQuerySingle);
             statementSingle.setInt(1, userId);
@@ -1168,9 +1143,7 @@ public class DBController {
     }
 
     public static void refreshUser(int userId) {
-        try {
-            //connect to DB 
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
 
             //checking for userId
             String findUsersQuery = "SELECT * FROM users WHERE userid=?";
@@ -1199,7 +1172,7 @@ public class DBController {
 
     @GetMapping("/api/get-reported-users")
     public ArrayList<ReportedUser> getReportedUsers() {
-        try (Connection conn = DriverManager.getConnection(dbURL, dbUsername, dbPassword)) {
+        try (Connection conn = dataSource.getConnection()) {
             String sqlQuerySingle = "SELECT * FROM reported_users";
             PreparedStatement statementSingle = conn.prepareStatement(sqlQuerySingle);
 
@@ -1227,7 +1200,7 @@ public class DBController {
 
     public static void addUserReport(int userId, String reason, String info) {
         //connect to DB
-        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+        try (Connection conn = staticDataSource.getConnection()) {
             String sqlQuery = "INSERT INTO reported_users (id, reason, info) VALUES (?, ?, ?);";
             PreparedStatement statement = conn.prepareStatement(sqlQuery);
             statement.setInt(1, userId);
@@ -1244,7 +1217,7 @@ public class DBController {
     }
 
     public static void removeUserReport(ReportedUser reportedUser) {
-        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+        try (Connection conn = staticDataSource.getConnection()) {
             String sqlQuerySingle = "DELETE FROM reported_users WHERE id=? AND reason=?;";
             PreparedStatement statementSingle = conn.prepareStatement(sqlQuerySingle);
             statementSingle.setInt(1, reportedUser.getUserId());
@@ -1258,9 +1231,7 @@ public class DBController {
     }
 
     public static boolean setUserWarnings(int userId, int strikes) {
-        try {
-            //connect to DB
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
         
             //creating sql query
             String sqlQuery = "UPDATE users SET strikes=? WHERE userid=?";
@@ -1281,9 +1252,7 @@ public class DBController {
     }
 
     public static boolean addUserWarning(int userId, long expirationDate, String reason) {
-        try {
-            //connect to DB
-            Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);
+        try (Connection conn = staticDataSource.getConnection();) {
             String sqlQuery = "INSERT INTO user_warnings (id, expirationdate, reason) VALUES (?, ?, ?);";
             PreparedStatement statement = conn.prepareStatement(sqlQuery);
             statement.setInt(1, userId);
@@ -1314,7 +1283,7 @@ public class DBController {
 
     public static void addBannedUser(int userId, long expirationDate, String reason) {
         //connect to DB
-        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+        try (Connection conn = staticDataSource.getConnection()) {
             String sqlQuery = "INSERT INTO banned_users (id, expirationdate, reason) VALUES (?, ?, ?);";
             PreparedStatement statement = conn.prepareStatement(sqlQuery);
             statement.setInt(1, userId);
@@ -1344,7 +1313,7 @@ public class DBController {
 
     public static void removeBannedUser(int userId) {
         //connect to DB
-        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+        try (Connection conn = staticDataSource.getConnection()) {
             String sqlQuery = "DELETE FROM banned_users WHERE id=?";
             PreparedStatement statement = conn.prepareStatement(sqlQuery);
             statement.setInt(1, userId);
@@ -1387,7 +1356,7 @@ public class DBController {
     }
 
     public static ArrayList<UserBan> getBannedUsers() {
-        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+        try (Connection conn = staticDataSource.getConnection()) {
             String sqlQuerySingle = "SELECT * FROM banned_users";
             PreparedStatement statement = conn.prepareStatement(sqlQuerySingle);
 
@@ -1429,7 +1398,7 @@ public class DBController {
     }
 
     public static void loadUserBans() {
-        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword);) {
+        try (Connection conn = staticDataSource.getConnection();) {
             loadUserBans(conn);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -1437,7 +1406,7 @@ public class DBController {
     }
 
     public void loadUserWarnings() {
-        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+        try (Connection conn = dataSource.getConnection()) {
             String sqlQuerySingle = "SELECT * FROM user_warnings";
             PreparedStatement statement = conn.prepareStatement(sqlQuerySingle);
 
@@ -1457,7 +1426,7 @@ public class DBController {
     }
 
     public static boolean changeUsername(int userId, String newUsername) {
-        try (Connection conn = DriverManager.getConnection(staticDbURL, staticDbUsername, staticDbPassword)) {
+        try (Connection conn = staticDataSource.getConnection()) {
             String sqlQuerySingle = "UPDATE users SET username=? WHERE userid=?;";
             PreparedStatement statement = conn.prepareStatement(sqlQuerySingle);
             statement.setString(1, newUsername);
