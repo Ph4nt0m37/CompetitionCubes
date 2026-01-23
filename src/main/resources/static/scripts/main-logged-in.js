@@ -29,8 +29,7 @@ onload = (event)=>{
                 const strikes = user['strikes'];
                 if (strikes>parseInt(warnings)) {
                     const userWarnings = user['userWarnings'];
-                    console.log(userWarnings);
-                    createNotification(`You have been warned for "${userWarnings[userWarnings.length-1]['reason']}". This warning will expire in a month.`);   
+                    createNotification(`You have been warned for "${userWarnings[userWarnings.length-1]}". This warning will expire in a month.`);   
                 }
                 document.cookie = `warnings=${strikes};`;
             }else {

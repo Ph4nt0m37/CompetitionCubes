@@ -203,8 +203,6 @@ warnConfirmButton.addEventListener("click", async ()=>{
             await removeReport(currUserReport.userId, currUserReport.username, reason);
             if (currReportMethod==reportingMethods.SOLVES) getInvalidTimes();
             if (currReportMethod==reportingMethods.USERS) getReportedUsers();
-        }else {
-            createNotification(`Something went wrong reporting this user. Please contact a developer.`);
         }
     });
 
@@ -240,7 +238,6 @@ actionsPopup.addEventListener("click",(event)=>{
         if (banConfirmPopup.style.display==="none" && warnConfirmPopup.style.display==="none") {
             actionsPopup.style.display="none";
             banPopup.style.display="none";
-            warnPopup.style.display="none";
         }
         //resetting and hiding the ban popup
         banReasonDropdown.children[0].selected = "selected";
@@ -259,7 +256,6 @@ document.addEventListener("keydown",(event)=>{
         if (banConfirmPopup.style.display==="none" && warnConfirmPopup.style.display==="none") {
             actionsPopup.style.display="none";
             banPopup.style.display="none";
-            warnPopup.style.display="none";
         }
         //resetting and hiding the ban popup
         banReasonDropdown.children[0].selected = "selected";
@@ -539,6 +535,19 @@ async function dnfAverage(userId, event, time) {
     }).then((resp)=>{
         return resp.json();
     }).then((success)=>{
+        return success;
+    });
+}
+
+async function warnUser(userId) {
+    return fetch(`/api/warn-user?id=${userId}`,{
+        method: "POST",
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    }).then(promise=>{
+        return promise.json();
+    }).then(success=>{
         return success;
     });
 }

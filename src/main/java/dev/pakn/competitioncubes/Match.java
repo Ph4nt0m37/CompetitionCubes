@@ -123,10 +123,11 @@ public class Match {
     }
 
     public boolean addSolve(int userId, SolveData solve) {
-        boolean isValidSolve = AntiCheat.validateSolve(solve.getPenalizedTime(), getUserWcaPbAvg(solve.getUserId()));
+        if (!solve.isValid()) 
+            AntiCheat.addInvalidSingle(solve, TimeConversions.doubleToTime(getUserWcaPbSingle(userId)), TimeConversions.doubleToTime(getUserWcaPbAvg(userId)));
 
         User user = DBController.getUserByIDList(userId);
-        if (isValidSolve && solve.getPenalizedTime()<=user.getLastStoredPbSingle(event)) {
+        if (solve.getPenalizedTime()<=user.getLastStoredPbSingle(event)) {
             user.addSingle(event, solve.getPenalizedTime());
         }
         return userSolves.get(userId).add(solve);
@@ -149,9 +150,12 @@ public class Match {
                     double ao5 = calculateAo5(userId);
                     User user = DBController.getUsers().get(userId);
                     double userPbAverage = user.getAverage(event) < 0 ? Integer.MAX_VALUE : user.getAverage(event);
-                    boolean isValidAverage = AntiCheat.validateAverage(user,event, ao5, userWcaAveragePbs.get(userId), userWcaSinglePbs.get(userId));
-                    if (isValidAverage && ao5>0 && ao5<userPbAverage) {
+                    boolean isValidAverage = AntiCheat.validateAverage(ao5, userWcaAveragePbs.get(userId));
+                    if (ao5>0 && ao5<userPbAverage) {
                         user.addAverage(event, ao5);
+                    }
+                    if (!isValidAverage) {
+                        AntiCheat.addInvalidAverage(user, event, ao5, TimeConversions.doubleToTime(userWcaSinglePbs.get(userId)), TimeConversions.doubleToTime(userWcaAveragePbs.get(userId)));
                     }
                 }
             }

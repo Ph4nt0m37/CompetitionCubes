@@ -104,35 +104,6 @@ public class AntiCheat {
         }
     }
 
-    //3x3 ONLY. need to fix equation because it breaks down below 2s average
-    public static boolean validateSolve(SolveData solve, double wcaAveragePb, double wcaSinglePb) {
-        double time = solve.getPenalizedTime();
-        if (time>0) {
-            //percent error calculation. uses average because it is a better tell of what single is possible
-            //double yVal = (-0.425*wcaAveragePb)+wcaAveragePb;
-            double flaggedPercentDiff = 0.425; //0.425 seems like a good max single
-            double solveDiffPercent;
-            if (wcaAveragePb < 56.52744) { //56.52744 is the intersect between both equations
-                solveDiffPercent = -(((time) - (Math.pow(wcaAveragePb,2.0) / (flaggedPercentDiff*100)) - wcaAveragePb) / wcaAveragePb);
-            }else {
-                solveDiffPercent = -(((time) - Math.sqrt(wcaAveragePb) - wcaAveragePb) / wcaAveragePb);
-            }
-            boolean isFlagged = solveDiffPercent < flaggedPercentDiff;
-            solve.setFlagged(isFlagged);
-            boolean isValid = time>=2.0;
-            solve.setValidity(isValid);
-            if (!isValid) {
-                solve.setPenalty(Penalty.DNF);
-                warnUser(solve.getUserId(),"Potentially Invalid Solve");
-            }
-            System.out.println("Solve: "+solve.getPenalizedTime()+" | Flagged: "+solve.isFlagged()+" | Validity: "+solve.isValid());
-            if (isFlagged) AntiCheat.addInvalidSingle(solve, TimeConversions.doubleToTime(wcaSinglePb), TimeConversions.doubleToTime(wcaAveragePb));
-            return isValid;
-        }else {
-            return true;
-        }
-    }
-
     //3x3 ONLY
     public static boolean validateAverage(double time, double wcaAveragePb) {
         if (time>0) {
@@ -144,28 +115,13 @@ public class AntiCheat {
         }
     }
 
-    //3x3 ONLY
-    public static boolean validateAverage(User user, Event event, double time, double wcaAveragePb, double wcaSinglePb) {
-        if (time>0) {
-            double maxPercentDiff = 0.25;
-            double solveDiffPercent = -((time-wcaAveragePb)/wcaAveragePb);
-            boolean isFlagged = solveDiffPercent < maxPercentDiff;
-            if (isFlagged) AntiCheat.addInvalidAverage(user, event, time, TimeConversions.doubleToTime(wcaSinglePb), TimeConversions.doubleToTime(wcaAveragePb));
-            boolean isValid = wcaAveragePb>=3.0;
-            if (!isValid) {
-                warnUser(user.getUserId(),"Potentially Invalid Average");
-            }
-            return isValid;
-        }else {
-            return true;
-        }
-    }
-
     public static void addInvalidSingle(SolveData solve, String wcaSingle, String wcaAverage) {
+        //TODO: calculate auto bans
         DBController.addInvalidSingle(solve, wcaSingle, wcaAverage);
     }
 
     public static void addInvalidAverage(User user, Event event, double avg, String wcaSingle, String wcaAverage) {
+        //TODO: calculate auto bans
         DBController.addInvalidAverage(user, event, avg, wcaSingle, wcaAverage);
     }
 
@@ -277,27 +233,12 @@ public class AntiCheat {
             DBController.addUserWarning(userId, expirationDate, reason);
             return true;
         } catch (Exception e){
-            e.printStackTrace();
             return false;
         }
     }
-
-    public static boolean warnUser(int userId, String reason) {
-        //for now only option is one month. I don't forsee needing to change this
-        long expirationDate = System.currentTimeMillis()+2629800000l;
-
-        try {
-            DBController.addUserWarning(userId, expirationDate, reason);
-            return true;
-        } catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-    }
-
 
     @PostMapping("/api/set-user-warnings")
-    public boolean setUserWarnings(@RequestParam("id") int userId, @RequestParam("warnings") int warnings) {
+    public boolean warnUser(@RequestParam("id") int userId, @RequestParam("warnings") int warnings) {
         try {
             DBController.setUserWarnings(userId, warnings);
             return true;

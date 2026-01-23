@@ -250,29 +250,14 @@ button {
   background: linear-gradient(0deg,rgb(0, 119, 230) 0%, rgb(89, 162, 247) 100%); 
 }
 
-.admin-badge {
-  background: #e00000;
-  background: linear-gradient(53deg, rgba(224, 0, 0, 1) 0%, rgba(255, 82, 82, 1) 100%);
-}
-
-.mod-badge {
-  background: rgb(133, 255, 89);
-  background: linear-gradient(90deg,rgb(133, 255, 89) 0%, rgba(22, 204, 80, 1) 100%);
-}
-
-.jr-mod-badge {
-  background: #6fd14b;
-  background: linear-gradient(90deg,rgba(111, 209, 75, 1) 0%, rgb(15, 129, 0) 100%);
-}
-
 .tester-badge {
-  background: #c97200;
-  background: linear-gradient(53deg, rgba(201, 114, 0, 1) 0%, rgba(255, 149, 0, 1) 100%);
+  background: #a2ff80;
+  background: linear-gradient(90deg,rgba(162, 255, 128, 1) 0%, rgba(22, 204, 80, 1) 100%);
 }
 
 .early-tester-badge {
-  background: #ff9900;
-  background: linear-gradient(53deg, rgba(255, 153, 0, 1) 0%, rgba(255, 195, 0, 1) 100%);
+  background: #6fd14b;
+  background: linear-gradient(90deg,rgba(111, 209, 75, 1) 0%, rgb(13, 104, 1) 100%);
 }
 
 .creator-badge {
@@ -532,7 +517,6 @@ button {
   margin-right: 10px;
   width: fit-content;
   top: 10px;
-  z-index: 3;
 }
 
 .notification {
@@ -545,6 +529,7 @@ button {
     box-shadow: 0 4px 12px rgb(0,0,0,0.25);
     color: var(--dark-font-color);
     animation: fadeIn 0.15s ease-out;
+    z-index: 3;
 }
 
 @keyframes fadeIn {
@@ -820,9 +805,13 @@ button {
     border: none;
 }
 
+#other-ban-reason {
+    width: 90%;
+}
+
 .ban-time-input {
     padding: 6px;
-    width: 90%;
+    width: 4rem;
     max-height: 1.1rem;
     border: 1px solid #cccccc;
     border-radius: 8px;
@@ -1092,7 +1081,7 @@ button {
     border: none;
 }
 
-#close-warn-x {
+#close-warn-button {
     position: absolute;
     right: 0px;
     background-color: rgb(0,0,0,0);
@@ -1110,13 +1099,6 @@ button {
     background-color: var(--yellow-button);
     font-size: 1.25rem;
     padding: 10px 35px;
-    border-radius: 10px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    margin: 10px 0 5px 0;
-    color: #1a1a1a;
-    transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
 .confirm-warn-button:hover {

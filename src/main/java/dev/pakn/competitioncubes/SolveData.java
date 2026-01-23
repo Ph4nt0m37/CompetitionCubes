@@ -8,7 +8,6 @@ public class SolveData implements Comparable<SolveData> {
     private Penalty penalty;
     private int userId;
     private boolean isValid;
-    private boolean flagged;
     private Event event;
 
     public SolveData(Event event, String timeString, String scramble, Penalty penalty, int userId) {
@@ -77,21 +76,8 @@ public class SolveData implements Comparable<SolveData> {
         return isValid;
     }
 
-    public void setFlagged(boolean suspicious) {
-        flagged = suspicious;
-    }
-
-    public boolean isFlagged() {
-        return flagged;
-    }
-
     public Event getEvent() {
         return event;
-    }
-
-    public void setPenalty(Penalty penalty) {
-        this.penalty = penalty;
-        calculateTimeWithPenalty();
     }
 
     @Override

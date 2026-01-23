@@ -44,8 +44,6 @@ public class DBController {
     private static String staticDbPassword;
     private static String staticDbURL;
 
-    
-
     private static HashMap<Integer, User> userList = new HashMap<>();
     private static HashMap<Integer, UserBan> bannedUserList = new HashMap<>();
 
