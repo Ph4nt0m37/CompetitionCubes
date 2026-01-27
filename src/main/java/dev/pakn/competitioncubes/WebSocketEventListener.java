@@ -22,11 +22,14 @@ public class WebSocketEventListener {
         
     }
 
+    //TODO: fix
     @EventListener
     public void handleWebSocketConnectListener(final SessionConnectEvent event) {
         StompHeaderAccessor headers = StompHeaderAccessor.wrap(event.getMessage());
         try {
+            //here
             int userId = Integer.parseInt(headers.getFirstNativeHeader("user_id"));
+            System.out.println("user connected: "+userId);
             sessionUserIdMap.put(headers.getSessionId(), userId);
             matchDisconnectTimer.remove(userId);
         }catch (NumberFormatException e) {

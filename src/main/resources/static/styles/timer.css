@@ -163,7 +163,7 @@ button {
     align-items: center;
     bottom: 0;
     padding: 20px 0px;
-    width: 120rem;
+    width: 100%;
     background-color: var(--header-color);
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
 }

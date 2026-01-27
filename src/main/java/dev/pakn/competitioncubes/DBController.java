@@ -151,7 +151,6 @@ public class DBController {
 
                 //adding user to userList
                 userList.put(userId, new User(userId,username,userWcaId,0,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),new Integer[0],0,0,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), 0, 0));
-
                 
                 return true;
             }
@@ -1137,7 +1136,6 @@ public class DBController {
             int bans = userResultSet.getInt("bans");
             Integer[] badgesArray = (Integer[]) userResultSet.getArray("badges").getArray();
             userList.put(userId, new User(userId,username,wcaId,permLevel,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans));
-
             
         }catch (Exception e) {
             e.printStackTrace();
@@ -1421,7 +1419,9 @@ public class DBController {
                 int userId = usersSet.getInt("id");
                 long expirationDate = usersSet.getLong("expirationdate");
                 String reason = usersSet.getString("reason");
-                userList.get(userId).addUserWarning(new UserWarning(userId, expirationDate, reason));
+                User user = userList.get(userId);
+                if (user!=null)
+                    user.addUserWarning(new UserWarning(userId, expirationDate, reason));
             }
         } catch (SQLException e) {
             // TODO Auto-generated catch block

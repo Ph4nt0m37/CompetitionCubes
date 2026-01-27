@@ -501,6 +501,7 @@ async function okAverage(userId, event, time) {
     }).then((resp)=>{
         return resp.json();
     }).then((success)=>{
+        console.log(success);
         return success;
     });
 }

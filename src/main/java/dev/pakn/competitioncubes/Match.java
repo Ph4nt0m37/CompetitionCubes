@@ -123,7 +123,7 @@ public class Match {
     }
 
     public boolean addSolve(int userId, SolveData solve) {
-        boolean isValidSolve = AntiCheat.validateSolve(solve.getPenalizedTime(), getUserWcaPbAvg(solve.getUserId()));
+        boolean isValidSolve = AntiCheat.validateSolve(solve, getUserWcaPbAvg(solve.getUserId()), getUserWcaPbSingle(solve.getUserId()));
 
         User user = DBController.getUserByIDList(userId);
         if (isValidSolve && solve.getPenalizedTime()<=user.getLastStoredPbSingle(event)) {

@@ -89,16 +89,8 @@ public class AntiCheat {
     //3x3 ONLY. need to fix equation because it breaks down below 2s average
     public static boolean validateSolve(double time, double wcaAveragePb) {
         if (time>0) {
-            //percent error calculation. uses average because it is a better tell of what single is possible
-            //double yVal = (-0.425*wcaAveragePb)+wcaAveragePb;
-            double maxPercentDiff = 0.425; //0.425 seems like a good max single
-            double solveDiffPercent;
-            if (wcaAveragePb < 56.52744) { //56.52744 is the intersect between both equations
-                solveDiffPercent = -(((time) - (Math.pow(wcaAveragePb,2.0) / (maxPercentDiff*100)) - wcaAveragePb) / wcaAveragePb);
-            }else {
-                solveDiffPercent = -(((time) - Math.sqrt(wcaAveragePb) - wcaAveragePb) / wcaAveragePb);
-            }
-            return solveDiffPercent < maxPercentDiff;
+            double invalidTime = Math.pow(wcaAveragePb, 1.015)-(Math.pow(wcaAveragePb, 1.03)/2.0);
+            return time > invalidTime;
         }else {
             return true;
         }
@@ -108,18 +100,11 @@ public class AntiCheat {
     public static boolean validateSolve(SolveData solve, double wcaAveragePb, double wcaSinglePb) {
         double time = solve.getPenalizedTime();
         if (time>0) {
-            //percent error calculation. uses average because it is a better tell of what single is possible
-            //double yVal = (-0.425*wcaAveragePb)+wcaAveragePb;
-            double flaggedPercentDiff = 0.425; //0.425 seems like a good max single
-            double solveDiffPercent;
-            if (wcaAveragePb < 56.52744) { //56.52744 is the intersect between both equations
-                solveDiffPercent = -(((time) - (Math.pow(wcaAveragePb,2.0) / (flaggedPercentDiff*100)) - wcaAveragePb) / wcaAveragePb);
-            }else {
-                solveDiffPercent = -(((time) - Math.sqrt(wcaAveragePb) - wcaAveragePb) / wcaAveragePb);
-            }
-            boolean isFlagged = solveDiffPercent < flaggedPercentDiff;
+            double flaggedTime = Math.pow(wcaAveragePb, 1.05)-(Math.pow(wcaAveragePb, 1.03)/2.0);
+            double invalidTime = Math.pow(wcaAveragePb, 1.015)-(Math.pow(wcaAveragePb, 1.03)/2.0);
+            boolean isFlagged = solve.getPenalizedTime()<flaggedTime;
             solve.setFlagged(isFlagged);
-            boolean isValid = time>=2.0;
+            boolean isValid = solve.getPenalizedTime()>invalidTime;
             solve.setValidity(isValid);
             if (!isValid) {
                 solve.setPenalty(Penalty.DNF);

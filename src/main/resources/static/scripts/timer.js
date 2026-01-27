@@ -257,7 +257,7 @@ window.onload = ()=>{
                 if (!spaceDown) startSpaceDown = Date.now().valueOf();
                 spaceDown=true;
                 if (timerState===timerStates.INSPECTION) {
-                    if (Date.now().valueOf()-startSpaceDown>499) {
+                    if (Date.now().valueOf()-startSpaceDown>299) {
                         userTimer.style.color="rgb(0,255,0)";
                         canStartTimer=true;
                     }else{

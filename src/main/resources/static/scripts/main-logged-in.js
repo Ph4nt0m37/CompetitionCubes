@@ -30,7 +30,7 @@ onload = (event)=>{
                 if (strikes>parseInt(warnings)) {
                     const userWarnings = user['userWarnings'];
                     console.log(userWarnings);
-                    createNotification(`You have been warned for "${userWarnings[userWarnings.length-1]['reason']}". This warning will expire in a month.`);   
+                    createNotification(`You have been warned for "${userWarnings[userWarnings.length-1]['reason']}". This warning will expire in a month, or you can dispute it on our Discord.`);   
                 }
                 document.cookie = `warnings=${strikes};`;
             }else {
@@ -43,7 +43,8 @@ onload = (event)=>{
                 const bansRealNum = user['bans'];
                 if (bansRealNum>parseInt(bans)) {
                     const userBan = user['userBan'];
-                    createNotification(`You have been banned for "${userBan['reason']}". Check your profile for more information.`);   
+                    if (userBan)
+                        createNotification(`You have been banned for "${userBan['reason']}". Check your profile for more information.`);   
                 }
                 document.cookie = `bans=${bansRealNum};`;
             }else {

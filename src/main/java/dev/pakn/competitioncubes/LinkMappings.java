@@ -56,7 +56,12 @@ public class LinkMappings {
     }
 
     @RequestMapping("/user/{userId}")
-    public String userPage(@CookieValue(value="user_secret", required = false) String userSecret, @PathVariable int userId) {
+    public String userPage(@CookieValue(value="user_secret", required = false) String userSecret, @PathVariable int userId, HttpServletResponse response) {
+        //prevent browser caching (for users with userinfoaccess)
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+        response.setHeader("Pragma", "no-cache"); // For HTTP/1.0
+        response.setDateHeader("Expires", 0); // For proxies
+        
         User user = DBController.getUserBySecret(userSecret);
         if (DBController.userExists(userId)) {
             if (user == null) {
