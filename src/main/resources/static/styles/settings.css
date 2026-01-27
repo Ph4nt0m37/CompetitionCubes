@@ -140,6 +140,10 @@ input:checked + .slider:before {
     align-items: center;
 }
 
-.row>h3 {
+.row > h3 {
     margin: 0;
+}
+
+.hidden {
+    display: none !important;
 }
