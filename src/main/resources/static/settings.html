@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles/settings.css">
     <link rel="stylesheet" href="https://cdn.cubing.net/v0/css/@cubing/icons/css">
     <link rel="icon" href="/images/compcubelogo.png">
-    <title>Admin Dashboard | Competition Cubes</title>
+    <title>Settings | Competition Cubes</title>
 </head>
 <body>
     <header id="header"></header>
@@ -17,10 +17,26 @@
     <div id="main">
         <div id="settings-div">
             <h1>Settings</h1>
-            <div class="setting">
-                <h3>Username</h3>
-                <input type="text" id="username-input" name="username" placeholder="Choose a username" maxlength="50" autocomplete="off">
-            </div>
+            <h2>General</h2>
+                <div class="setting">
+                    <h3>Username</h3>
+                    <input type="text" id="username-input" name="username" placeholder="Choose a username" maxlength="50" autocomplete="off">
+                </div>
+            <h2>Sound</h2>
+                <div class="setting row">
+                    <h3>Inspection Audio:</h3>
+                    <label class="switch">
+                        <input type="checkbox" id="inspection-audio-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="setting row">
+                    <h3>Match Sounds:</h3>
+                    <label class="switch">
+                        <input type="checkbox" id="match-sounds-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
         </div>
     </div>
 </body>
