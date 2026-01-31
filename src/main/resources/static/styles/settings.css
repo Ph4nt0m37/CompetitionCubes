@@ -147,3 +147,68 @@ input:checked + .slider:before {
 .hidden {
     display: none !important;
 }
+
+#save-button {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-top: 30px;
+    margin-bottom: 5px;
+    border: none;
+    background-color: var(--blue-button);
+    color: white;
+    border-radius: 10px;
+    font-size: 1.4rem;
+    text-align: center;
+    padding: 8px 34px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+#save-button:hover {
+    background-color: var(--blue-button-hover);
+}
+
+#save-button:active {
+    transform: scale(0.97);
+}
+
+.notif-abs-div {
+  position: absolute;
+  right: 5px;
+  top: 90px;
+}
+
+#notif-div {
+  position: sticky;
+  margin-left: auto;
+  margin-right: 10px;
+  width: fit-content;
+  top: 10px;
+  z-index: 3;
+}
+
+.notification {
+    background-color: var(--notification-color);
+    width: 15rem;
+    text-align: center;
+    padding: 10px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--h2-color);
+    box-shadow: 0 4px 12px rgb(0,0,0,0.25);
+    color: var(--dark-font-color);
+    animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; 
+       display: flex;
+    }
+  100% { opacity: 1; }
+}
+
+.fade-out { animation: fadeOut 2.5s; }
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}

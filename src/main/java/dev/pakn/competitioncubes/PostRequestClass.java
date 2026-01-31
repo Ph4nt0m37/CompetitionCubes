@@ -169,4 +169,40 @@ public class PostRequestClass {
             this.reason = reason;
         }
     }
+
+    public static class UserSettingsReq {
+        private int userId;
+        private boolean inspectionAudio;
+        private boolean matchSounds;
+        
+        public UserSettingsReq(int userId, boolean inspectionAudio, boolean matchSounds) {
+            this.userId = userId;
+            this.inspectionAudio = inspectionAudio;
+            this.matchSounds = matchSounds;
+        }
+
+        public int getUserId() {
+            return userId;
+        }
+
+        public void setUserId(int userId) {
+            this.userId = userId;
+        }
+
+        public boolean hasInspectionAudio() {
+            return inspectionAudio;
+        }
+
+        public void setInspectionAudio(boolean inspectionAudio) {
+            this.inspectionAudio = inspectionAudio;
+        }
+
+        public boolean hasMatchSounds() {
+            return matchSounds;
+        }
+
+        public void setMatchSounds(boolean matchSounds) {
+            this.matchSounds = matchSounds;
+        }
+    }
 }

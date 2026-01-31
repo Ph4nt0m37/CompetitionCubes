@@ -16,6 +16,9 @@ import javax.sql.DataSource;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -87,7 +90,7 @@ public class DBController {
                 int strikes = userResultSet.getInt("strikes");
                 int bans = userResultSet.getInt("bans");
                 Integer[] badgesArray = (Integer[]) userResultSet.getArray("badges").getArray();
-                User user = new User(userId,username,wcaId,permLevel,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans);
+                User user = new User(userId,username,wcaId,permLevel,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans, getUserSettings(userId));
                 user.setUserBan(bannedUserList.get(user.getUserId()));
                 userList.put(userId, user);
             }
@@ -149,8 +152,16 @@ public class DBController {
                     eventStatement.executeUpdate();
                 }
 
+                String settingsQuery = "INSERT INTO user_settings (id, inspection_audio, match_sounds) VALUES (?, ?, ?);";
+                PreparedStatement settingsStatement = conn.prepareStatement(settingsQuery);
+                settingsStatement.setInt(1, userId);
+                settingsStatement.setBoolean(2, true);
+                settingsStatement.setBoolean(3, true);
+
+                settingsStatement.executeUpdate();
+
                 //adding user to userList
-                userList.put(userId, new User(userId,username,userWcaId,0,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),new Integer[0],0,0,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), 0, 0));
+                userList.put(userId, new User(userId,username,userWcaId,0,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),new Integer[0],0,0,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), 0, 0, new UserSettings(true, true)));
                 
                 return true;
             }
@@ -165,8 +176,13 @@ public class DBController {
     }
 
     @GetMapping("/api/get-user-data")
-    public User getUserBySecretRequest(@CookieValue(value="user_secret", required = false) String userSecret) {
-        return getUserBySecret(userSecret);
+    public ResponseEntity<User> getUserBySecretRequest(@CookieValue(value="user_secret", required = false) String userSecret) {
+        User user = getUserBySecret(userSecret);
+        if (user!=null) {
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/api/get-user-data-by-id/{userId}")
@@ -220,7 +236,7 @@ public class DBController {
                 Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
                 int strikes = usersFound.getInt("strikes");
                 int bans = usersFound.getInt("bans");
-                return new User(userId,username,wcaId,permLevel,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans);
+                return new User(userId,username,wcaId,permLevel,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans, getUserSettings(userId));
             }else {
                 
                 return null;
@@ -294,7 +310,7 @@ public class DBController {
                 Integer[] badgesArray = (Integer[]) usersFound.getArray("badges").getArray();
                 int strikes = usersFound.getInt("strikes");
                 int bans = usersFound.getInt("bans");
-                return new User(userId,username,wcaId,permLevel,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans);
+                return new User(userId,username,wcaId,permLevel,userElos,userSingles,userAverages,badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans, getUserSettings(userId));
             }
 
             return null ;
@@ -1135,7 +1151,7 @@ public class DBController {
             int strikes = userResultSet.getInt("strikes");
             int bans = userResultSet.getInt("bans");
             Integer[] badgesArray = (Integer[]) userResultSet.getArray("badges").getArray();
-            userList.put(userId, new User(userId,username,wcaId,permLevel,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans));
+            userList.put(userId, new User(userId,username,wcaId,permLevel,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans, getUserSettings(userId)));
             
         }catch (Exception e) {
             e.printStackTrace();
@@ -1164,7 +1180,7 @@ public class DBController {
             int strikes = userResultSet.getInt("strikes");
             int bans = userResultSet.getInt("bans");
             Integer[] badgesArray = (Integer[]) userResultSet.getArray("badges").getArray();
-            userList.put(userId, new User(userId,username,wcaId,permLevel,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans));
+            userList.put(userId, new User(userId,username,wcaId,permLevel,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans, getUserSettings(userId)));
 
             return true;
         }catch (Exception e) {
@@ -1444,6 +1460,62 @@ public class DBController {
             // TODO Auto-generated catch block
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @GetMapping("/api/get-user-settings/{userId}")
+    public ResponseEntity<UserSettings> getUserSettingsReq(@PathVariable int userId) {
+        UserSettings userSettings = getUserSettings(userId);
+        if (userSettings!=null) {
+            return new ResponseEntity<UserSettings>(userSettings, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public static UserSettings getUserSettings(int userId) {
+        try (Connection conn = staticDataSource.getConnection();) {
+            String queryString = "SELECT * FROM user_settings WHERE id = ?";
+            PreparedStatement statement = conn.prepareStatement(queryString);
+            statement.setInt(1, userId);
+
+            ResultSet results = statement.executeQuery();
+            if (results.next()) {
+                boolean inspectionAudio = results.getBoolean("inspection_audio");
+                boolean matchSounds = results.getBoolean("match_sounds");
+                return new UserSettings(inspectionAudio, matchSounds);
+            }else {
+                return null;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @PostMapping("/api/save-user-settings")
+    public ResponseEntity<String> saveUserSettings(@RequestBody PostRequestClass.UserSettingsReq userSettingsReq) {
+        try (Connection conn = dataSource.getConnection();) {
+
+            //checking for userSecret
+            String findUserSecretQuery = "UPDATE user_settings SET inspection_audio=?, match_sounds=? WHERE id=?";
+            PreparedStatement userSecretStatement = conn.prepareStatement(findUserSecretQuery);
+            userSecretStatement.setBoolean(1, userSettingsReq.hasInspectionAudio());
+            userSecretStatement.setBoolean(2, userSettingsReq.hasMatchSounds());
+            userSecretStatement.setInt(3, userSettingsReq.getUserId());
+
+            //getting resultset
+            int rowsChanged = userSecretStatement.executeUpdate();
+
+            userList.get(userSettingsReq.getUserId()).setUserSettings(new UserSettings(userSettingsReq.hasInspectionAudio(), userSettingsReq.hasMatchSounds()));
+
+            if (rowsChanged>0) {
+                return new ResponseEntity<>("Success",HttpStatus.OK);
+            }
+            return new ResponseEntity<>("No user with this userId found.",HttpStatus.NOT_FOUND);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Something went wrong.",HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

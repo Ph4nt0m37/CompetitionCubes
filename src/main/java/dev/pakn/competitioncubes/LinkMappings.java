@@ -93,6 +93,11 @@ public class LinkMappings {
         return "rules.html";
     }
 
+    @RequestMapping("/settings")
+    public String settingsPage() {
+        return "settings.html";
+    }
+
     @RequestMapping("/admin")
     public String adminDashboard(@CookieValue(value="user_secret", required = false) String userSecret) {
         if (userSecret!=null) {
