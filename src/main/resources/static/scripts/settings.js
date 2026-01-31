@@ -18,6 +18,7 @@ await fetch(`/api/get-user-data`).then(async (response)=> {
 }).then(function(data) {
     user = data;
     userId=data.userId;
+    usernameBox.value = user['username'];
     const settings = user['userSettings'];
     loadingText.classList.add("hidden");
     settingsDiv.classList.remove("hidden");
