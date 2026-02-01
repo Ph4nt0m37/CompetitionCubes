@@ -98,7 +98,9 @@ fetch("/header.html")
         });
 
         fetch(`/api/get-user-data`).then((response)=> {
-            return response.json();
+            if (response.ok)
+                return response.json();
+            createNotification("Something went wrong loading your data, so some things may not work as expected. Please contact a developer if this keeps happening.");
             }).then(function(data) {
                 userId=data.userId;
                 profileButton.textContent = data.username;

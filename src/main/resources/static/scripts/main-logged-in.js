@@ -18,7 +18,9 @@ onload = (event)=>{
 
     //on website loading stuff
     fetch(`/api/get-user-data`).then((response)=> {
-        return response.json();
+        if (response.ok)
+            return response.json();
+        createNotification("Something went wrong loading your data, so some things may not work as expected. Please contact a developer if this keeps happening.");
         }).then(function(data) {
             user=data;
             userId=user.userId;

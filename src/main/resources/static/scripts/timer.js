@@ -18,6 +18,8 @@ export function setTimerEnabled(enabled) {
     timerEnabled=enabled;
 }
 
+const matchJoinAudio = document.getElementById("match-join-audio");
+
 window.onload = ()=>{
     const userTimer = document.getElementById("user-timer");
     const okButton = document.getElementById("ok-button");
@@ -109,6 +111,18 @@ window.onload = ()=>{
             createNotification(`Please select a reason for reporting!`);
         }
     });
+
+    let userSettings = null;
+    fetch(`/api/get-user-settings/${userId}`).then((resp)=>{
+        if (resp.ok)
+            return resp.json();
+        createNotification("Something went wrong loading your settings, so some thing may not work as expected.");
+    }).then(settings=>{
+        userSettings = settings;
+        if (userSettings['inspectionAudio']) {
+            matchJoinAudio.play();
+        }
+    }); 
 
     actionsPopup.addEventListener("click",(event)=>{
         if (event.target===event.currentTarget && forfeitPopup.style.display==="none") {
@@ -338,10 +352,12 @@ window.onload = ()=>{
                         inspectionTime--;
                         if (inspectionTime>0) {
                             userTimer.textContent=inspectionTime.toString();
-                            if (inspectionTime==7) {
-                                eightSecondsAudio.play();
-                            }else if (inspectionTime==3) {
-                                twelveSecondsAudio.play();
+                            if (userSettings['inspectionAudio']) {
+                                if (inspectionTime==7) {
+                                    eightSecondsAudio.play();
+                                }else if (inspectionTime==3) {
+                                    twelveSecondsAudio.play();
+                                }
                             }
                         }else if (inspectionTime<1 && inspectionTime>-2) {
                             userTimer.textContent="+2";

@@ -27,33 +27,39 @@ await fetch(`/api/get-user-data`).then(async (response)=> {
     return;
 });
 
-fetch(`/api/get-user-settings/${userId}`).then((resp)=>{
-    if (resp.ok)
-        return resp.json();
-    createNotification("Something went wrong when loading this page. Please try again later.","#c53838");
-}).then(settings=>{
-    console.log(settings);
-
-    
-});
-
 saveButton.addEventListener("click",()=>{
-    fetch("/api/update-user-settings",{
+    let success = true;
+    fetch("/api/save-user-settings",{
         method: "POST",
         body: JSON.stringify({
+            userId: userId,
             inspectionAudio: inspectionAudioToggle.checked,
-            matchSoundsToggle: matchSoundsToggle.checked
+            matchSounds: matchSoundsToggle.checked
         }),
         headers: {
             "Content-type": "application/json; charset=UTF-8"
         }
     }).then(resp=>{
         if (!resp.ok) {
-            createNotification("Successfully saved settings.","#22eb51")
-        }else {
-            createNotification("Something went wrong when trying to save these settings. Please try again later.","#c53838");
+            success = false;
         }
-    })
+    });
+    fetch(`/api/rename-user?userId=${userId}&newUsername=${usernameBox.value}`,{
+        method: "POST",
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    }).then(resp=>{
+        if (!resp.ok) {
+            success = false;
+        }
+    });
+
+    if (success) {
+        createNotification("Successfully saved settings.","#22eb51")
+    }else {
+        createNotification("Something went wrong when trying to save these settings. Please try again later or contact a developer.","#c53838");
+    }
 });
 
 const notificationTemplate = document.querySelector(".notification.template");
@@ -61,7 +67,7 @@ const notificationBox = document.getElementById("notif-div");
 
 function createNotification(text, color) {
     const notif = notificationTemplate.cloneNode(true);
-    notif.styles.backgroundColor=color;
+    notif.style.backgroundColor=color;
     notif.textContent = text;
     notif.classList.remove("template");
     notificationBox.appendChild(notif);

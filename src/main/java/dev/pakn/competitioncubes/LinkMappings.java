@@ -94,8 +94,16 @@ public class LinkMappings {
     }
 
     @RequestMapping("/settings")
-    public String settingsPage() {
-        return "settings.html";
+    public String settingsPage(@CookieValue(value="user_secret", required = false) String userSecret) {
+        if (userSecret!=null) {
+            //auto login here!
+            User user = DBController.getUserBySecret(userSecret);
+            //if login succeeded. if they somehow have user_secret cookie but it doesn't exist, user will be null
+            if (user!=null) {
+                return "settings.html";
+            }
+        }
+        throw new HttpForbiddenException();
     }
 
     @RequestMapping("/admin")

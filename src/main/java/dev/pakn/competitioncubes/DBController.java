@@ -1463,6 +1463,15 @@ public class DBController {
         }
     }
 
+    @PostMapping("/api/rename-user")
+    public static ResponseEntity<?> changeUsernameReq(@RequestParam int userId, @RequestParam String newUsername) {
+        boolean success = changeUsername(userId, newUsername);
+        if (success) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @GetMapping("/api/get-user-settings/{userId}")
     public ResponseEntity<UserSettings> getUserSettingsReq(@PathVariable int userId) {
         UserSettings userSettings = getUserSettings(userId);
@@ -1500,14 +1509,17 @@ public class DBController {
             //checking for userSecret
             String findUserSecretQuery = "UPDATE user_settings SET inspection_audio=?, match_sounds=? WHERE id=?";
             PreparedStatement userSecretStatement = conn.prepareStatement(findUserSecretQuery);
-            userSecretStatement.setBoolean(1, userSettingsReq.hasInspectionAudio());
-            userSecretStatement.setBoolean(2, userSettingsReq.hasMatchSounds());
+            userSecretStatement.setBoolean(1, userSettingsReq.isInspectionAudio());
+            userSecretStatement.setBoolean(2, userSettingsReq.isMatchSounds());
             userSecretStatement.setInt(3, userSettingsReq.getUserId());
 
             //getting resultset
             int rowsChanged = userSecretStatement.executeUpdate();
 
-            userList.get(userSettingsReq.getUserId()).setUserSettings(new UserSettings(userSettingsReq.hasInspectionAudio(), userSettingsReq.hasMatchSounds()));
+            User user = userList.get(userSettingsReq.getUserId());
+            if (user!=null) {
+                user.setUserSettings(new UserSettings(userSettingsReq.isInspectionAudio(), userSettingsReq.isMatchSounds()));
+            }
 
             if (rowsChanged>0) {
                 return new ResponseEntity<>("Success",HttpStatus.OK);

@@ -172,8 +172,10 @@ public class PostRequestClass {
 
     public static class UserSettingsReq {
         private int userId;
-        private boolean inspectionAudio;
-        private boolean matchSounds;
+        private boolean inspectionAudio = true;
+        private boolean matchSounds = true;
+
+        public UserSettingsReq() {}
         
         public UserSettingsReq(int userId, boolean inspectionAudio, boolean matchSounds) {
             this.userId = userId;
@@ -189,7 +191,7 @@ public class PostRequestClass {
             this.userId = userId;
         }
 
-        public boolean hasInspectionAudio() {
+        public boolean isInspectionAudio() {
             return inspectionAudio;
         }
 
@@ -197,12 +199,18 @@ public class PostRequestClass {
             this.inspectionAudio = inspectionAudio;
         }
 
-        public boolean hasMatchSounds() {
+        public boolean isMatchSounds() {
             return matchSounds;
         }
 
         public void setMatchSounds(boolean matchSounds) {
             this.matchSounds = matchSounds;
+        }
+
+        @Override
+        public String toString() {
+            return "UserSettingsReq [userId=" + userId + ", inspectionAudio=" + inspectionAudio + ", matchSounds="
+                    + matchSounds + "]";
         }
     }
 }
