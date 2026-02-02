@@ -119,27 +119,27 @@ public class AntiCheat {
     }
 
     //3x3 ONLY
-    public static boolean validateAverage(double time, double wcaAveragePb) {
-        if (time>0) {
-            double maxPercentDiff = 0.25;
-            double solveDiffPercent = -((time-wcaAveragePb)/wcaAveragePb);
-            return solveDiffPercent < maxPercentDiff;
+    public static boolean validateAverage(double average, double wcaAveragePb) {
+        if (average>0) {
+            double invalidTime = Math.pow(wcaAveragePb, 1.015)-(Math.pow(wcaAveragePb, 1.03)/2.75);
+            return average > invalidTime;
         }else {
             return true;
         }
     }
 
     //3x3 ONLY
-    public static boolean validateAverage(User user, Event event, double time, double wcaAveragePb, double wcaSinglePb) {
-        if (time>0) {
-            double maxPercentDiff = 0.25;
-            double solveDiffPercent = -((time-wcaAveragePb)/wcaAveragePb);
-            boolean isFlagged = solveDiffPercent < maxPercentDiff;
-            if (isFlagged) AntiCheat.addInvalidAverage(user, event, time, TimeConversions.doubleToTime(wcaSinglePb), TimeConversions.doubleToTime(wcaAveragePb));
-            boolean isValid = wcaAveragePb>=3.0;
-            if (!isValid) {
+    public static boolean validateAverage(User user, Event event, double average, double wcaAveragePb, double wcaSinglePb) {
+        if (average>0) {
+            double flaggedTime = Math.pow(wcaAveragePb, 1.05)-(Math.pow(wcaAveragePb, 1.03)/2.75);
+            double invalidTime = Math.pow(wcaAveragePb, 1.015)-(Math.pow(wcaAveragePb, 1.03)/2.75);
+            boolean isFlagged = average < flaggedTime;
+            boolean isValid = average > invalidTime;
+            if (!isValid)
                 warnUser(user.getUserId(),"Potentially Invalid Average");
-            }
+
+            System.out.println("Average: "+average+" | Flagged: "+isFlagged+" | Validity: "+isValid);
+            if (isFlagged) AntiCheat.addInvalidAverage(user, event, average, TimeConversions.doubleToTime(wcaSinglePb), TimeConversions.doubleToTime(wcaAveragePb));
             return isValid;
         }else {
             return true;
