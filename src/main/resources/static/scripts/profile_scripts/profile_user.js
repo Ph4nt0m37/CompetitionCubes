@@ -4,7 +4,8 @@ const actionsPopup = document.getElementById("background-overlay");
 const body = document.getElementsByTagName("body")[0];
 
 const infoPopup = document.getElementById("info-popup")
-const warningsText = document.getElementById("warnings-text");
+const activeWarningsText = document.getElementById("active-warnings-text");
+const allWarningsText = document.getElementById("all-warnings-text");
 const bansText = document.getElementById("bans-text");
 
 const closeInfoX = document.getElementById("close-info-x");
@@ -19,7 +20,9 @@ const currBannedText = document.getElementById("curr-banned-text");
 viewInfoButton.addEventListener("click",()=>{
     actionsPopup.style.display="grid";
     infoPopup.style.display = "flex";
-    warningsText.textContent = `Warnings: ${user['strikes']}`;
+    console.log(user['userWarnings']);
+    activeWarningsText.textContent = `Active Warnings: ${user['userWarnings'].length}`;
+    allWarningsText.textContent = `All Warnings: ${user['strikes']}`;
     bansText.textContent = `Bans: ${user['bans']}`;
     const userBan = user['userBan'];
     if (userBan) {

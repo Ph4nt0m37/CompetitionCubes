@@ -212,3 +212,7 @@ input:checked + .slider:before {
   0% { opacity: 1; }
   100% { opacity: 0; }
 }
+
+.error {
+  color: var(--error-color);
+}

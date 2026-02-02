@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import javax.sql.DataSource;
 
 import org.json.JSONObject;
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -109,7 +110,7 @@ public class DBController {
 
             if (accessToken!=null) {
                 String userWcaId = AuthController.getWCAId(accessToken);
-                String username = new JSONObject(userDataJSON).getString("username");
+                String username = validateUsername(new JSONObject(userDataJSON).getString("username"));
             
                 //creating sql query
                 String sqlQuery = "INSERT INTO users (wcaid, username, usersecret, matcheswon, matcheslost, badges, strikes, bans, permlevel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
@@ -1160,7 +1161,7 @@ public class DBController {
 
     //TODO: Add insane rate limiting
     @GetMapping("/api/refresh-user/{userId}")
-    public boolean refreshUserReq(@PathVariable int userId) {
+    public ResponseEntity<String> refreshUserReq(@PathVariable int userId) {
         try (Connection conn = staticDataSource.getConnection();) {
 
             //checking for userId
@@ -1182,10 +1183,12 @@ public class DBController {
             Integer[] badgesArray = (Integer[]) userResultSet.getArray("badges").getArray();
             userList.put(userId, new User(userId,username,wcaId,permLevel,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),badgesArray,matchesWon,matchesLost,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), strikes, bans, getUserSettings(userId)));
 
-            return true;
+            return new ResponseEntity<>("Successfully refreshed user.",HttpStatus.OK);
+        }catch (PSQLException e) {
+            return new ResponseEntity<>("User not found.",HttpStatus.NOT_FOUND);
         }catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return new ResponseEntity<>("Internal Server Error",HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -1445,16 +1448,35 @@ public class DBController {
         }
     }
 
+    public static void removeUserWarning(int userId, UserWarning warning) {
+        //connect to DB
+        try (Connection conn = staticDataSource.getConnection()) {
+            String sqlQuery = "DELETE FROM user_warnings WHERE id=?";
+            PreparedStatement statement = conn.prepareStatement(sqlQuery);
+            statement.setInt(1, userId);
+
+            //sending sql query
+            statement.executeUpdate();
+
+            userList.get(userId).removeUserWarning(warning);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
     public static boolean changeUsername(int userId, String newUsername) {
         try (Connection conn = staticDataSource.getConnection()) {
+            String validatedUsername = validateUsername(newUsername);
+
             String sqlQuerySingle = "UPDATE users SET username=? WHERE userid=?;";
             PreparedStatement statement = conn.prepareStatement(sqlQuerySingle);
-            statement.setString(1, newUsername);
+            statement.setString(1, validatedUsername);
             statement.setInt(2, userId);
 
             //sending sql update
             statement.executeUpdate();
-            userList.get(userId).setUsername(newUsername);
+            userList.get(userId).setUsername(validatedUsername);
             return true;
         } catch (SQLException e) {
             // TODO Auto-generated catch block
@@ -1464,10 +1486,23 @@ public class DBController {
     }
 
     @PostMapping("/api/rename-user")
-    public static ResponseEntity<?> changeUsernameReq(@RequestParam int userId, @RequestParam String newUsername) {
-        boolean success = changeUsername(userId, newUsername);
-        if (success) {
-            return new ResponseEntity<>(HttpStatus.OK);
+    public static ResponseEntity<?> changeUsernameReq(@CookieValue(value="user_secret", required = false) String userSecret, @RequestParam int userId, @RequestParam String newUsername) {
+        if (userSecret!=null) {
+            //auto login here!
+            User userRequester = DBController.getUserBySecret(userSecret);
+            //if login succeeded. if they somehow have user_secret cookie but it doesn't exist, user will be null
+            if (userRequester!=null && (userRequester.getUserId()==userId || userRequester.getPermissionLevel().hasChangeUsernameAccess())) {
+                if (!userRequester.getPermissionLevel().hasChangeUsernameAccess()) {
+                    for (UserWarning warning:userRequester.getUserWarnings()) {
+                        if (warning.getReason().equals("username"))
+                            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                    }
+                }
+                boolean success = changeUsername(userId, newUsername);
+                if (success) {
+                    return new ResponseEntity<>(HttpStatus.OK);
+                }
+            }
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -1529,5 +1564,9 @@ public class DBController {
             e.printStackTrace();
             return new ResponseEntity<>("Something went wrong.",HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private static String validateUsername(String username) {
+        return username.length() > 50 ? username.substring(0,50) : username;
     }
 }

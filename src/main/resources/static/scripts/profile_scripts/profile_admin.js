@@ -68,6 +68,7 @@ const hourTimeInput = document.getElementById("ban-time-hour");
 const minuteTimeInput = document.getElementById("ban-time-mins");
 
 const permaBanCheckbox = document.getElementById("perma-ban-check");
+const permaWarnCheckbox = document.getElementById("perma-warn-check");
 
 const otherReasonDiv = document.getElementById("other-reason-div");
 
@@ -114,7 +115,7 @@ warnConfirmButton.addEventListener("click", async ()=>{
     warnPopup.style.display="none";
     warnConfirmPopup.style.display="none";
 
-    const duration = 2629800000;
+    const duration = permaWarnCheckbox.checked ? -1 : 2629800000;
     let reason = warnReasonDropdown.value;
     if (reason==="other") {
         reason = otherWarnReason.value;
@@ -122,7 +123,7 @@ warnConfirmButton.addEventListener("click", async ()=>{
     }
 
     if (reason==="username") {
-        await fetch(`/api/rename-user-random?id=${currUserReport.userId}`, {
+        await fetch(`/api/rename-user-random?id=${user['userId']}`, {
             method: "POST",
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
@@ -133,6 +134,8 @@ warnConfirmButton.addEventListener("click", async ()=>{
             if (!success) {
                 createNotification(`Something went wrong renaming this user. Please try renaming manually or contact a developer.`);
             }
+        }).catch(error=>{
+                createNotification(`Something went wrong renaming this user. Please try renaming manually or contact a developer.`);
         });
     }
 
@@ -165,6 +168,7 @@ warnConfirmButton.addEventListener("click", async ()=>{
 
     warnReasonDropdown.children[0].selected = "selected";
     otherWarnReason.value = "";
+    permaWarnCheckbox.checked = false;
     otherWarnReasonDiv.style.display = "none";
 
     resetBanTimeInputs();

@@ -261,27 +261,6 @@ public class User {
 
     public void addStrike() {
         strikes++;
-        if (bans==0) {
-            if (strikes==4) {
-                AntiCheat.banUser(userId, 259200000l, "Getting 4 warnings");
-            }else if (strikes==5) {
-                AntiCheat.banUser(userId, 604800000l, "Getting 5 warnings");
-            }else if (strikes==6) {
-                AntiCheat.banUser(userId, 2629800000l, "Getting 6 warnings");
-            }
-        }else if (bans==1) {
-            if (strikes==4) {
-                AntiCheat.banUser(userId, 604800000l, "Getting 4 warnings and 1 ban");
-            }else if (strikes==5) {
-                AntiCheat.banUser(userId, 1209600000l, "Getting 5 warnings and 1 ban");
-            }else if (strikes==6) {
-                AntiCheat.banUser(userId, 2629800000l, "Getting 6 warnings and 1 ban");
-            }
-        }else if (bans>=2) {
-            if (strikes==4) {
-                AntiCheat.banUser(userId, -1, "Getting 4 warnings and 2+ bans");
-            }
-        }
     }
 
     public int getBans() {
@@ -302,6 +281,28 @@ public class User {
 
     public void addUserWarning(UserWarning userWarning) {
         this.warnings.add(userWarning);
+        int activeWarnings = warnings.size();
+        if (bans==0) {
+            if (activeWarnings==4) {
+                AntiCheat.banUser(userId, 259200000l, "Getting 4 active warnings");
+            }else if (activeWarnings==5) {
+                AntiCheat.banUser(userId, 604800000l, "Getting 5 active warnings");
+            }else if (activeWarnings==6) {
+                AntiCheat.banUser(userId, 2629800000l, "Getting 6 active warnings");
+            }
+        }else if (bans==1) {
+            if (activeWarnings==4) {
+                AntiCheat.banUser(userId, 604800000l, "Getting 4 active warnings and 1 ban");
+            }else if (activeWarnings==5) {
+                AntiCheat.banUser(userId, 1209600000l, "Getting 5 active warnings and 1 ban");
+            }else if (activeWarnings==6) {
+                AntiCheat.banUser(userId, 2629800000l, "Getting 6 active warnings and 1 ban");
+            }
+        }else if (bans>=2) {
+            if (activeWarnings==4) {
+                AntiCheat.banUser(userId, -1, "Getting 4 active warnings and 2+ bans");
+            }
+        }
     }
 
     public void removeUserWarning(UserWarning userWarning) {

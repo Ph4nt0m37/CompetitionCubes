@@ -44,7 +44,8 @@
             <div class="report-section">
                 <h2 class="report-form-text">Stats</h2>
                 <div class="info-stats-div">
-                    <p class="warnings-text" id="warnings-text">Warnings: N/A</p>
+                    <p class="warnings-text" id="active-warnings-text">Active Warnings: N/A</p>
+                    <p class="warnings-text" id="all-warnings-text">All Warnings: N/A</p>
                     <p class="bans-text" id="bans-text">Bans: N/A</p>
                 </div>
                 <p id="curr-banned-text">Currently banned until [unknown] for [unknown]</p>
@@ -87,7 +88,7 @@
                 </div>
                 <h2 class="ban-form-text">Ban Time</h2>
                 <div class="ban-time-div perma-ban-div">
-                    <input type="checkbox" id="perma-ban-check" name="perma-ban" value="Permanent Ban">
+                    <input type="checkbox" id="perma-ban-check" class="perma-check" name="perma-ban" value="Permanent Ban">
                     <h3 class="ban-time-text">Permanent Ban</h3>
                 </div>
                 <div class="ban-times-div">
@@ -140,6 +141,10 @@
                 <div class="other-reason-div" id="other-warn-reason-div">
                     <h2 class="ban-form-text other-reason">Other Reason</h2>
                     <input type="text" class="ban-time-input other-reason" id="other-warn-reason" placeholder="Other reason..." maxlength="250" autocomplete="off">
+                </div>
+                <div class="ban-time-div perma-warn-div">
+                    <input type="checkbox" id="perma-warn-check" class="perma-check" name="perma-warn" value="Permanent Warn">
+                    <h3 class="ban-time-text">Permanent Warn</h3>
                 </div>
             </div>
             <button id="confirm-warn-button" class="confirm-warn-button">Warn</button>

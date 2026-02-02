@@ -5,11 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 //this class is not an enum because jackson serialization of enums only allows for one json value
 public class PermissionLevel {
-    public final static PermissionLevel USER = new PermissionLevel(false, false, false);
-    public final static PermissionLevel TRAINEE = new PermissionLevel(false, false, true);
-    public final static PermissionLevel MODERATOR = new PermissionLevel(true, true, true);
-    public final static PermissionLevel ADMIN = new PermissionLevel(true, true, true);
-    public final static PermissionLevel OWNER = new PermissionLevel(true, true, true);
+    public final static PermissionLevel USER = new PermissionLevel(false, false, false, false);
+    public final static PermissionLevel TRAINEE = new PermissionLevel(false, false, true, true);
+    public final static PermissionLevel MODERATOR = new PermissionLevel(true, true, true, true);
+    public final static PermissionLevel ADMIN = new PermissionLevel(true, true, true, true);
+    public final static PermissionLevel OWNER = new PermissionLevel(true, true, true, true);
 
     private static int currLevelVal = 0;
 
@@ -21,16 +21,18 @@ public class PermissionLevel {
     @JsonProperty
     private boolean hasBanAccess = false;
     @JsonProperty
+    private boolean hasChangeUsernameAccess = false;
+    @JsonProperty
     private boolean hasUserInfoAccess = false;
 
-    private PermissionLevel(int levelVal, boolean hasAdminDashboardAccess, boolean hasBanAccess, boolean hasUserInfoAccess) {
+    private PermissionLevel(int levelVal, boolean hasAdminDashboardAccess, boolean hasBanAccess, boolean hasChangeUsernameAccess, boolean hasUserInfoAccess) {
         this.levelVal = levelVal;
         this.hasAdminDashboardAccess = hasAdminDashboardAccess;
         this.hasBanAccess = hasBanAccess;
         this.hasUserInfoAccess = hasUserInfoAccess;
     }
 
-    private PermissionLevel(boolean hasAdminDashboardAccess, boolean hasBanAccess, boolean hasUserInfoAccess) {
+    private PermissionLevel(boolean hasAdminDashboardAccess, boolean hasBanAccess, boolean hasChangeUsernameAccess, boolean hasUserInfoAccess) {
         this.levelVal = currLevelVal++; //post increment so that levelVal starts at 0
         this.hasAdminDashboardAccess = hasAdminDashboardAccess;
         this.hasBanAccess = hasBanAccess;
@@ -52,6 +54,10 @@ public class PermissionLevel {
 
     public boolean hasUserInfoAccess() {
         return hasUserInfoAccess;
+    }
+
+    public boolean hasChangeUsernameAccess() {
+        return hasChangeUsernameAccess;
     }
 
     public static PermissionLevel valueToPermissionLevel(int value) {

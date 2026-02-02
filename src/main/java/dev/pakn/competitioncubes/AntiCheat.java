@@ -255,7 +255,7 @@ public class AntiCheat {
     @PostMapping("/api/warn-user")
     public boolean warnUser(@RequestBody PostRequestClass.UserWarningReq userWarning) {
         int userId = userWarning.getUserId();
-        long expirationDate = System.currentTimeMillis()+2629800000l;
+        long expirationDate = System.currentTimeMillis()+userWarning.getDuration();
         String reason = userWarning.getReason();
 
         try {
@@ -268,8 +268,21 @@ public class AntiCheat {
     }
 
     public static boolean warnUser(int userId, String reason) {
-        //for now only option is one month. I don't forsee needing to change this
+        //for now only default is one month. I don't forsee needing to change this
         long expirationDate = System.currentTimeMillis()+2629800000l;
+
+        try {
+            DBController.addUserWarning(userId, expirationDate, reason);
+            return true;
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean warnUser(int userId, String reason, long duration) {
+        //for now only default is one month. I don't forsee needing to change this
+        long expirationDate = System.currentTimeMillis()+duration;
 
         try {
             DBController.addUserWarning(userId, expirationDate, reason);
@@ -355,7 +368,7 @@ public class AntiCheat {
     //Checks durations for warnings and bans
     //This method is primarily for redundancy, as if a user never searches for a match, their ban/warning will never be removed from the database. this method will ensure they are removed from the database
     //This method also reloads the user bans directly from the database in case I added from there
-    @Scheduled(fixedRate = 3600000) //1 hour
+    @Scheduled(fixedRate = 60000) //1 hour
     private void checkDurations() {
         //refresh from db
         DBController.loadUserBans();
@@ -363,11 +376,21 @@ public class AntiCheat {
         ArrayList<UserBan> userBans = DBController.getBannedUsers();
         long currTimeMillis = System.currentTimeMillis();
 
-        //go through all users and check if the current time is past their expiration date
+        //go through all users bans and check if the current time is past their expiration date
         for (UserBan userBan:userBans) {
             if (userBan.getExpirationDate()>=0 && currTimeMillis>userBan.getExpirationDate()) {
-                //will only remove them from database!
                 DBController.removeBannedUser(userBan.getUserId());
+            }
+        }
+
+        //idk why i did the bans differently than this, but whatever
+        //O(n^2), but users can only really have 5 active warnings until they're permanently banned, so worst case is 5n
+        for (int userId:DBController.getUsers().keySet()) {
+            for (UserWarning warning:DBController.getUserByIDList(userId).getUserWarnings()) {
+                if (warning.getExpirationDate()>=0 && currTimeMillis>warning.getExpirationDate()) {
+                    //will only remove them from database!
+                    DBController.removeUserWarning(userId, warning);
+                }
             }
         }
     }

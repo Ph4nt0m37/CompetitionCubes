@@ -41,7 +41,7 @@ public class UserWarning {
     public boolean equals(Object o) {
         if (this==o) return true;
         UserWarning otherWarning = (UserWarning) o;
-        if (this.userId == otherWarning.userId && this.reason == otherWarning.reason && this.expirationDate == otherWarning.expirationDate) return true;
+        if (this.userId == otherWarning.userId && this.reason.equals(otherWarning.reason) && this.expirationDate == otherWarning.expirationDate) return true;
         return false;
     }
 }

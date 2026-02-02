@@ -105,6 +105,7 @@ h1 {
 .ban-form-text {
     color: black;
     font-size: 1.2rem;
+    text-align: center;
 }
 
 #ban-reason-dropdown {
@@ -403,6 +404,10 @@ button {
     color: var(--h2-color);
 }
 
+.other-reason {
+    width: 90%;
+}
+
 /* Chrome, Safari, Edge, Opera */
 .ban-time-input::-webkit-outer-spin-button,
 .ban-time-input::-webkit-inner-spin-button {
@@ -442,7 +447,11 @@ button {
     margin-top: -8px;
 }
 
-#perma-ban-check {
+.perma-warn-div {
+    margin: 8px 0px;
+}
+
+.perma-check {
     background-color: #fff;
     margin: 0;
     font: inherit;

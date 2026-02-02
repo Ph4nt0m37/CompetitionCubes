@@ -142,13 +142,13 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
                 document.getElementsByClassName("rank-text")[i+1].children[0].textContent = rankEnumToRankText[user.ranks[EVENTS[i]]];
                 document.getElementsByClassName("rank-text")[i+1].children[0].classList.add(rankToClassName[user.ranks[EVENTS[i]]])
                 const single = user.singles[EVENTS[i]];
-                if (single===-1) {
+                if (single===-1 || single===2147483647.00) {
                     document.getElementsByClassName("single-text")[i+1].textContent = "N/A";
                 }else{
                     document.getElementsByClassName("single-text")[i+1].textContent = single.toFixed(2);
                 }
                 const average = user.averages[EVENTS[i]];
-                if (average===-1) {
+                if (average===-1 || average===2147483647.00) {
                     document.getElementsByClassName("avg-text")[i+1].textContent = "N/A";
                 }else{
                     document.getElementsByClassName("avg-text")[i+1].textContent = average.toFixed(2);

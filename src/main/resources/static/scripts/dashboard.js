@@ -56,6 +56,7 @@ const hourTimeInput = document.getElementById("ban-time-hour");
 const minuteTimeInput = document.getElementById("ban-time-mins");
 
 const permaBanCheckbox = document.getElementById("perma-ban-check");
+const permaWarnCheckbox = document.getElementById("perma-warn-check");
 
 const otherBanReasonDiv = document.getElementById("other-ban-reason-div");
 
@@ -162,7 +163,7 @@ warnConfirmButton.addEventListener("click", async ()=>{
     warnPopup.style.display="none";
     warnConfirmPopup.style.display="none";
 
-    const duration = 2629800000;
+    const duration = permaWarnCheckbox.checked ? -1 : 2629800000;
     let reason = warnReasonDropdown.value;
     if (reason==="other") {
         reason = otherWarnReason.value;
@@ -210,6 +211,7 @@ warnConfirmButton.addEventListener("click", async ()=>{
 
     warnReasonDropdown.children[0].selected = "selected";
     otherWarnReason.value = "";
+    permaWarnCheckbox.checked = false;
     otherWarnReasonDiv.style.display = "none";
 
     resetBanTimeInputs();

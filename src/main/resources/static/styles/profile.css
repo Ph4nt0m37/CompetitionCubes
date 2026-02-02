@@ -603,10 +603,16 @@ button {
     border: none;
 }
 
-.info-stats-div {
+.warning-stats-div {
   display: flex;
   flex-direction: row;
   gap: 20px;
+}
+
+.info-stats-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .info-user-text {
@@ -617,10 +623,12 @@ button {
 
 .warnings-text {
   color: var(--warning-color-text);
+  margin: 1px;
 }
 
 .bans-text {
   color: var(--ban-color);
+  margin: 1px;
 }
 
 .close-info-button {
@@ -884,7 +892,7 @@ button {
     margin-top: -8px;
 }
 
-#perma-ban-check {
+.perma-check {
     background-color: #fff;
     margin: 0;
     font: inherit;
@@ -894,6 +902,10 @@ button {
     border: 2px solid #424242;
     border-radius: 0.3em;
     transform: translateY(-0.075em);
+}
+
+.perma-warn-div {
+    margin: 8px 0px;
 }
 
 .confirm-popup {
