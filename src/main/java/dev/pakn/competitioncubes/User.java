@@ -305,6 +305,10 @@ public class User {
         }
     }
 
+    public void loadUserWarning(UserWarning userWarning) {
+        this.warnings.add(userWarning);
+    }
+
     public void removeUserWarning(UserWarning userWarning) {
         this.warnings.remove(userWarning);
     }

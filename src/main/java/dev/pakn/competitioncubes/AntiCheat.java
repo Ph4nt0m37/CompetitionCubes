@@ -255,16 +255,10 @@ public class AntiCheat {
     @PostMapping("/api/warn-user")
     public boolean warnUser(@RequestBody PostRequestClass.UserWarningReq userWarning) {
         int userId = userWarning.getUserId();
-        long expirationDate = System.currentTimeMillis()+userWarning.getDuration();
+        long duration = userWarning.getDuration();
         String reason = userWarning.getReason();
 
-        try {
-            DBController.addUserWarning(userId, expirationDate, reason);
-            return true;
-        } catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
+        return warnUser(userId, reason, duration);
     }
 
     public static boolean warnUser(int userId, String reason) {
@@ -281,7 +275,6 @@ public class AntiCheat {
     }
 
     public static boolean warnUser(int userId, String reason, long duration) {
-        //for now only default is one month. I don't forsee needing to change this
         long expirationDate = System.currentTimeMillis()+duration;
 
         try {
@@ -307,19 +300,10 @@ public class AntiCheat {
     @PostMapping("/api/ban-user")
     public boolean banUser(@RequestBody PostRequestClass.UserBan userBan) {
         int userId = userBan.getUserId();
-        long expirationDate = System.currentTimeMillis()+userBan.getDuration();
+        long duration = userBan.getDuration();
         String reason = userBan.getReason();
 
-        try {
-            if (userBan.getDuration()<0) {
-                DBController.addBannedUser(userId, -1, reason);
-            }else {
-                DBController.addBannedUser(userId, expirationDate, reason);
-            }
-            return true;
-        } catch (Exception e){
-            return false;
-        }
+        return banUser(userId, duration, reason);
     }
 
     public static boolean banUser(int userId, long duration, String reason) {
@@ -338,7 +322,7 @@ public class AntiCheat {
     }
 
     @PostMapping("/api/unban-user")
-    public boolean banUser(@RequestParam("id") int userId) {
+    public boolean unbanUser(@RequestParam("id") int userId) {
         try {
             DBController.removeBannedUser(userId);
             return true;

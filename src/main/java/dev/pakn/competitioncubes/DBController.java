@@ -1440,7 +1440,7 @@ public class DBController {
                 String reason = usersSet.getString("reason");
                 User user = userList.get(userId);
                 if (user!=null)
-                    user.addUserWarning(new UserWarning(userId, expirationDate, reason));
+                    user.loadUserWarning(new UserWarning(userId, expirationDate, reason));
             }
         } catch (SQLException e) {
             // TODO Auto-generated catch block

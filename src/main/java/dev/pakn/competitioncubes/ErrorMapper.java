@@ -22,6 +22,8 @@ public class ErrorMapper implements ErrorController {
                 return "error_pages/error-500.html";
             }else if (code==HttpStatus.FORBIDDEN.value()) {
                 return "error_pages/error-403.html";
+            }else if (code==HttpStatus.UNAUTHORIZED.value()) {
+                return "error_pages/error-401.html";
             }
         }
         return "error.html";

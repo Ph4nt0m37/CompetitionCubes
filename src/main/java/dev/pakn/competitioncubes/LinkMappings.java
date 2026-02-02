@@ -103,7 +103,7 @@ public class LinkMappings {
                 return "settings.html";
             }
         }
-        throw new HttpForbiddenException();
+        throw new HttpUnauthorizedException();
     }
 
     @RequestMapping("/admin")
