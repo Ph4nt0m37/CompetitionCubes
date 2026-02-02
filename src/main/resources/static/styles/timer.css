@@ -1,5 +1,5 @@
 html, body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     flex-direction: column;
     background-color: var(--main-bg-color);
@@ -319,7 +319,7 @@ button {
 }
 
 #report-popup {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     width: 22rem;
     height: 30rem;
     display: none;
@@ -430,7 +430,7 @@ button {
 }
 
 #menu-popup {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     width: 18rem;
     height: 24rem;
     display: flex;
@@ -526,7 +526,7 @@ button {
 }
 
 #forfeit-confirm-popup {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     width: 22rem;
     height: 8.5rem;
     display: none;

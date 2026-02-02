@@ -66,8 +66,27 @@ p {
 }
 
 @font-face {
-  font-family: "Segoe UI";
-  src: url("/src/main/resources/static/fonts/segoe_ui/segoeui.ttf");
+  font-family: "Noto Sans";
+  src: url("../fonts/Noto_Sans/static/NotoSans-SemiBold.ttf");
+  font-weight: 400 699;
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  src: url("../fonts/Noto_Sans/static/NotoSans-Light.ttf");
+  font-weight: 0 399;
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  src: url("../fonts/Noto_Sans/static/NotoSans-Bold.ttf");
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  src: url("../fonts/Noto_Sans/static/NotoSans-ExtraBold.ttf");
+  font-weight: bolder;
 }
 
 .notif-abs-div {

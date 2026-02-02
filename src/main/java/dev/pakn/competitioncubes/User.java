@@ -11,6 +11,7 @@ public class User {
     private int userId;
     private String wcaId;
     private String username;
+    private String wcaName;
     private int matchesWon;
     private int matchesLost;
     private HashMap<Event, Integer> elos = new HashMap<>();
@@ -85,6 +86,14 @@ public class User {
     }
 
     public void setUsername(String newUsername) {
+        this.username = newUsername;
+    }
+
+    public String getWcaName() {
+        return wcaName;
+    }
+
+    public void setWcaName(String newUsername) {
         this.username = newUsername;
     }
 

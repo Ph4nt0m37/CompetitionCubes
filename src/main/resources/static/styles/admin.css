@@ -1,5 +1,5 @@
 html, body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     background-color: var(--main-bg-color);
     color: #333;
@@ -73,7 +73,7 @@ h1 {
 }
 
 #ban-popup {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     width: 22rem;
     height: 34rem;
     display: none;
@@ -400,7 +400,7 @@ button {
 }
 
 .ban-time-input::placeholder {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     color: var(--h2-color);
 }
 
@@ -464,7 +464,7 @@ button {
 }
 
 #ban-confirm-popup {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     width: 22rem;
     height: 8.5rem;
     display: none;
@@ -546,7 +546,7 @@ button {
 
 
 #warn-popup {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     width: 22rem;
     height: 22rem;
     display: none;
@@ -678,7 +678,7 @@ button {
 }
 
 #warn-confirm-popup {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     width: 22rem;
     height: 8.5rem;
     display: none;
