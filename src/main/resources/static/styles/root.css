@@ -67,14 +67,14 @@ p {
 
 @font-face {
   font-family: "Noto Sans";
-  src: url("../fonts/Noto_Sans/static/NotoSans-SemiBold.ttf");
-  font-weight: 400 699;
+  src: url("../fonts/Noto_Sans/static/NotoSans-Medium.ttf");
+  font-weight: 1 399;
 }
 
 @font-face {
   font-family: "Noto Sans";
-  src: url("../fonts/Noto_Sans/static/NotoSans-Light.ttf");
-  font-weight: 0 399;
+  src: url("../fonts/Noto_Sans/static/NotoSans-SemiBold.ttf");
+  font-weight: 400 699;
 }
 
 @font-face {

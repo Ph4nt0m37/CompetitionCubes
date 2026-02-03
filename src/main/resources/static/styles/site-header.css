@@ -87,6 +87,7 @@ header {
     font-family: inherit;
     color: var(--h2-color);
     transition: box-shadow 0.2s ease;
+    font-weight: 500;
 }
 
 #search-bar:focus {
@@ -147,6 +148,7 @@ header {
     border-radius: 0 0 5px 5px;
     width: 100%;
     z-index: 4;
+    font-weight: 300;
 }
 
 /* Links inside the dropdown */
