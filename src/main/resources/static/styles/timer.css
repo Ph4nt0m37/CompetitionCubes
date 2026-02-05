@@ -29,9 +29,10 @@ h1 {
 
 #scramble-text {
     color: var(--timer-color);
-    font-size: 3.6rem;
+    font-size: 4.25vw;
     margin: 15px;
     text-align: center;
+    max-width: 72.5%;
 }
 
 #timer-main-div {
@@ -55,24 +56,29 @@ h1 {
 }
 
 .timer {
-    font-size: 8.4rem;
+    font-size: 7.8vw;
     /*border: 10px solid black;*/
     color: var(--timer-color);
+    margin: 0;
 }
 
 .ao5 {
-    font-size: 3.3rem;
+    font-size: 3.8vw;
     /*border: 10px solid black;*/
     color: var(--timer-color);
     padding: 0;
-    margin: 1rem;
+    margin: 1vh;
+}
+
+.penalty-button {
+    font-size: 3vw;
 }
 
 .winsText {
-    font-size: 3.3rem;
+    font-size: 3.8vw;
     transition: color 2s ease-out;
     color: var(--timer-color);
-    margin: 0;
+    margin: 1vh;
     padding: 0;
 }
 
@@ -87,9 +93,9 @@ h1 {
 }
 
 .username {
-    font-size: 3.48rem;
+    font-size: 3.8vw;
     color: var(--dark-blue-color);
-    margin-bottom: 2rem;
+    margin-bottom: 1.5vh;
     padding: 0;
 }
 
@@ -100,10 +106,10 @@ h1 {
 }
 
 button {
-    border-radius: 1.44rem;
+    border-radius: 1.65vw;
     border: none;
     font-weight: bold;
-    font-size: 2.7rem;
+    font-size: 3vw;
     cursor: pointer;
     padding: 6px 10px;
     transition: background-color 0.3s ease, transform 0.1s ease;
@@ -148,7 +154,7 @@ button {
 .penalty-text {
     color: var(--timer-color);
     margin: -0.75rem;
-    font-size: 3.3rem;
+    font-size: 3.3vw;
     display: none;
 }
 
@@ -256,7 +262,7 @@ button {
     position: absolute;
     color: white;
     border-radius: 17.5px;
-    font-size: 2.7rem;
+    font-size: 3vw;
     font-weight: bold;
     background-color: var(--blue-button);
     padding: 12.5px 25px;
@@ -627,14 +633,14 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 4.5vmax;
+  height: 4.5vmax;
   margin: 0.3rem;
 }
 
 #report-solve-button > img {
-  width: 2rem;
-  height: 2rem;
+  width: 2.8vmax;
+  height: 2.8vmax;
 }
 
 #report-solve-button:hover {

@@ -30,6 +30,7 @@ let userElo = -1;
 let oppElo = -1;
 
 export function setScramble(scramble) {
+    shrinkTextToContainerSize();
     if (!matchWinner) {
         if (scramble!=="Waiting for Opponent to solve..." && scramble!=="Waiting for Opponent to confirm solve...") {
             currentScramble = scramble;
@@ -191,4 +192,17 @@ function timeToFloat(time) {
         return parseFloat(times[0]);
     }
 }*/
+
+function shrinkTextToContainerSize() {
+    for(const element of document.getElementsByClassName("shrink"))
+    {
+        var size = parseInt(getComputedStyle(element).getPropertyValue('font-size'));
+        const parent_width = parseInt(getComputedStyle(element.parentElement).getPropertyValue('width'));
+        while(element.offsetWidth > parent_width)
+        {
+            element.style.fontSize = size + "px";
+            size -= 1;
+        }
+    }
+}
 

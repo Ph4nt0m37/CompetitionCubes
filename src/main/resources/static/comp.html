@@ -17,7 +17,7 @@
     <button type="button" id="home-button">Home</button>
     <button type="button" id="menu-button">Menu</button>
     <button id="report-solve-button">
-        <img src="/images/flag.svg" draggable="false">
+        <img src="../static/images/flag.svg" draggable="false">
     </button>
     <div class="notif-abs-div">
         <div id="notif-div">
@@ -57,7 +57,7 @@
         </div>
     </div>
     <div id="scramble-div" style="border-bottom: 10px solid #242424">
-        <h2 id="scramble-text">Waiting for Opponent to solve...</h2>
+        <h2 id="scramble-text" class="shrink">Waiting for Opponent to solve...</h2>
     </div>
     <div id="timer-main-div">
         <div class="timer-div" style="border-right: 5px solid #242424;">
@@ -67,9 +67,9 @@
             <h1 class="timer" id="user-timer">00:00.00</h1>
             <h2 class="ao5" id="user-ao5">ao5: - </h1>
             <div id="penalties-div">
-                <button id="ok-button">OK</button>
-                <button id="plus-2-button">+2</button>
-                <button id="dnf-button">DNF</button>
+                <button id="ok-button" class="penalty-button">OK</button>
+                <button id="plus-2-button" class="penalty-button">+2</button>
+                <button id="dnf-button" class="penalty-button">DNF</button>
             </div>
         </div>
         <div class="timer-div" style="border-left: 5px solid #242424;">
