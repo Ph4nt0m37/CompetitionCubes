@@ -14,6 +14,7 @@ public class User {
     private String wcaName;
     private int matchesWon;
     private int matchesLost;
+    private boolean isDonor;
     private HashMap<Event, Integer> elos = new HashMap<>();
     private HashMap<Event, Double> pbSingles = new HashMap<>();
     private HashMap<Event, Double> pbAverages = new HashMap<>();

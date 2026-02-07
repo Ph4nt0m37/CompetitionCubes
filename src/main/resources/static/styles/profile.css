@@ -286,6 +286,11 @@ button {
   background: linear-gradient(53deg, rgba(86, 0, 224, 1) 0%, rgba(189, 66, 255, 1) 100%);
 }*/
 
+.donor-badge {
+  background: #5f00d4;
+  background: linear-gradient(53deg, rgba(95, 0, 212, 1) 0%, rgba(247, 0, 255, 1) 100%);
+}
+
 .diamond-badge {
   background: #8bf6f7;
   background: linear-gradient(90deg,rgba(139, 246, 247, 1) 0%, rgba(36, 163, 227, 1) 100%);

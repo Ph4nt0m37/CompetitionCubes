@@ -8,11 +8,12 @@ public class BadgeController {
     public static final int EARLY_TESTER_BADGE = 4;
     public static final int TESTER_BADGE = 5;
     public static final int CREATOR_BADGE = 6;
-    public static final int DIAMOND_BADGE = 7;
-    public static final int GOLD_BADGE = 8;
-    public static final int SILVER_BADGE = 9;
-    public static final int BRONZE_BADGE = 10;
-    public static final int SNS_FALL_25_BADGE = 11;
+    public static final int DONOR_BADGE = 7;
+    public static final int DIAMOND_BADGE = 8;
+    public static final int GOLD_BADGE = 9;
+    public static final int SILVER_BADGE = 10;
+    public static final int BRONZE_BADGE = 11;
+    public static final int SNS_FALL_25_BADGE = 12;
 
     public static void calculateAndGrantBadges(Match match) {
         for (int userId:match.getUsers()) {

@@ -15,34 +15,43 @@ public class MatchFinder {
 
     @PostMapping("/waiting-list")
     private WaitlistResult addToWaitingList(@RequestBody String userIdJSON) {
-        JSONObject requestJson = new JSONObject(userIdJSON);
-        int userId = requestJson.getInt("userId");
-        String event = requestJson.getString("event");
+        try {
+            JSONObject requestJson = new JSONObject(userIdJSON);
+            int userId = requestJson.getInt("userId");
+            String event = requestJson.getString("event");
 
-        //check if the user is banned
-        UserBan userBan = DBController.getBannedUser(userId);
-        if (userBan != null) {
-            if (userBan.getExpirationDate()<0) return new WaitlistResult(WaitlistCode.BANNED_PERMANENTLY, userBan.getExpirationDate());
-            if (System.currentTimeMillis()>userBan.getExpirationDate()) {
-                //remove user from database and continue
-                DBController.removeBannedUser(userBan.getUserId());
-            }else {
-                return new WaitlistResult(WaitlistCode.BANNED, userBan.getExpirationDate());
+            //check if the user is banned
+            UserBan userBan = DBController.getBannedUser(userId);
+            if (userBan != null) {
+                if (userBan.getExpirationDate()<0) return new WaitlistResult(WaitlistCode.BANNED_PERMANENTLY, userBan.getExpirationDate());
+                if (System.currentTimeMillis()>userBan.getExpirationDate()) {
+                    //remove user from database and continue
+                    DBController.removeBannedUser(userBan.getUserId());
+                }else {
+                    return new WaitlistResult(WaitlistCode.BANNED, userBan.getExpirationDate());
+                }
             }
-        }
-        
-        Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
-        if (userMatch!=null) {
-            return new WaitlistResult(WaitlistCode.IN_MATCH);
-        }
-        for (WaitlistRequest req:waitingList) {
-            if (req.getUserId()==userId) {
+
+            if (AntiCheat.getWCAAverage(DBController.getUserByIDList(userId).getWcaId(), Event.eventIdToEvent(event))<0) {
+                return new WaitlistResult(WaitlistCode.NOT_COMPETED);
+            }
+            
+            Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
+            if (userMatch!=null) {
                 return new WaitlistResult(WaitlistCode.IN_MATCH);
             }
+            for (WaitlistRequest req:waitingList) {
+                if (req.getUserId()==userId) {
+                    return new WaitlistResult(WaitlistCode.IN_MATCH);
+                }
+            }
+            waitingList.add(new WaitlistRequest(userId, event));
+            System.out.println("added "+userId+" to waiting list");
+            return new WaitlistResult(WaitlistCode.SUCCESS);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return new WaitlistResult(WaitlistCode.ERROR);
         }
-        waitingList.add(new WaitlistRequest(userId, event));
-        System.out.println("added "+userId+" to waiting list");
-        return new WaitlistResult(WaitlistCode.SUCCESS);
     }
 
     //Idk what i was doing when i wrote this lol

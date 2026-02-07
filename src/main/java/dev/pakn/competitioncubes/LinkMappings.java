@@ -8,6 +8,7 @@ import java.util.Set;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,8 +18,28 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class LinkMappings {
-    @RequestMapping("/competition")
+    private static final long launchEpoch = 0;
+    //private static final long launchEpoch = 1774728000000l;
+
+    @GetMapping("/{path:[^\\.]*}")
+    public String catchAll() {
+        try {
+            if (!hasLaunched()) {
+                return "launch-waiting.html";
+            }else {
+                throw new HttpNotFoundException();
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new HttpForbiddenException(); 
+        }
+    }
+
+    @GetMapping("/competition")
     public String compPage(@CookieValue(value="user_secret", required = false) String userSecret, @RequestParam("roomId") String roomIdStr) {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
         User user = DBController.getUserBySecret(userSecret);
         for (Match match:MatchController.getMatches()) {
             if (match.getRoomId()==Integer.parseInt(roomIdStr)) {
@@ -32,12 +53,16 @@ public class LinkMappings {
         throw new HttpForbiddenException();
     }
 
-    @RequestMapping("/")
+    @GetMapping("/")
     public String mainPage(@CookieValue(value="user_secret", required = false) String userSecret, HttpServletResponse response) {
         //prevent browser caching
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
         response.setHeader("Pragma", "no-cache"); // For HTTP/1.0
         response.setDateHeader("Expires", 0); // For proxies
+
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
 
         if (userSecret!=null) {
             //auto login here!
@@ -50,17 +75,27 @@ public class LinkMappings {
         return "main.html";
     }
 
-    @RequestMapping("/create-account")
-    public String createAccountPage() {
+    @GetMapping("/create-account")
+    public String createAccountPage(@CookieValue(value="user_secret", required = false) String userSecret) {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
+        if (userSecret==null) {
+            throw new HttpUnauthorizedException();
+        }
         return "createAccount.html";
     }
 
-    @RequestMapping("/user/{userId}")
+    @GetMapping("/user/{userId}")
     public String userPage(@CookieValue(value="user_secret", required = false) String userSecret, @PathVariable int userId, HttpServletResponse response) {
         //prevent browser caching (for users with userinfoaccess)
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
         response.setHeader("Pragma", "no-cache"); // For HTTP/1.0
         response.setDateHeader("Expires", 0); // For proxies
+
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
         
         User user = DBController.getUserBySecret(userSecret);
         if (DBController.userExists(userId)) {
@@ -78,23 +113,35 @@ public class LinkMappings {
         }
     }
 
-    @RequestMapping("/rankings")
+    @GetMapping("/rankings")
     public String rankingsPage() {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
         return "leaderboard.html";
     }
 
-    @RequestMapping("/search") 
+    @GetMapping("/search") 
     public String searchPage() {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
         return "search-page.html";
     }
 
-    @RequestMapping("/rules")
+    @GetMapping("/rules")
     public String rulesPage() {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
         return "rules.html";
     }
 
-    @RequestMapping("/settings")
+    @GetMapping("/settings")
     public String settingsPage(@CookieValue(value="user_secret", required = false) String userSecret) {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
         if (userSecret!=null) {
             //auto login here!
             User user = DBController.getUserBySecret(userSecret);
@@ -106,8 +153,11 @@ public class LinkMappings {
         throw new HttpUnauthorizedException();
     }
 
-    @RequestMapping("/admin")
+    @GetMapping("/admin")
     public String adminDashboard(@CookieValue(value="user_secret", required = false) String userSecret) {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
         if (userSecret!=null) {
             //auto login here!
             User user = DBController.getUserBySecret(userSecret);
@@ -116,4 +166,17 @@ public class LinkMappings {
         }
         throw new HttpForbiddenException();
     }
+
+    @GetMapping("/donate")
+    public String donatePage() {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
+        return "donate.html";
+    }
+
+    public static boolean hasLaunched() {
+		long currentEpoch = System.currentTimeMillis();
+		return currentEpoch >= launchEpoch;
+	}
 }

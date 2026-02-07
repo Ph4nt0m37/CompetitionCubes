@@ -186,7 +186,7 @@ function startMatchSearch(stompClient) {
                         destination: "/app/find-match",
                         body: JSON.stringify({
                             'userId':userId,
-                            'event':'3x3'
+                            'event':'333'
                         })
                     });
                 }
@@ -203,14 +203,18 @@ function startMatchSearch(stompClient) {
             searchText.style.color="#e23333";
             if (waitlistCode==="IN_MATCH") {
                 searchText.textContent = "You are already searching for (or are in) a match!"
-                return;
+            }else if (waitlistCode==="NOT_COMPETED") {
+                searchText.innerHTML = "Unfortunately, in order to validate results, you need an WCA official average to compete in this event.<br>Please come back when you have an official WCA average in this event!";
             }else if (waitlistCode==="BANNED") {
                 searchText.innerHTML = `You have been banned from competing until ${expirationDate}.<br>Appeal your ban on our <a href="https://discord.gg/NsaFuasMrV" target="_blank">Discord</a> or at this <a href="mailto:compcube@pakn.dev">email</a>.`;
-                return;
             }else if (waitlistCode==="BANNED_PERMANENTLY") {
                 searchText.innerHTML = `You have been permanently banned from competing.<br>Appeal your ban on our <a href="https://discord.gg/NsaFuasMrV" target="_blank">Discord</a> or at this <a href="mailto:compcube@pakn.dev">email</a>.`;
-                return;
+            }else if (waitlistCode==="ERROR") {
+                searchText.textContent = `Something went wrong trying to find a match. Please try again later, sorry!`;
+            }else if (waitlistCode==="MAINTENANCE") {
+                searchText.textContent = `Competing is currently in maintenance! Please come back later.`;
             }
+            return;
         }
     });
 }

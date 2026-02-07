@@ -224,7 +224,7 @@ button {
     font-size: 1.3rem;
     display: none;
     color: #555;
-    margin-top: 20px;
+    margin: 0px;
 }
 
 .elo-change-text {
@@ -649,4 +649,11 @@ button {
 
 #report-solve-button:active {
   scale: 0.95;
+}
+
+#searching-users-text {
+    font-size: 1.15rem;
+    color: var(--success-color);
+    margin-top: 3px;
+    font-weight: 700;
 }

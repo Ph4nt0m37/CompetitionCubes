@@ -1569,4 +1569,23 @@ public class DBController {
     private static String validateUsername(String username) {
         return username.length() > 50 ? username.substring(0,50) : username;
     }
+
+    //TODO: finish donor stuff
+    public static boolean addDonor(int userId) {
+        try (Connection conn = staticDataSource.getConnection()) {
+            String sqlQuerySingle = "UPDATE users SET is_donor=? WHERE userid=?;";
+            PreparedStatement statement = conn.prepareStatement(sqlQuerySingle);
+            statement.setBoolean(1, true);
+            statement.setInt(2, userId);
+
+            //sending sql update
+            statement.executeUpdate();
+            userList.get(userId).getBadges().add(BadgeController.DONOR_BADGE);
+            return true;
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

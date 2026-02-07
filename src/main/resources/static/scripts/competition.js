@@ -29,6 +29,8 @@ let matchWinner = null;
 let userElo = -1;
 let oppElo = -1;
 
+const searchingUsersText = document.getElementById("searching-users-text");
+
 export function setScramble(scramble) {
     shrinkTextToContainerSize();
     if (!matchWinner) {
@@ -146,6 +148,8 @@ export function endMatch(matchData) {
     homeButton.classList.add("fade-in-element");
     footerDiv.style.display="flex";
     footerDiv.classList.add("fade-in-element");
+    getWaitingUserCount()
+    setInterval(getWaitingUserCount,10000);
     let eloChangeText = document.getElementById("elo-change-text");
     let oppEloChangeText = document.getElementById("opp-elo-change-text");
     matchWinner=matchData.winner;
@@ -204,5 +208,15 @@ function shrinkTextToContainerSize() {
             size -= 1;
         }
     }
+}
+
+function getWaitingUserCount() {
+    fetch("/waiting-list/3x3").then((response)=>{
+        return response.json();
+    }).then((numSearching)=>{
+        let userWord = "users";
+        if (numSearching==1) userWord = "user";
+        searchingUsersText.textContent=`${numSearching} ${userWord} searching for match...`;
+    });
 }
 

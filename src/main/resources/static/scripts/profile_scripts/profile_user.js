@@ -20,7 +20,6 @@ const currBannedText = document.getElementById("curr-banned-text");
 viewInfoButton.addEventListener("click",()=>{
     actionsPopup.style.display="grid";
     infoPopup.style.display = "flex";
-    console.log(user['userWarnings']);
     activeWarningsText.textContent = `Active Warnings: ${user['userWarnings'].length}`;
     allWarningsText.textContent = `All Warnings: ${user['strikes']}`;
     bansText.textContent = `Bans: ${user['bans']}`;

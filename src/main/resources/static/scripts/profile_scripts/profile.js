@@ -111,7 +111,6 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
     return response.json();
     }).then(function(data) {
         user = data;
-        console.log(data);
         usernameText.textContent=user.username;
         wcaLink.href=`https://www.worldcubeassociation.org/persons/${user["wcaId"]}`;
         wcaLink.target="_blank";

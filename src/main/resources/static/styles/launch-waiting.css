@@ -1,0 +1,30 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.launch-text {
+
+}
+
+.time-until-launch-text {
+    font-size: 2rem;
+    color: var(--h2-color);
+    font-weight: bold;
+}
+
+#time-text {
+    font-size: 8rem;
+    margin: 0;
+}
+
+.cc-logo {
+    width: 8rem;
+    height: 8rem;
+    image-rendering: pixelated;
+}
