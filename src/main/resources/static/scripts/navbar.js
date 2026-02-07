@@ -74,6 +74,17 @@ fetch("/header.html")
         });
 
         signOutDropdownLink.addEventListener("click",()=>{
+            fetch(`/waiting-list`, {
+                method: "DELETE",
+                body: JSON.stringify({
+                    userId: userId
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            }).catch(error=>{
+                //do nothing!
+            });
             fetch('/wca-auth/sign-out', {
                 method: 'DELETE'
             }).then(() => {

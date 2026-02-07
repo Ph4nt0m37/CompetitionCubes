@@ -15,6 +15,8 @@ import javax.sql.DataSource;
 
 import org.json.JSONObject;
 import org.postgresql.util.PSQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -37,6 +39,8 @@ import jakarta.servlet.http.Cookie;
 
 @RestController
 public class DBController {
+
+    private static Logger logger = LoggerFactory.getLogger(DBController.class);
 
     /*@Value("${spring.datasource.username}")
     private String dbUsername;
@@ -163,15 +167,14 @@ public class DBController {
 
                 //adding user to userList
                 userList.put(userId, new User(userId,username,userWcaId,0,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),new Integer[0],0,0,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), 0, 0, new UserSettings(true, true)));
-                
+
                 return true;
             }
 
             
             return false;
         }catch (Exception e) {
-            System.out.println("Failed to connect to db!");
-            e.printStackTrace();
+            logger.error("Failed to connect to db!", e);
             return false;
         }
     }
@@ -430,7 +433,7 @@ public class DBController {
             
             return true;
         }catch (Exception e) {
-            System.out.println("Failed to connect to db!");
+            logger.error("Failed to connect to db!", e);
             e.printStackTrace();
             return false;
         }
@@ -459,7 +462,7 @@ public class DBController {
             
             return true;
         }catch (Exception e) {
-            System.out.println("Failed to connect to db!");
+            logger.error("Failed to connect to db!", e);
             e.printStackTrace();
             return false;
         }
@@ -485,7 +488,7 @@ public class DBController {
             
             return true;
         }catch (Exception e) {
-            System.out.println("Failed to connect to db!");
+            logger.error("Failed to connect to db!", e);
             e.printStackTrace();
             return false;
         }
@@ -511,7 +514,7 @@ public class DBController {
             
             return true;
         }catch (Exception e) {
-            System.out.println("Failed to connect to db!");
+            logger.error("Failed to connect to db!", e);
             e.printStackTrace();
             return false;
         }
@@ -903,9 +906,6 @@ public class DBController {
                     usersFound++;
                 }
             }
-            for (LeaderboardEntry entry:averageSortedUsers) {
-                System.out.println(entry.getStat());
-            }
             return averageSortedUsers;
         }catch (Exception e) {
             e.printStackTrace();
@@ -1267,7 +1267,7 @@ public class DBController {
             
             return true;
         }catch (Exception e) {
-            System.out.println("Failed to connect to db!");
+            logger.error("Failed to connect to db!", e);
             e.printStackTrace();
             return false;
         }
@@ -1296,7 +1296,7 @@ public class DBController {
             userList.get(userId).addUserWarning(new UserWarning(userId, expirationDate, reason));
             return true;
         }catch (Exception e) {
-            System.out.println("Failed to connect to db!");
+            logger.error("Failed to connect to db!", e);
             e.printStackTrace();
             return false;
         }

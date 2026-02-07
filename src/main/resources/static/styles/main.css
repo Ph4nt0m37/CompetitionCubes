@@ -58,3 +58,12 @@ button {
     outline: none;
     border: none;
 }
+
+.version-text {
+    position: absolute;
+    bottom: 0px;
+    left: 10px;
+    font-weight: 200;
+    font-size: 0.85rem;
+    color: var(--dark-font)
+}

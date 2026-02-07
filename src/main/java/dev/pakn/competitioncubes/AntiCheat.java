@@ -7,6 +7,8 @@ import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,8 +21,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class AntiCheat {
+    private static Logger logger = LoggerFactory.getLogger(AntiCheat.class);
+
     public static double getWCASingle(String wcaId, Event event) {
-        System.out.println("id:"+wcaId);
         if (!wcaId.isEmpty() && wcaId!=null) {
             try {
                 HttpResponse<String> response = WebRequests.sendGetRequest("https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/persons/"+wcaId+".json");
@@ -44,8 +47,7 @@ public class AntiCheat {
                     }
                 }
             }catch (Exception e) {
-                System.out.println("Something went wrong with the request! "+e.getMessage());
-                e.printStackTrace();
+                logger.error("Something went wrong with the request! ",e);
                 return -1;
             }
         }else {
@@ -77,8 +79,7 @@ public class AntiCheat {
                     }
                 }
             }catch (Exception e) {
-                System.out.println("Something went wrong with the request! "+e.getMessage());
-                e.printStackTrace();
+                logger.error("Something went wrong with the request! ",e);
                 return -1;
             }
         }else {
@@ -110,7 +111,7 @@ public class AntiCheat {
                 solve.setPenalty(Penalty.DNF);
                 warnUser(solve.getUserId(),"Potentially Invalid Solve");
             }
-            System.out.println("Solve: "+solve.getPenalizedTime()+" | Flagged: "+solve.isFlagged()+" | Validity: "+solve.isValid());
+            logger.debug("Solve: "+solve.getPenalizedTime()+" | Flagged: "+solve.isFlagged()+" | Validity: "+solve.isValid());
             if (isFlagged) AntiCheat.addInvalidSingle(solve, TimeConversions.doubleToTime(wcaSinglePb), TimeConversions.doubleToTime(wcaAveragePb));
             return isValid;
         }else {
@@ -138,7 +139,7 @@ public class AntiCheat {
             if (!isValid)
                 warnUser(user.getUserId(),"Potentially Invalid Average");
 
-            System.out.println("Average: "+average+" | Flagged: "+isFlagged+" | Validity: "+isValid);
+            logger.debug("Average: "+average+" | Flagged: "+isFlagged+" | Validity: "+isValid);
             if (isFlagged) AntiCheat.addInvalidAverage(user, event, average, TimeConversions.doubleToTime(wcaSinglePb), TimeConversions.doubleToTime(wcaAveragePb));
             return isValid;
         }else {
@@ -337,7 +338,6 @@ public class AntiCheat {
         String[] nouns = {"Cube","Plastic","DNF","Corner","Edge","Center","Screw","Timer","Mat","Cover","Puzzle","Judge","Winner","Podium"};
         Random rand = new Random();
         String generatedUsername = adjectives[rand.nextInt(adjectives.length)] + nouns[rand.nextInt(nouns.length)] + String.format("%02d",rand.nextInt(99)+1);
-        System.out.println(generatedUsername);
         return DBController.changeUsername(userId, generatedUsername);
     }
 

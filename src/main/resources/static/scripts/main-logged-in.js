@@ -186,7 +186,7 @@ function startMatchSearch(stompClient) {
                         destination: "/app/find-match",
                         body: JSON.stringify({
                             'userId':userId,
-                            'event':'333'
+                            'event':'3x3'
                         })
                     });
                 }

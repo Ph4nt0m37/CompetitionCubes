@@ -1,5 +1,7 @@
 package dev.pakn.competitioncubes;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -18,6 +20,8 @@ import java.util.HashMap;
 @RestController
 public class MatchController {
 
+    private static Logger logger = LoggerFactory.getLogger(MatchController.class);
+
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
@@ -33,29 +37,34 @@ public class MatchController {
     @MessageMapping("/find-match")
     @SendTo("/room/found-match")
     public Match findMatch(WaitlistRequest waitlistRequest) {
-        //cloning waitlist because we want to ignore userId and if we don't clone it we will accidentally remove userId from actual waitlist
-        ArrayList<WaitlistRequest> waitList = (ArrayList<WaitlistRequest>) MatchFinder.getWaitingList().clone();
-        for (int i=0;i<waitList.size();i++) {
-            if (waitList.get(i).getUserId()==waitlistRequest.getUserId()) waitList.remove(i);
-        }
-        User user = DBController.getUsers().get(waitlistRequest.getUserId());
-        for (WaitlistRequest oppReq:waitList) {
-            User oppUser = DBController.getUsers().get(oppReq.getUserId());
-            int oppId = oppReq.getUserId();
-            Event event = DBController.stringToEventMap.get(waitlistRequest.getEvent());
-            if (oppReq.getEvent().equals(waitlistRequest.getEvent()) && Math.abs(user.getElo(event)-oppUser.getElo(event))<100) {
-                //fix
-                MatchFinder.removeFromWaitingList(waitlistRequest.getUserId());
-                MatchFinder.removeFromWaitingList(oppId);
-                System.out.println("match found between "+waitlistRequest.getUserId()+" and "+oppId);
-                Match match = new Match(event,new int[]{waitlistRequest.getUserId(),oppId},(int)(Math.random()*9999999));
-                matches.add(match);
-                user.setCurrentMatch(match);
-                oppUser.setCurrentMatch(match);
-                return match;
+        try {
+            //cloning waitlist because we want to ignore userId and if we don't clone it we will accidentally remove userId from actual waitlist
+            ArrayList<WaitlistRequest> waitList = (ArrayList<WaitlistRequest>) MatchFinder.getWaitingList().clone();
+            for (int i=0;i<waitList.size();i++) {
+                if (waitList.get(i).getUserId()==waitlistRequest.getUserId()) waitList.remove(i);
             }
+            User user = DBController.getUsers().get(waitlistRequest.getUserId());
+            for (WaitlistRequest oppReq:waitList) {
+                User oppUser = DBController.getUsers().get(oppReq.getUserId());
+                int oppId = oppReq.getUserId();
+                Event event = DBController.stringToEventMap.get(waitlistRequest.getEvent());
+                if (oppReq.getEvent().equals(waitlistRequest.getEvent()) && Math.abs(user.getElo(event)-oppUser.getElo(event))<100) {
+                    //fix
+                    MatchFinder.removeFromWaitingList(waitlistRequest.getUserId());
+                    MatchFinder.removeFromWaitingList(oppId);
+                    logger.info("match found between "+waitlistRequest.getUserId()+" and "+oppId);
+                    Match match = new Match(event,new int[]{waitlistRequest.getUserId(),oppId},(int)(Math.random()*9999999));
+                    matches.add(match);
+                    user.setCurrentMatch(match);
+                    oppUser.setCurrentMatch(match);
+                    return match;
+                }
+            }
+            return new Match();
+        }catch (Exception e) {
+            e.printStackTrace();
+            return new Match();
         }
-        return new Match(null,null,-1);
     }
 
     @MessageMapping("/update-match")

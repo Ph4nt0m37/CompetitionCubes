@@ -1,6 +1,8 @@
 package dev.pakn.competitioncubes;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -10,6 +12,8 @@ import java.util.*;
 
 @RestController
 public class MatchFinder {
+
+    private static Logger logger = LoggerFactory.getLogger(MatchFinder.class);
 
     private static ArrayList<WaitlistRequest> waitingList = new ArrayList<>();
 
@@ -46,7 +50,7 @@ public class MatchFinder {
                 }
             }
             waitingList.add(new WaitlistRequest(userId, event));
-            System.out.println("added "+userId+" to waiting list");
+            logger.debug("added "+userId+" to waiting list");
             return new WaitlistResult(WaitlistCode.SUCCESS);
         }catch (Exception e) {
             e.printStackTrace();
@@ -63,7 +67,7 @@ public class MatchFinder {
     @DeleteMapping("/waiting-list")
     private void removeFromWaitingListReq(@RequestBody String userIdJSON) {
         int userId = new JSONObject(userIdJSON).getInt("userId");
-        System.out.println("removed "+userId+" from waiting list");
+        logger.debug("removed "+userId+" from waiting list");
         removeFromWaitingList(userId);
     }
 

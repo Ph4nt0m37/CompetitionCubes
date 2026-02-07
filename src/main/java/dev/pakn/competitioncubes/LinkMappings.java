@@ -21,7 +21,7 @@ public class LinkMappings {
     private static final long launchEpoch = 0;
     //private static final long launchEpoch = 1774728000000l;
 
-    @GetMapping("/{path:[^\\.]*}")
+    /*@GetMapping("/{path:[^\\.]*}")
     public String catchAll() {
         try {
             if (!hasLaunched()) {
@@ -33,7 +33,7 @@ public class LinkMappings {
             e.printStackTrace();
             throw new HttpForbiddenException(); 
         }
-    }
+    }*/
 
     @GetMapping("/competition")
     public String compPage(@CookieValue(value="user_secret", required = false) String userSecret, @RequestParam("roomId") String roomIdStr) {

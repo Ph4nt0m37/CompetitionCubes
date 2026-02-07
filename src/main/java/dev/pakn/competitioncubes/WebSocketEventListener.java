@@ -2,6 +2,8 @@ package dev.pakn.competitioncubes;
 
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,6 +14,8 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 @Component
 public class WebSocketEventListener {
+
+    private static Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
 
     HashMap<String, Integer> sessionUserIdMap = new HashMap<>();
 
@@ -29,11 +33,10 @@ public class WebSocketEventListener {
         try {
             //here
             int userId = Integer.parseInt(headers.getFirstNativeHeader("user_id"));
-            System.out.println("user connected: "+userId);
             sessionUserIdMap.put(headers.getSessionId(), userId);
             matchDisconnectTimer.remove(userId);
         }catch (NumberFormatException e) {
-            System.out.println("wth how did they get a userId that is not a number???");
+            logger.error("wth how did they get a userId that is not a number???",e);
             e.printStackTrace();
         }
     }
@@ -42,9 +45,8 @@ public class WebSocketEventListener {
     public void handleWebSocketDisconnectListener(final SessionDisconnectEvent event) {
         int userId = sessionUserIdMap.get(event.getSessionId());
         MatchFinder.removeFromWaitingList(userId);
-        System.out.println("removed "+userId+" from waiting list!");
+        logger.debug("removed "+userId+" from waiting list!");
         Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
-        System.out.println(userMatch);
         if (userMatch!=null && userMatch.getWinner()==null) matchDisconnectTimer.put(userId, 3);
     }
 

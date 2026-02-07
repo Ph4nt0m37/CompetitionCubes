@@ -29,15 +29,7 @@ public class Match {
     private User quitUser = null;
 
     public Match() {
-        currentSolver = users[0];
-        for (int user:users) {
-            userScores.put(user, 0);
-            userSolves.put(user, new ArrayList<SolveData>());
-            userWcaSinglePbs.put(user, AntiCheat.getWCASingle(DBController.getUserByIDList(user).getWcaId(), event));
-            userWcaAveragePbs.put(user, AntiCheat.getWCAAverage(DBController.getUserByIDList(user).getWcaId(), event));
-        }
-        event=Event.THREE_BY_THREE;
-        generateNewScramble(EventToPuzzle.eventToPuzzle(event));
+        
     }
 
     public Match(Event event, int[] users, int roomId) {
