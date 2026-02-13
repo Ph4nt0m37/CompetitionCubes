@@ -25,8 +25,8 @@ import jakarta.servlet.http.HttpServletResponse;
 public class LinkMappings {
     private static Logger logger = LoggerFactory.getLogger(LinkMappings.class);
 
-    private static final long launchEpoch = 0;
-    //private static final long launchEpoch = 1774728000000l;
+    //private static final long launchEpoch = 0;
+    private static final long launchEpoch = 1774728000000l;
 
     /*@GetMapping("/{path:[^\\.]*}")
     public String catchAll() {
