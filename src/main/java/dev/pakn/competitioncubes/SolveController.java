@@ -18,19 +18,13 @@ public class SolveController {
 
 
     @MessageMapping("/solveData")
-    public void sendSolveData(SolveData data) {
+    public void sendSolveData(SentSolveData data) {
         try {
             ArrayList<Match> matches = MatchController.getMatches();
             for (Match currMatch:matches) {
                 if (currMatch.getRoomId()==data.getRoomId()) {
-                    ArrayList<String> times = currMatch.getUserTimes().get(data.getUserId());
-                    times.add(data.getTime());
-                    ArrayList<Penalty> currentPenalties = currMatch.getUserPenalties().get(data.getUserId());
-                    Penalty penalty = Penalty.OK;
-                    if (data.getPenalty().equals("+2")) penalty=Penalty.PLUS_2;
-                    if (data.getPenalty().equals("+4")) penalty=Penalty.PLUS_4;
-                    if (data.getPenalty().equalsIgnoreCase("DNF")) penalty=Penalty.DNF;
-                    currentPenalties.add(penalty);
+                    SolveData solveData = new SolveData(currMatch.getEvent(),data.getTime(),data.getScramble(),Penalty.stringToPenalty(data.getPenalty()),data.getUserId());
+                    currMatch.addSolve(data.getUserId(),solveData);
                 }
             }
             simpMessagingTemplate.convertAndSend("/room/solves/"+data.getRoomId(),data);

@@ -1,8 +1,12 @@
 html, body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     background-color: var(--main-bg-color);
     color: #333;
+}
+
+button {
+    cursor: pointer;
 }
 
 .main-div {
@@ -33,6 +37,7 @@ html, body {
 }
 
 #leaderboard-div {
+    position: relative;
     display: flex;
     flex-direction: column;
     min-width: 50rem;
@@ -48,6 +53,8 @@ html, body {
     display: flex;
     flex-direction: row;
     gap: 50px;
+    justify-content: center;
+    width: 100%;
 }
 
 .stats-box {
@@ -64,7 +71,7 @@ html, body {
     background-color: var(--defecit-color);
     border-radius: 10px;
     padding: 5px;
-    min-width: 150px;
+    min-width: 170px;
 }
 
 .badge {
@@ -72,9 +79,20 @@ html, body {
     padding: 5px;
     margin: 5px;
     border-radius: 20px;
-    min-width: 150px;
+    width: 150px;
     text-align: center;
     font-weight: 500;
+}
+
+#temp-div {
+  display: flex;
+  flex-direction: column;
+  height: 8.65rem;
+  overflow-y: auto;
+  background-color: var(--defecit-color);
+  border-radius: 10px;
+  padding: 5px;
+  width: 170px;
 }
 
 #user-stats-div {
@@ -114,6 +132,26 @@ html, body {
   border-right: 3px solid #bebebe;
 }
 
+.sorting-button {
+    padding: 5px 12px;
+    margin: 3px;
+    font-size: 0.925rem;
+    font-weight: 500;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+    border: 2px solid #bebebe;
+    border-radius: 5px;
+    background-color: var(--popup-color);
+    transition: background-color 0.125s ease, transform 0.1s ease;
+}
+
+.sorting-button:hover {
+    background-color: var(--neutral-button);
+}
+
+.sorting-button:active {
+    background-color: var(--bright-green-button)
+}
+
 #rankings-key {
   border-bottom: 3px solid #bebebe;
   flex-direction: row;
@@ -135,6 +173,76 @@ html, body {
   display: none;
 }
 
+.event-button {
+  padding: 6px 9px;
+  font-size: 1.2rem;
+  border: 2px solid #bebebe;
+  border-radius: 5px;
+  background-color: var(--popup-color);
+  transition: background-color 0.125s ease, transform 0.1s ease;
+}
+
+.event-button:hover {
+  background-color: var(--neutral-button);
+}
+
+.event-button:active {
+  background-color: var(--bright-green-button);
+}
+
+.hidden-button {
+  display: none;
+}
+
+.rank {
+  background-color: #999999;
+  border-radius: 20px;
+  padding: 4px 10px;
+  width: 5rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.rank-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* Ranks */
+
+.champ-rank {
+  background: #a7b83b;
+  background: linear-gradient(90deg, rgba(167, 184, 59, 1) 0%, rgba(210, 217, 2, 1) 100%);
+  -webkit-box-shadow:0px 0px 16px 10px rgba(237,240,72,0.9);
+  -moz-box-shadow: 0px 0px 16px 10px rgba(237,240,72,0.9);
+  box-shadow: 0px 0px 16px 10px rgba(237,240,72,0.9);
+}
+
+.emerald-rank {
+  background: #2eba18;
+  background: linear-gradient(90deg, rgba(46, 186, 24, 1) 0%, rgba(127, 255, 110, 1) 100%);
+}
+
+.diamond-rank {
+  background: #8bf6f7;
+  background: linear-gradient(90deg,rgba(139, 246, 247, 1) 0%, rgba(36, 163, 227, 1) 100%);
+}
+
+.gold-rank {
+  background: #EFBF04;
+}
+
+.silver-rank {
+  background: #C4C4C4;
+}
+
+.bronze-rank {
+  background: #CE8946;
+}
+
 
 /* Badges */
 .owner-badge {
@@ -142,14 +250,45 @@ html, body {
   background: linear-gradient(0deg,rgb(0, 119, 230) 0%, rgb(89, 162, 247) 100%); 
 }
 
+.admin-badge {
+  background: #e00000;
+  background: linear-gradient(53deg, rgba(224, 0, 0, 1) 0%, rgba(255, 82, 82, 1) 100%);
+}
+
+.mod-badge {
+  background: rgb(133, 255, 89);
+  background: linear-gradient(90deg,rgb(133, 255, 89) 0%, rgba(22, 204, 80, 1) 100%);
+}
+
+.jr-mod-badge {
+  background: #6fd14b;
+  background: linear-gradient(90deg,rgba(111, 209, 75, 1) 0%, rgb(15, 129, 0) 100%);
+}
+
 .tester-badge {
-  background: #a2ff80;
-  background: linear-gradient(90deg,rgba(162, 255, 128, 1) 0%, rgba(22, 204, 80, 1) 100%);
+  background: #c97200;
+  background: linear-gradient(53deg, rgba(201, 114, 0, 1) 0%, rgba(255, 149, 0, 1) 100%);
 }
 
 .early-tester-badge {
-  background: #6fd14b;
-  background: linear-gradient(90deg,rgba(111, 209, 75, 1) 0%, rgb(13, 104, 1) 100%);
+  background: #ff9900;
+  background: linear-gradient(53deg, rgba(255, 153, 0, 1) 0%, rgba(255, 195, 0, 1) 100%);
+}
+
+.creator-badge {
+  background: #e00000;
+  background: linear-gradient(53deg, rgba(224, 0, 0, 1) 0%, rgba(255, 82, 82, 1) 100%);
+}
+
+/* Not in use */
+/*.twitch-badge {
+  background: #5600e0;
+  background: linear-gradient(53deg, rgba(86, 0, 224, 1) 0%, rgba(189, 66, 255, 1) 100%);
+}*/
+
+.donor-badge {
+  background: #5f00d4;
+  background: linear-gradient(53deg, rgba(95, 0, 212, 1) 0%, rgba(247, 0, 255, 1) 100%);
 }
 
 .diamond-badge {
@@ -175,4 +314,870 @@ html, body {
 .snsfall25-badge {
   background: #7a601c;
   background: linear-gradient(90deg, rgba(122, 96, 28, 1) 0%, rgba(158, 150, 38, 1) 100%);
+}
+
+#wca-link {
+  font-weight: bold;
+  text-decoration: underline;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+#username-text {
+  margin: 3px;
+}
+
+.username-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: .67em;
+}
+
+.rank-highlight {
+  color: var(--dark-blue-color);
+}
+
+.profile-buttons {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  right: 8px;
+  gap: 5px;
+}
+
+#report-flag {
+  border: none;
+  border-radius: 5px;
+  background-color: var(--report-button);
+  padding: 6px 6px 4px 7px;
+}
+
+#report-flag:hover {
+  background-color: #c31717;
+}
+
+#report-flag:active {
+  scale: 0.95;
+}
+
+#background-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    display: none;
+    place-items: center;
+    justify-content: center;
+    align-items: center;
+    z-index: 6;
+    grid-template-columns: 1fr;
+}
+
+#report-popup {
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+    width: 22rem;
+    height: 30rem;
+    display: none;
+    background-color: var(--main-bg-color);
+    z-index: 5;
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: fadeIn 0.15s ease-out;
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+}
+
+.report-user-text {
+    color: var(--ban-color);
+    font-size: 1.8rem;
+    margin: 15px;
+}
+
+.report-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.report-form-text {
+    color: black;
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+#report-reason-dropdown {
+    font-weight: 700;
+    border: #555 2px solid;
+    padding: 3px 35px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 5px;
+    color: black;
+    transition: background-color 0.3s ease;
+    margin: 10px 0px;
+}
+
+#report-reason-dropdown, ::picker(select) {
+    appearance: base-select;
+}
+
+#report-reason-dropdown:hover {
+    background-color: var(--high-defecit-color);
+}
+
+#report-reason-dropdown::picker-icon {
+    position: relative;
+    top: 3px;
+    content: url("../images/chevron-down-gray.svg");
+    transform-origin: center 12px;
+    transition: 0.15s rotate;
+    transform: scale(0.85);
+}
+
+#report-reason-dropdown:open::picker-icon {
+  rotate: 180deg;
+}
+
+#report-reason-dropdown > option {
+    border: 2px solid #555;
+    background-color: var(--defecit-color);
+    font-weight: 100;
+    outline: none;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+#report-reason-dropdown > option:first-of-type {
+  border-radius: 4px 4px 0 0;
+}
+
+#report-reason-dropdown > option:last-of-type {
+  border-radius: 0 0 4px 4px;
+}
+
+::picker(select) {
+  border-radius: 4px;
+  border: none;
+}
+
+#report-reason-dropdown > option:not(option:last-of-type) {
+  border-bottom: none;
+}
+
+#report-reason-dropdown > option:checked {
+    font-weight: bold;
+}
+
+#report-reason-dropdown > option:hover {
+    background-color: var(--high-defecit-color);
+}
+
+#report-reason-dropdown > option::checkmark {
+    order: 1;
+    margin-left: auto;
+    content: url("../images/check_gray.svg");
+    scale: 0.85;
+    position: relative;
+    top: 2px;
+}
+
+#close-report-button {
+    position: absolute;
+    right: 0px;
+    background-color: rgb(0,0,0,0);
+    padding: 0;
+    margin: 5px 7px;
+    padding: 2px;
+    border: none;
+}
+
+.report-button {
+    border: none;
+    color: white;
+    border-radius: 12.5px;
+    font-size: 1.25rem;
+    padding: 10px 20px;
+    font-weight: bold;
+    background-color: var(--dark-red-button);
+    padding: 12.5px 22.5px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: block;
+}
+
+.report-button:hover {
+    background-color: var(--dark-red-button-hover);
+}
+
+.report-button:active {
+    transform: scale(0.97);
+}
+
+.template {
+    display: none;
+}
+
+.notif-abs-div {
+  position: absolute;
+  right: 5px;
+  top: 90px;
+}
+
+#notif-div {
+  position: sticky;
+  margin-left: auto;
+  margin-right: 10px;
+  width: fit-content;
+  top: 10px;
+  z-index: 3;
+}
+
+.notification {
+    background-color: var(--notification-color);
+    width: 15rem;
+    text-align: center;
+    padding: 10px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--h2-color);
+    box-shadow: 0 4px 12px rgb(0,0,0,0.25);
+    color: var(--dark-font-color);
+    animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; 
+       display: flex;
+    }
+  100% { opacity: 1; }
+}
+
+.fade-out { animation: fadeOut 2.5s; }
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+#view-info-button {
+  border: none;
+  border-radius: 5px;
+  background-color: var(--blue-button);
+  padding: 6px 6px 4px 6px;
+}
+
+#view-info-button:hover {
+  background-color: var(--blue-button-hover);
+}
+
+#view-info-button:active {
+  scale: 0.95;
+}
+
+#info-popup {
+  font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+  width: 16rem;
+  min-height: 14rem;
+  display: none;
+  background-color: var(--main-bg-color);
+  z-index: 5;
+  border-radius: 12px;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  animation: fadeIn 0.15s ease-out;
+  grid-row: 1;
+  grid-column: 1;
+  position: relative;
+}
+
+#close-info-x {
+    position: absolute;
+    right: 0px;
+    background-color: rgb(0,0,0,0);
+    padding: 0;
+    margin: 5px 7px;
+    padding: 2px;
+    border: none;
+}
+
+.warning-stats-div {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.info-stats-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info-user-text {
+    color: var(--blue-button);
+    font-size: 1.8rem;
+    margin: 15px;
+}
+
+.warnings-text {
+  color: var(--warning-color-text);
+  margin: 1px;
+}
+
+.bans-text {
+  color: var(--ban-color);
+  margin: 1px;
+}
+
+.close-info-button {
+  border: none;
+  color: white;
+  border-radius: 12.5px;
+  font-size: 1.25rem;
+  padding: 10px 20px;
+  font-weight: bold;
+  background-color: var(--blue-button);
+  padding: 12.5px 22.5px;
+  cursor: pointer;
+  margin: 5px;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: block;
+}
+
+.close-info-button:hover {
+    background-color: var(--blue-button-hover);
+}
+
+.close-info-button:active {
+    scale: 0.97;
+}
+
+.admin-buttons-div {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 5px;
+}
+
+.admin-buttons-div > button {
+  border-radius: 10px;
+  border: none;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 6px 10px;
+  margin: 10px 0 5px 0;
+  color: #1a1a1a;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.warn-button {
+    background-color: var(--yellow-button);
+}
+
+.warn-button:hover {
+    background-color: var(--yellow-button-hover);
+}
+
+.warn-button:active {
+    transform: scale(0.97);
+}
+
+.ban-button {
+    background-color: var(--ban-color);
+}
+
+.ban-button:hover {
+    background-color: #a81313;
+}
+
+.ban-button:active {
+    transform: scale(0.97);
+}
+
+#curr-banned-text {
+  color: var(--ban-color);
+  text-align: center;
+  margin: 0;
+  width: 95%;
+  display: none;
+}
+
+#ban-popup {
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+    width: 22rem;
+    height: 34rem;
+    display: none;
+    background-color: var(--main-bg-color);
+    z-index: 5;
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: fadeIn 0.15s ease-out;
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+}
+
+.ban-user-text {
+    color: var(--ban-color);
+    font-size: 1.8rem;
+    margin: 15px;
+}
+
+.ban-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.ban-form-text {
+    color: black;
+    font-size: 1.2rem;
+}
+
+#ban-reason-dropdown {
+    font-weight: 700;
+    border: #555 2px solid;
+    padding: 3px 35px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 5px;
+    color: black;
+    transition: background-color 0.3s ease;
+}
+
+#ban-reason-dropdown, ::picker(select) {
+    appearance: base-select;
+}
+
+#ban-reason-dropdown:hover {
+    background-color: var(--high-defecit-color);
+}
+
+#ban-reason-dropdown::picker-icon {
+    position: relative;
+    top: 3px;
+    content: url("../images/chevron-down-gray.svg");
+    transform-origin: center 12px;
+    transition: 0.15s rotate;
+    transform: scale(0.85);
+}
+
+#ban-reason-dropdown:open::picker-icon {
+  rotate: 180deg;
+}
+
+#ban-reason-dropdown > option {
+    border: 2px solid #555;
+    background-color: var(--defecit-color);
+    font-weight: 100;
+    outline: none;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+#ban-reason-dropdown > option:first-of-type {
+  border-radius: 4px 4px 0 0;
+}
+
+#ban-reason-dropdown > option:last-of-type {
+  border-radius: 0 0 4px 4px;
+}
+
+::picker(select) {
+  border-radius: 4px;
+  border: none;
+}
+
+#ban-reason-dropdown > option:not(option:last-of-type) {
+  border-bottom: none;
+}
+
+#ban-reason-dropdown > option:checked {
+    font-weight: bold;
+}
+
+#ban-reason-dropdown > option:hover {
+    background-color: var(--high-defecit-color);
+}
+
+#ban-reason-dropdown > option::checkmark {
+    order: 1;
+    margin-left: auto;
+    content: url("../images/check_gray.svg");
+    scale: 0.85;
+    position: relative;
+    top: 2px;
+}
+
+#close-ban-button {
+    position: absolute;
+    right: 0px;
+    background-color: rgb(0,0,0,0);
+    padding: 0;
+    margin: 5px 7px;
+    padding: 2px;
+    border: none;
+}
+
+.ban-time-input {
+    padding: 6px;
+    width: 90%;
+    max-height: 1.1rem;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--h2-color);
+    margin: 0;
+    transition: box-shadow 0.2s ease;
+}
+
+.ban-time-input:focus {
+    outline: none;
+    box-shadow: 0 0 6px #a4a4a4;
+    border-color: #a4a4a4;
+}
+
+.ban-time-input::placeholder {
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--h2-color);
+}
+
+/* Chrome, Safari, Edge, Opera */
+.ban-time-input::-webkit-outer-spin-button,
+.ban-time-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.ban-time-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.ban-time-div {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+}
+
+.ban-time-text {
+    font-size: 1.25rem;
+    color: var(--h2-color);
+    text-align: center;
+    margin: 0;
+}
+
+.ban-times-div {
+    display: flex;
+    max-width: 20rem;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.perma-ban-div {
+    margin-bottom: 8px;
+    margin-top: -8px;
+}
+
+.perma-check {
+    background-color: #fff;
+    margin: 0;
+    font: inherit;
+    color: #f8f8f8;
+    width: 1em;
+    height: 1em;
+    border: 2px solid #424242;
+    border-radius: 0.3em;
+    transform: translateY(-0.075em);
+}
+
+.perma-warn-div {
+    margin: 8px 0px;
+}
+
+.confirm-popup {
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+    width: 22rem;
+    height: 8.5rem;
+    display: none;
+    background-color: var(--main-bg-color);
+    z-index: 5;
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: fadeIn 0.15s ease-out;
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+}
+
+.ban-buttons {
+    display: flex;
+}
+
+.ban-confirm-text {
+    font-size: 1.15rem;
+    margin-bottom: 22.5px;
+    text-align: center;
+}
+
+.ban-page-button {
+    border: none;
+    color: white;
+    border-radius: 12.5px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    width: 75px;
+    padding: 10px 0px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    display: block;
+    margin: 0px 20px;
+}
+
+.ban-page-button:active {
+    scale: 0.97;
+}
+
+.confirm-button {
+    background-color: var(--red-button);
+}
+
+.confirm-button:hover {
+    background-color: var(--red-button-hover);
+}
+
+.deny-button {
+    background-color: var(--green-button);
+}
+
+.deny-button:hover {
+    background-color: var(--green-button-hover);
+}
+
+.confirm-ban-button {
+    background-color: var(--ban-color);
+    font-size: 1.25rem;
+    padding: 10px 35px;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 10px 0 5px 0;
+    color: #1a1a1a;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+} 
+
+.confirm-ban-button:hover {
+    background-color: var(--dark-red-button-hover);
+}
+
+.confirm-ban-button:active {
+    scale: 0.97;
+}
+
+.other-reason-div {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+#unban-button {
+  display: none;
+}
+
+#warn-popup {
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+    width: 22rem;
+    height: 22rem;
+    display: none;
+    background-color: var(--main-bg-color);
+    z-index: 5;
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: fadeIn 0.15s ease-out;
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+}
+
+.select-reason-dropdown {
+    font-weight: 700;
+    border: #555 2px solid;
+    padding: 3px 35px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 5px;
+    color: black;
+    transition: background-color 0.3s ease;
+}
+
+.select-reason-dropdown, ::picker(select) {
+    appearance: base-select;
+}
+
+.select-reason-dropdown:hover {
+    background-color: var(--high-defecit-color);
+}
+
+.select-reason-dropdown::picker-icon {
+    position: relative;
+    top: 3px;
+    content: url("../images/chevron-down-gray.svg");
+    transform-origin: center 12px;
+    transition: 0.15s rotate;
+    transform: scale(0.85);
+}
+
+.select-reason-dropdown:open::picker-icon {
+  rotate: 180deg;
+}
+
+.select-reason-dropdown > option {
+    border: 2px solid #555;
+    background-color: var(--defecit-color);
+    font-weight: 100;
+    outline: none;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.select-reason-dropdown > option:first-of-type {
+  border-radius: 4px 4px 0 0;
+}
+
+.select-reason-dropdown > option:last-of-type {
+  border-radius: 0 0 4px 4px;
+}
+
+::picker(select) {
+  border-radius: 4px;
+  border: none;
+}
+
+.select-reason-dropdown > option:not(option:last-of-type) {
+  border-bottom: none;
+}
+
+.select-reason-dropdown > option:checked {
+    font-weight: bold;
+}
+
+.select-reason-dropdown > option:hover {
+    background-color: var(--high-defecit-color);
+}
+
+.select-reason-dropdown > option::checkmark {
+    order: 1;
+    margin-left: auto;
+    content: url("../images/check_gray.svg");
+    scale: 0.85;
+    position: relative;
+    top: 2px;
+}
+
+#close-ban-button {
+    position: absolute;
+    right: 0px;
+    background-color: rgb(0,0,0,0);
+    padding: 0;
+    margin: 5px 7px;
+    padding: 2px;
+    border: none;
+}
+
+#close-warn-x {
+    position: absolute;
+    right: 0px;
+    background-color: rgb(0,0,0,0);
+    padding: 0;
+    margin: 5px 7px;
+    padding: 2px;
+    border: none;
+}
+
+#other-ban-reason {
+    width: 90%;
+}
+
+.confirm-warn-button {
+    background-color: var(--yellow-button);
+    font-size: 1.25rem;
+    padding: 10px 35px;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 10px 0 5px 0;
+    color: #1a1a1a;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.confirm-warn-button:hover {
+    background-color: var(--yellow-button-hover);
+}
+
+.confirm-warn-button:active {
+    scale: 0.97;
+}
+
+#warn-confirm-popup {
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+    width: 22rem;
+    height: 8.5rem;
+    display: none;
+    background-color: var(--main-bg-color);
+    z-index: 5;
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: fadeIn 0.15s ease-out;
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+}
+
+#warn-user-text {
+    color: var(--warning-color);
+}
+
+#warn-confirm {
+    background-color: var(--red-button);
+}
+
+#warn-confirm:hover {
+    background-color: var(--red-button-hover);
+}
+
+#warn-deny {
+    background-color: var(--green-button);
+}
+
+#warn-deny:hover {
+    background-color: var(--green-button-hover);
 }

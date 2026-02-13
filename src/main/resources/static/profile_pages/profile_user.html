@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Language" content="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/root.css">
+    <link rel="stylesheet" href="/styles/site-header.css">
+    <link rel="stylesheet" href="/styles/profile.css">
+    <link rel="stylesheet" href="https://cdn.cubing.net/v0/css/@cubing/icons/css">
+    <link rel="icon" href="/images/compcubelogo.png">
+    <title>User Profile | Competition Cubes</title>
+</head>
+<body>
+    <header id="header"></header>
+
+    <div class="notif-abs-div">
+        <div id="notif-div">
+            <p class="notification template">Notification</p>
+        </div>
+    </div>
+    <div id="background-overlay">
+        <div id="report-popup">
+            <button id="close-report-button">
+                <img src="/images/x.svg" draggable="false">
+            </button>
+            <h1 class="report-user-text">Report User</h1>
+            <div class="report-section">
+                <h2 class="report-form-text">Report Reason</h2>
+                <select id="report-reason-dropdown">
+                    <option value="default" selected="selected">Report reason...</option>
+                    <option value="username">Username</option>
+                    <option value="smurfing">Smurfing</option>
+                </select>
+            </div>
+            <button id="confirm-report-button" class="report-button">Report</button>
+        </div>
+        <div id="info-popup">
+            <button id="close-info-x">
+                <img src="/images/x.svg" draggable="false">
+            </button>
+            <h1 class="info-user-text">User Info</h1>
+            <div class="report-section">
+                <h2 class="report-form-text">Stats</h2>
+                <div class="info-stats-div">
+                    <p class="warnings-text" id="active-warnings-text">Active Warnings: N/A</p>
+                    <p class="warnings-text" id="all-warnings-text">All Warnings: N/A</p>
+                    <p class="bans-text" id="bans-text">Bans: N/A</p>
+                </div>
+                <p id="curr-banned-text">Currently banned until [unknown] for [unknown]</p>
+            </div>
+            <!--
+            <button id="close-info-button" class="close-info-button">Close</button>
+            -->
+        </div>
+    </div>
+
+    <div class="main-div">
+        <div id="leaderboard-div">
+            <div class="profile-buttons">
+                <button id="view-info-button">
+                    <img src="/images/blue_eye.svg" draggable="false">
+                </button>
+                <button id="report-flag">
+                    <img src="/images/flag.svg" draggable="false">
+                </button>
+            </div>
+            <div class="username-div">
+                <h1 id="username-text">Loading...</h1>
+                <a id="wca-link">WCA Profile</a>
+            </div>
+            <div class="stats-div">
+                <div class="stats-box">
+                    <h3>Badges</h3>
+                    <div id="badges-div">
+                        <div class="badge badge-template owner-badge">Owner</div>
+                        <div class="badge badge-template admin-badge">Admin</div>
+                        <div class="badge badge-template mod-badge">Moderator</div>
+                        <div class="badge badge-template jr-mod-badge">Jr. Moderator</div>
+                        <div class="badge badge-template early-tester-badge">Early Tester</div>
+                        <div class="badge badge-template tester-badge">Tester</div>
+                        <div class="badge badge-template creator-badge">Creator</div>
+                        <div class="badge badge-template donor-badge">Donor</div>
+                        <div class="badge badge-template diamond-badge">Top 1</div>
+                        <div class="badge badge-template gold-badge">Top 10</div>
+                        <div class="badge badge-template silver-badge">Top 50</div>
+                        <div class="badge badge-template bronze-badge">Top 100</div>
+                        <div class="badge badge-template snsfall25-badge">SNS Fall 2025</div>
+                    </div>
+                </div>
+                <div class="stats-box">
+                    <h3>Statistics</h3>
+                    <div id="user-stats-div">
+                        <h5 class="statistics-text" id="matches-played-text">Matches Played: 0</h5>
+                        <h5 class="statistics-text" id="matches-won-text">Matches Won: 0</h5>
+                        <h5 class="statistics-text" id="matches-lost-text">Matches Lost: 0</h5>
+                        <h5 class="statistics-text" id="win-loss-text">Win-Loss %: 0%</h5>
+                    </div>
+                </div>
+                <div class="stats-box">
+                    <h3>Something here</h3>
+                    <div id="temp-div">
+                        <div class="badge">something here</div>
+                    </div>
+                </div>
+            </div>
+            <h2>Rankings</h2>
+            <div id="sorting-box">
+                <button class="sorting-button" id="elo-button">ELO</button>
+                <button class="sorting-button" id="single-button">Single</button>
+                <button class="sorting-button" id="avg-button">Average</button>
+                <!--<button class="event-button" id="3x3-button" event="3x3"><span class="cubing-icon event-333"></span></button>
+                <button class="event-button" id="2x2-button" event="2x2"><span class="cubing-icon event-222"></span></button>
+                <button class="event-button" id="4x4-button" event="4x4"><span class="cubing-icon event-444"></span></button>
+                <button class="event-button" id="5x5-button" event="5x5"><span class="cubing-icon event-555"></span></button>
+                <button class="event-button" id="6x6-button" event="6x6"><span class="cubing-icon event-666"></span></button>
+                <button class="event-button" id="7x7-button" event="7x7"><span class="cubing-icon event-777"></span></button>
+                <button class="event-button" id="clock-button" event="clock"><span class="cubing-icon event-clock"></span></button>
+                <button class="event-button" id="sq1-button" event="sq1"><span class="cubing-icon event-sq1"></span></button>
+                <button class="event-button" id="skewb-button" event="skewb"><span class="cubing-icon event-skewb"></span></button>
+                <button class="event-button" id="pyra-button" event="prya"><span class="cubing-icon event-pyram"></span></button>
+                <button class="event-button" id="mega-button" event="mega"><span class="cubing-icon event-minx"></span></button>
+                <button class="event-button" id="3oh-button" event="3oh"><span class="cubing-icon event-333oh"></span></button>
+                <button class="event-button" id="3bld-button" event="3bld"><span class="cubing-icon event-333bf"></span></button>-->
+            </div>
+            <div id="rankings-div">
+                <div class="event-entry" id="rankings-key">
+                    <p class="rankings-key event-text">Event</p>
+                    <p class="rankings-key rank-text">Rank</p>
+                    <p class="rankings-key world-rank-text">World Rank</p>
+                    <p class="rankings-key elo-text">ELO</p>
+                    <p class="rankings-key single-text">Single</p>
+                    <p class="rankings-key avg-text">Average</p>
+                </div>
+                <div class="event-entry" id="event-entry-template">
+                    <p class="event-entry-text event-text">3x3</p>
+                    <div class="event-entry-text rank-text">
+                        <div class="rank">Bronze</div>
+                    </div>
+                    <p class="event-entry-text world-rank-text">0</p>
+                    <p class="event-entry-text elo-text">100</p>
+                    <p class="event-entry-text single-text">0</p>
+                    <p class="event-entry-text avg-text">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+<script type="module" src="/scripts/navbar.js"></script>
+<script type="module" src="/scripts/profile_scripts/profile.js"></script>
+<script type="module" src="/scripts/profile_scripts/profile_user.js"></script>
+</html>

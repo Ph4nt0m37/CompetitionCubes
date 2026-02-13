@@ -1,21 +1,52 @@
 package dev.pakn.competitioncubes;
 
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
+import org.slf4j.Logger;
 
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class LinkMappings {
-    @RequestMapping("/competition")
+    private static Logger logger = LoggerFactory.getLogger(LinkMappings.class);
+
+    //private static final long launchEpoch = 0;
+    private static final long launchEpoch = 1774728000000l;
+
+    /*@GetMapping("/{path:[^\\.]*}")
+    public String catchAll() {
+        try {
+            if (!hasLaunched()) {
+                return "launch-waiting.html";
+            }else {
+                throw new HttpNotFoundException();
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new HttpForbiddenException(); 
+        }
+    }*/
+
+    @GetMapping("/competition")
     public String compPage(@CookieValue(value="user_secret", required = false) String userSecret, @RequestParam("roomId") String roomIdStr) {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
         User user = DBController.getUserBySecret(userSecret);
         for (Match match:MatchController.getMatches()) {
             if (match.getRoomId()==Integer.parseInt(roomIdStr)) {
@@ -26,51 +57,134 @@ public class LinkMappings {
                 }
             }
         }
-        return "forward:/error.html";
+        throw new HttpForbiddenException();
     }
 
-    @RequestMapping("/")
+    @GetMapping("/")
+    //im NOT using @AuthenticationPrinciple here because I need to accept unauthorized users. if I add @PreAuthorized, then non-authed users will get 401
     public String mainPage(@CookieValue(value="user_secret", required = false) String userSecret, HttpServletResponse response) {
         //prevent browser caching
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
         response.setHeader("Pragma", "no-cache"); // For HTTP/1.0
         response.setDateHeader("Expires", 0); // For proxies
 
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
+
         if (userSecret!=null) {
             //auto login here!
             User user = DBController.getUserBySecret(userSecret);
             //if login succeeded. if they somehow have user_secret cookie but it doesn't exist, user will be null
-            if (user!=null) return "main-logged-in.html";
+            if (user!=null) {
+                return "main-logged-in.html";
+            }
         }
         return "main.html";
     }
 
-    @RequestMapping("/create-account")
-    public String createAccountPage() {
+    @GetMapping("/create-account")
+    public String createAccountPage(@CookieValue(value="user_secret", required = false) String userSecret) {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
+        if (userSecret==null) {
+            throw new HttpUnauthorizedException();
+        }
         return "createAccount.html";
     }
 
-    @RequestMapping("/user/{userId}")
-    public String userPage(@PathVariable int userId) {
+    @GetMapping("/user/{userId}")
+    public String userPage(@CookieValue(value="user_secret", required = false) String userSecret, @PathVariable int userId, HttpServletResponse response) {
+        //prevent browser caching (for users with userinfoaccess)
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+        response.setHeader("Pragma", "no-cache"); // For HTTP/1.0
+        response.setDateHeader("Expires", 0); // For proxies
+
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
+        
+        User user = DBController.getUserBySecret(userSecret);
         if (DBController.userExists(userId)) {
-            return "forward:/profile.html";
+            if (user == null) {
+                return "forward:/profile_pages/profile_unauthed.html";
+            }else {
+                if (user.getPermissionLevel().hasBanAccess())
+                    return "forward:/profile_pages/profile_admin.html";
+                if (user.getPermissionLevel().hasUserInfoAccess() || user.getUserId()==userId)
+                    return "forward:/profile_pages/profile_user.html";
+            }
+            return "forward:/profile_pages/profile.html";
         }else{
-            return "forward:/error.html";
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 
-    @RequestMapping("/rankings")
+    @GetMapping("/rankings")
     public String rankingsPage() {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
         return "leaderboard.html";
     }
 
-    @RequestMapping("/search") 
+    @GetMapping("/search") 
     public String searchPage() {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
         return "search-page.html";
     }
 
-    @RequestMapping("/rules")
+    @GetMapping("/rules")
     public String rulesPage() {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
         return "rules.html";
     }
+
+    @GetMapping("/settings")
+    public String settingsPage(@CookieValue(value="user_secret", required = false) String userSecret) {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
+        if (userSecret!=null) {
+            //auto login here!
+            User user = DBController.getUserBySecret(userSecret);
+            //if login succeeded. if they somehow have user_secret cookie but it doesn't exist, user will be null
+            if (user!=null) {
+                return "settings.html";
+            }
+        }
+        throw new HttpUnauthorizedException();
+    }
+
+    @GetMapping("/admin")
+    public String adminDashboard(@CookieValue(value="user_secret", required = false) String userSecret) {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
+        if (userSecret!=null) {
+            //auto login here!
+            User user = DBController.getUserBySecret(userSecret);
+            //if login succeeded. if they somehow have user_secret cookie but it doesn't exist, user will be null
+            if (user!=null && user.getPermissionLevel().hasAdminDashboardAccess()) return "admin-dashboard.html";
+        }
+        throw new HttpForbiddenException();
+    }
+
+    @GetMapping("/donate")
+    public String donatePage() {
+        if (!hasLaunched()) {
+            return "launch-waiting.html";
+        }
+        return "donate.html";
+    }
+
+    public static boolean hasLaunched() {
+		long currentEpoch = System.currentTimeMillis();
+		return currentEpoch >= launchEpoch;
+	}
 }

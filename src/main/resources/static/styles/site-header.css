@@ -1,11 +1,11 @@
 html, body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     background-color: var(--main-bg-color);
     color: #333;
 }
 
-button {
+a {
     font-family: inherit;
     cursor: pointer;
     outline: none;
@@ -44,16 +44,19 @@ header {
 }
 
 .header-button {
+    display: flex;
+    text-align: center;
+    align-items: center;
     height: 100%;
     background-color: var(--header-color);
     padding: 0px 15px;
     font-size: 1rem;
     font-weight: 500;
     color: var(--h2-color);
-
 }
 
 .header-button:hover {
+    color: var(--h2-color);
     background-color: var(--neutral-button);
 }
 
@@ -84,6 +87,7 @@ header {
     font-family: inherit;
     color: var(--h2-color);
     transition: box-shadow 0.2s ease;
+    font-weight: 200;
 }
 
 #search-bar:focus {
@@ -101,7 +105,9 @@ header {
 }
 
 #profile-button {
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     display: none;
+    justify-content: center;
     border: none;
     background-color: var(--blue-button);
     color: white;
@@ -109,6 +115,8 @@ header {
     padding: 12px 24px;
     font-size: 1rem;
     font-weight: bold;
+    overflow: hidden;
+    max-width: 150px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.1s ease;
 }
@@ -139,6 +147,8 @@ header {
     border: none;
     border-radius: 0 0 5px 5px;
     width: 100%;
+    z-index: 4;
+    font-weight: 300;
 }
 
 /* Links inside the dropdown */
@@ -172,6 +182,7 @@ header {
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.1s ease;
+    text-align: center;
 }
 
 #sign-in-button:hover {
@@ -180,4 +191,8 @@ header {
 
 #sign-in-button:active {
     transform: scale(0.97);
+}
+
+#admin-dropdown-link {
+    display: none;
 }

@@ -1,39 +1,64 @@
 package dev.pakn.competitioncubes;
 
-import lombok.Getter;
-
-public class SolveData {
-    private int roomId;
-    private String time;
+public class SolveData implements Comparable<SolveData> {
+    private String timeString;
+    private double timeDouble;
+    private double timeDoubleWithPenalty;
     private String scramble;
-    private String penalty;
+    private Penalty penalty;
     private int userId;
+    private boolean isValid;
+    private boolean flagged;
+    private Event event;
 
-    public SolveData() {}
-
-    public SolveData(int id, String time, String penalty, int userId) {
-        roomId = id;
-        this.time=time;
-        this.scramble="";
+    public SolveData(Event event, String timeString, String scramble, Penalty penalty, int userId) {
+        this.event = event;
+        this.timeString = timeString;
+        this.timeDouble = TimeConversions.timeToDouble(timeString);
+        this.scramble = scramble;
         this.penalty = penalty;
-        this.userId=userId;
+        this.userId = userId;
+
+        calculateTimeWithPenalty();
     }
 
-
-    public SolveData(int id, String time, String penalty, String scramble, int userId) {
-        roomId = id;
-        this.time=time;
-        this.scramble=scramble;
+    public SolveData(Event event, double timeDouble, String scramble, Penalty penalty, int userId) {
+        this.event = event;
+        this.timeDouble = timeDouble;
+        this.timeString = TimeConversions.doubleToTime(timeDouble);
+        this.scramble = scramble;
         this.penalty = penalty;
-        this.userId=userId;
+        this.userId = userId;
+
+        calculateTimeWithPenalty();
     }
 
-    public String getTime() {
-        return time;
+    private void calculateTimeWithPenalty() {
+        if (penalty==Penalty.OK) {
+            timeDoubleWithPenalty = timeDouble;
+        }else if (penalty==Penalty.PLUS_2) {
+            timeDoubleWithPenalty = timeDouble+2;
+        }else if (penalty==Penalty.PLUS_4) {
+            timeDoubleWithPenalty = timeDouble+4;
+        }else if (penalty==Penalty.DNF) {
+            timeDoubleWithPenalty = Integer.MAX_VALUE;
+        }
     }
 
-    public int getRoomId() {
-        return roomId;
+    public double getPenalizedTime() {
+        return timeDoubleWithPenalty;
+    }
+
+    public String getTimeString() {
+        return timeString;
+    }
+
+    public double getTimeDouble() {
+        return timeDouble;
+    }
+
+    public Penalty getPenalty() {
+        return penalty;
     }
 
     public String getScramble() {
@@ -44,7 +69,33 @@ public class SolveData {
         return userId;
     }
 
-    public String getPenalty() {
-        return penalty;
+    public void setValidity(boolean valid) {
+        isValid = valid;
+    }
+
+    public boolean isValid() {
+        return isValid;
+    }
+
+    public void setFlagged(boolean suspicious) {
+        flagged = suspicious;
+    }
+
+    public boolean isFlagged() {
+        return flagged;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setPenalty(Penalty penalty) {
+        this.penalty = penalty;
+        calculateTimeWithPenalty();
+    }
+
+    @Override
+    public int compareTo(SolveData o) {
+        return (int) Math.signum(timeDoubleWithPenalty-o.timeDoubleWithPenalty);
     }
 }

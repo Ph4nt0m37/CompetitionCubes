@@ -1,12 +1,15 @@
 html body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
+    background-color: var(--main-bg-color);
+}
+
+.main {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: var(--main-bg-color);
 }
 
 h1 {

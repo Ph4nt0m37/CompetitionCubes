@@ -1,8 +1,12 @@
 html, body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     background-color: var(--main-bg-color);
     color: #333;
+}
+
+button {
+    cursor: pointer;
 }
 
 #main {
@@ -32,6 +36,7 @@ html, body {
     margin: 3px;
     font-size: 1rem;
     font-weight: 500;
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     border: 2px solid #bebebe;
     border-radius: 5px;
     background-color: var(--popup-color);
@@ -47,7 +52,7 @@ html, body {
 }
 
 .event-button {
-    padding: 10px 12px;
+    padding: 10px 14px;
     font-size: 1.5rem;
     border: 2px solid #bebebe;
     border-radius: 5px;

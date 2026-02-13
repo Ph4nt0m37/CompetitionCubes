@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Language" content="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/root.css">
+    <link rel="stylesheet" href="styles/admin.css">
+    <link rel="stylesheet" href="https://cdn.cubing.net/v0/css/@cubing/icons/css">
+    <link rel="icon" href="/images/compcubelogo.png">
+    <title>Admin Dashboard | Competition Cubes</title>
+</head>
+<body>
+    <div id="background-overlay">
+        <div id="ban-popup">
+            <button id="close-ban-button">
+                <img src="/images/x.svg" draggable="false">
+            </button>
+            <h1 class="ban-user-text" id="ban-user-text">Ban User</h1>
+            <div class="ban-section">
+                <h2 class="ban-form-text">Ban Reason</h2>
+                <select class="select-reason-dropdown" id="ban-reason-dropdown">
+                    <option value="default" selected="selected">Ban reason...</option>
+                    <option value="username">Username</option>
+                    <option value="smurfing">Smurfing</option>
+                    <option value="time-wasting">Time Wasting</option>
+                    <option value="cheating">Cheating</option>
+                    <option value="other">Other</option>
+                </select>
+                <div class="other-reason-div" id="other-ban-reason-div">
+                    <h2 class="ban-form-text other-reason">Other Reason</h2>
+                    <input type="text" class="ban-time-input other-reason" id="other-ban-reason" placeholder="Other reason..." maxlength="250" autocomplete="off">
+                </div>
+                <h2 class="ban-form-text">Ban Time</h2>
+                <div class="ban-time-div perma-ban-div">
+                    <input type="checkbox" id="perma-ban-check" class="perma-check" name="perma-ban" value="Permanent Ban">
+                    <h3 class="ban-time-text">Permanent Ban</h3>
+                </div>
+                <div class="ban-times-div">
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-year" placeholder="Years" min="0" max="99999" autocomplete="off">
+                        <h3 class="ban-time-text">Years</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-month" placeholder="Months" min="0" max="12" autocomplete="off">
+                        <h3 class="ban-time-text">Months</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-day" placeholder="Days" min="0" max="31" autocomplete="off">
+                        <h3 class="ban-time-text">Days</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-hour" placeholder="Hours" min="0" max="24" autocomplete="off">
+                        <h3 class="ban-time-text">Hours</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-mins" placeholder="Minutes" min="0" max="60" autocomplete="off">
+                        <h3 class="ban-time-text">Minutes</h3>
+                    </div>
+                </div>
+            </div>
+            <button id="confirm-ban-button" class="confirm-ban-button">Ban</button>
+        </div>
+        <div id="ban-confirm-popup">
+            <p class="ban-confirm-text">Are you sure you want to ban this user?</p>
+            <div class="ban-buttons">
+                <button id="ban-confirm" class="ban-page-button">Yes</button>
+                <button id="ban-deny" class="ban-page-button">No</button>
+            </div>
+        </div>
+
+        <div id="warn-popup">
+            <button id="close-warn-button">
+                <img src="/images/x.svg" draggable="false">
+            </button>
+            <h1 class="ban-user-text" id="warn-user-text">Warn User</h1>
+            <div class="ban-section">
+                <h2 class="ban-form-text">Warn Reason</h2>
+                <select class="select-reason-dropdown" id="warn-reason-dropdown">
+                    <option value="default" selected="selected">Warn reason...</option>
+                    <option value="username">Username</option>
+                    <option value="smurfing">Smurfing</option>
+                    <option value="time-wasting">Time Wasting</option>
+                    <option value="cheating">Cheating</option>
+                    <option value="other">Other</option>
+                </select>
+                <div class="other-reason-div" id="other-warn-reason-div">
+                    <h2 class="ban-form-text other-reason">Other Reason</h2>
+                    <input type="text" class="ban-time-input other-reason" id="other-warn-reason" placeholder="Other reason..." maxlength="250" autocomplete="off">
+                </div>
+                <div class="ban-time-div perma-warn-div">
+                    <input type="checkbox" id="perma-warn-check" class="perma-check" name="perma-warn" value="Permanent Warn">
+                    <h3 class="ban-time-text">Permanent Warn</h3>
+                </div>
+            </div>
+            <button id="confirm-warn-button" class="confirm-warn-button">Warn</button>
+        </div>
+        <div id="warn-confirm-popup">
+            <p class="ban-confirm-text">Are you sure you want to warn this user?</p>
+            <div class="ban-buttons">
+                <button id="warn-confirm" class="ban-page-button">Yes</button>
+                <button id="warn-deny" class="ban-page-button">No</button>
+            </div>
+        </div>
+    </div>
+    <div class="notif-abs-div">
+        <div id="notif-div">
+            <p class="notification template">Notification</p>
+        </div>
+    </div>
+    <div class="main">
+        <h1>Admin Dashboard</h1>
+        <div id="main-info-div">
+            <aside id="left-navbar">
+                <h2 class="options-text">Options</h2>
+                <button class="options-button" id="reported-solves-button">Reported Solves</button>
+                <button class="options-button" id="reported-users-button">Reported Users</button>
+            </aside>
+            <div id="dashboard-div">
+                <div id="div-content">
+                    <h2 id="report-type-text">Reported Solves</h2>
+                    <h3 id="loading-text">Loading...</h3>
+                    <div class="entry solve-entry template">
+                        <h2 class="solve-user">
+                            <a class="solve-user-link" target="_blank">Username</a>
+                        </h2>
+                        <h4 class="event-text"><span class="cubing-icon event-333"></span> 3x3 <span class="cubing-icon event-333"></span></h4>
+                        <h3 class="solve-time">Single: 0.00</h3>
+                        <h5 class="wca-pb">WCA Single: 00:00.00 | WCA Average: 00:00.00</h5>
+                        <div class="buttons-div">
+                            <button class="ok-button">OK</button>
+                            <button class="dnf-button">DNF</button>
+                            <button class="ban-button">Ban</button>
+                        </div>
+                    </div>
+                    <div class="entry user-entry template">
+                        <h2 class="solve-user">
+                            <a class="solve-user-link" target="_blank">Username</a>
+                        </h2>
+                        <h3 class="solve-time report-reason">Reason: N/A</h3>
+                        <h5 class="report-info template">Time: N/A</h5>
+                        <div class="buttons-div">
+                            <button class="ok-button">OK</button>
+                            <button class="warn-button">Warn</button>
+                            <button class="ban-button">Ban</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="module" src="scripts/dashboard.js"></script>
+</html>

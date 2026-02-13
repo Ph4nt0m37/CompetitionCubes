@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Language" content="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/root.css">
+    <link rel="stylesheet" href="/styles/site-header.css">
+    <link rel="stylesheet" href="/styles/profile.css">
+    <link rel="stylesheet" href="https://cdn.cubing.net/v0/css/@cubing/icons/css">
+    <link rel="icon" href="/images/compcubelogo.png">
+    <title>User Profile | Competition Cubes</title>
+</head>
+<body>
+    <header id="header"></header>
+
+    <div class="notif-abs-div">
+        <div id="notif-div">
+            <p class="notification template">Notification</p>
+        </div>
+    </div>
+    <div id="background-overlay">
+        <div id="report-popup">
+            <button id="close-report-button">
+                <img src="/images/x.svg" draggable="false">
+            </button>
+            <h1 class="report-user-text">Report User</h1>
+            <div class="report-section">
+                <h2 class="report-form-text">Report Reason</h2>
+                <select id="report-reason-dropdown">
+                    <option value="default" selected="selected">Report reason...</option>
+                    <option value="username">Username</option>
+                    <option value="smurfing">Smurfing</option>
+                    <option value="cheating">Cheating</option>
+                </select>
+            </div>
+            <button id="confirm-report-button" class="report-button">Report</button>
+        </div>
+        <div id="info-popup">
+            <button id="close-info-x">
+                <img src="/images/x.svg" draggable="false">
+            </button>
+            <h1 class="info-user-text">User Info</h1>
+            <div class="report-section">
+                <h2 class="report-form-text">Stats</h2>
+                <div class="info-stats-div">
+                    <p class="warnings-text" id="active-warnings-text">Active Warnings: N/A</p>
+                    <p class="warnings-text" id="all-warnings-text">All Warnings: N/A</p>
+                    <p class="bans-text" id="bans-text">Bans: N/A</p>
+                </div>
+                <p id="curr-banned-text">Currently banned until [unknown] for [unknown]</p>
+                <h1 class="report-form-text">Admin Actions</h1>
+                <div class="admin-buttons-div">
+                    <button class="warn-button" id="warn-button">Warn</button>
+                    <button class="ban-button" id="ban-button">Ban</button>
+                    <button class="ban-button" id="unban-button">Unban</button>
+                </div>
+            </div>
+            <!--
+            <button id="close-info-button" class="close-info-button">Close</button>
+            -->
+        </div>
+        <div id="unban-confirm-popup" class="confirm-popup">
+            <p class="ban-confirm-text">Are you sure you want to unban this user?</p>
+            <div class="ban-buttons">
+                <button id="unban-confirm" class="ban-page-button confirm-button">Yes</button>
+                <button id="unban-deny" class="ban-page-button deny-button">No</button>
+            </div>
+        </div>
+        <div id="ban-popup">
+            <button id="close-ban-button">
+                <img src="/images/x.svg" draggable="false">
+            </button>
+            <h1 class="ban-user-text" id="ban-user-text">Ban User</h1>
+            <div class="ban-section">
+                <h2 class="ban-form-text">Ban Reason</h2>
+                <select id="ban-reason-dropdown">
+                    <option value="default" selected="selected">Ban reason...</option>
+                    <option value="username">Username</option>
+                    <option value="smurfing">Smurfing</option>
+                    <option value="wasting">Time Wasting</option>
+                    <option value="cheating">Cheating</option>
+                    <option value="other">Other</option>
+                </select>
+                <div class="other-reason-div" id="other-reason-div">
+                    <h2 class="ban-form-text other-reason">Other Reason</h2>
+                    <input type="text" class="ban-time-input other-reason" id="other-ban-reason" placeholder="Other reason..." maxlength="250" autocomplete="off">
+                </div>
+                <h2 class="ban-form-text">Ban Time</h2>
+                <div class="ban-time-div perma-ban-div">
+                    <input type="checkbox" id="perma-ban-check" class="perma-check" name="perma-ban" value="Permanent Ban">
+                    <h3 class="ban-time-text">Permanent Ban</h3>
+                </div>
+                <div class="ban-times-div">
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-year" placeholder="Years" min="0" max="99999" autocomplete="off">
+                        <h3 class="ban-time-text">Years</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-month" placeholder="Months" min="0" max="12" autocomplete="off">
+                        <h3 class="ban-time-text">Months</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-day" placeholder="Days" min="0" max="31" autocomplete="off">
+                        <h3 class="ban-time-text">Days</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-hour" placeholder="Hours" min="0" max="24" autocomplete="off">
+                        <h3 class="ban-time-text">Hours</h3>
+                    </div>
+                    <div class="ban-time-div">
+                        <input type="number" class="ban-time-input" id="ban-time-mins" placeholder="Minutes" min="0" max="60" autocomplete="off">
+                        <h3 class="ban-time-text">Minutes</h3>
+                    </div>
+                </div>
+            </div>
+            <button id="confirm-ban-button" class="confirm-ban-button">Ban</button>
+        </div>
+        <div id="ban-confirm-popup"  class="confirm-popup">
+            <p class="ban-confirm-text">Are you sure you want to ban this user?</p>
+            <div class="ban-buttons">
+                <button id="ban-confirm" class="ban-page-button confirm-button">Yes</button>
+                <button id="ban-deny" class="ban-page-button deny-button">No</button>
+            </div>
+        </div>
+        <div id="warn-popup">
+            <button id="close-warn-x">
+                <img src="/images/x.svg" draggable="false">
+            </button>
+            <h1 class="ban-user-text" id="warn-user-text">Warn User</h1>
+            <div class="ban-section">
+                <h2 class="ban-form-text">Warn Reason</h2>
+                <select class="select-reason-dropdown" id="warn-reason-dropdown">
+                    <option value="default" selected="selected">Warn reason...</option>
+                    <option value="username">Username</option>
+                    <option value="smurfing">Smurfing</option>
+                    <option value="wasting">Time Wasting</option>
+                    <option value="cheating">Cheating</option>
+                    <option value="other">Other</option>
+                </select>
+                <div class="other-reason-div" id="other-warn-reason-div">
+                    <h2 class="ban-form-text other-reason">Other Reason</h2>
+                    <input type="text" class="ban-time-input other-reason" id="other-warn-reason" placeholder="Other reason..." maxlength="250" autocomplete="off">
+                </div>
+                <div class="ban-time-div perma-warn-div">
+                    <input type="checkbox" id="perma-warn-check" class="perma-check" name="perma-warn" value="Permanent Warn">
+                    <h3 class="ban-time-text">Permanent Warn</h3>
+                </div>
+            </div>
+            <button id="confirm-warn-button" class="confirm-warn-button">Warn</button>
+        </div>
+        <div id="warn-confirm-popup">
+            <p class="ban-confirm-text">Are you sure you want to warn this user?</p>
+            <div class="ban-buttons">
+                <button id="warn-confirm" class="ban-page-button">Yes</button>
+                <button id="warn-deny" class="ban-page-button">No</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-div">
+        <div id="leaderboard-div">
+            <div class="profile-buttons">
+                <button id="view-info-button">
+                    <img src="/images/blue_eye.svg" draggable="false">
+                </button>
+                <button id="report-flag">
+                    <img src="/images/flag.svg" draggable="false">
+                </button>
+            </div>
+            <div class="username-div">
+                <h1 id="username-text">Loading...</h1>
+                <a id="wca-link">WCA Profile</a>
+            </div>
+            <div class="stats-div">
+                <div class="stats-box">
+                    <h3>Badges</h3>
+                    <div id="badges-div">
+                        <div class="badge badge-template owner-badge">Owner</div>
+                        <div class="badge badge-template admin-badge">Admin</div>
+                        <div class="badge badge-template mod-badge">Moderator</div>
+                        <div class="badge badge-template jr-mod-badge">Jr. Moderator</div>
+                        <div class="badge badge-template early-tester-badge">Early Tester</div>
+                        <div class="badge badge-template tester-badge">Tester</div>
+                        <div class="badge badge-template creator-badge">Creator</div>
+                        <div class="badge badge-template donor-badge">Donor</div>
+                        <div class="badge badge-template diamond-badge">Top 1</div>
+                        <div class="badge badge-template gold-badge">Top 10</div>
+                        <div class="badge badge-template silver-badge">Top 50</div>
+                        <div class="badge badge-template bronze-badge">Top 100</div>
+                        <div class="badge badge-template snsfall25-badge">SNS Fall 2025</div>
+                    </div>
+                </div>
+                <div class="stats-box">
+                    <h3>Statistics</h3>
+                    <div id="user-stats-div">
+                        <h5 class="statistics-text" id="matches-played-text">Matches Played: 0</h5>
+                        <h5 class="statistics-text" id="matches-won-text">Matches Won: 0</h5>
+                        <h5 class="statistics-text" id="matches-lost-text">Matches Lost: 0</h5>
+                        <h5 class="statistics-text" id="win-loss-text">Win-Loss %: 0%</h5>
+                    </div>
+                </div>
+                <div class="stats-box">
+                    <h3>Something here</h3>
+                    <div id="temp-div">
+                        <div class="badge">something here</div>
+                    </div>
+                </div>
+            </div>
+            <h2>Rankings</h2>
+            <div id="sorting-box">
+                <button class="sorting-button" id="elo-button">ELO</button>
+                <button class="sorting-button" id="single-button">Single</button>
+                <button class="sorting-button" id="avg-button">Average</button>
+                <!--<button class="event-button" id="3x3-button" event="3x3"><span class="cubing-icon event-333"></span></button>
+                <button class="event-button" id="2x2-button" event="2x2"><span class="cubing-icon event-222"></span></button>
+                <button class="event-button" id="4x4-button" event="4x4"><span class="cubing-icon event-444"></span></button>
+                <button class="event-button" id="5x5-button" event="5x5"><span class="cubing-icon event-555"></span></button>
+                <button class="event-button" id="6x6-button" event="6x6"><span class="cubing-icon event-666"></span></button>
+                <button class="event-button" id="7x7-button" event="7x7"><span class="cubing-icon event-777"></span></button>
+                <button class="event-button" id="clock-button" event="clock"><span class="cubing-icon event-clock"></span></button>
+                <button class="event-button" id="sq1-button" event="sq1"><span class="cubing-icon event-sq1"></span></button>
+                <button class="event-button" id="skewb-button" event="skewb"><span class="cubing-icon event-skewb"></span></button>
+                <button class="event-button" id="pyra-button" event="prya"><span class="cubing-icon event-pyram"></span></button>
+                <button class="event-button" id="mega-button" event="mega"><span class="cubing-icon event-minx"></span></button>
+                <button class="event-button" id="3oh-button" event="3oh"><span class="cubing-icon event-333oh"></span></button>
+                <button class="event-button" id="3bld-button" event="3bld"><span class="cubing-icon event-333bf"></span></button>-->
+            </div>
+            <div id="rankings-div">
+                <div class="event-entry" id="rankings-key">
+                    <p class="rankings-key event-text">Event</p>
+                    <p class="rankings-key rank-text">Rank</p>
+                    <p class="rankings-key world-rank-text">World Rank</p>
+                    <p class="rankings-key elo-text">ELO</p>
+                    <p class="rankings-key single-text">Single</p>
+                    <p class="rankings-key avg-text">Average</p>
+                </div>
+                <div class="event-entry" id="event-entry-template">
+                    <p class="event-entry-text event-text">3x3</p>
+                    <div class="event-entry-text rank-text">
+                        <div class="rank">Bronze</div>
+                    </div>
+                    <p class="event-entry-text world-rank-text">0</p>
+                    <p class="event-entry-text elo-text">100</p>
+                    <p class="event-entry-text single-text">0</p>
+                    <p class="event-entry-text avg-text">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+<script type="module" src="/scripts/navbar.js"></script>
+<script type="module" src="/scripts/profile_scripts/profile.js"></script>
+<script type="module" src="/scripts/profile_scripts/profile_user.js"></script>
+<script type="module" src="/scripts/profile_scripts/profile_admin.js"></script>
+</html>

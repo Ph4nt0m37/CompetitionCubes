@@ -59,4 +59,18 @@ public class WebRequests {
     
         return response.body();
     }
+
+    public static HttpResponse<String> sendGetRequest(String url) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newBuilder().build();
+        HttpRequest httpReq = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .header("Content-Type", "application/json")
+            .GET()
+            .build();
+
+        HttpResponse<String> response = client.send(httpReq,
+            HttpResponse.BodyHandlers.ofString());
+    
+        return response;
+    }
 }

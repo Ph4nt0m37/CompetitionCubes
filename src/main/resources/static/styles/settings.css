@@ -1,0 +1,219 @@
+html, body {
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: var(--main-bg-color);
+    color: #333;
+}
+
+button {
+    cursor: pointer;
+}
+
+#main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#settings-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 25rem;
+    padding: 8px 20px;
+    margin: 20px;
+    background-color: var(--popup-color);
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgb(0,0,0,0.1);
+}
+
+.setting {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#username-input {
+    padding: 6px 30px;
+    width: 80%;
+    max-width: 350px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 1rem;
+    font-family: inherit;
+    font-weight: 200;
+    transition: box-shadow 0.2s ease;
+}
+
+#username-input:focus {
+    outline: none;
+    box-shadow: 0 0 6px #0073bf;
+    border-color: #0073bf;
+}
+
+h1 {
+    margin: 20px;
+}
+
+h2 {
+    margin: 10px;
+    padding: 0;
+    text-decoration: underline;
+    color: var(--h2-color);
+}
+
+h3 {
+    font-size: 1.2rem;
+    color: var(--h3-color-dark);
+    margin: 10px;
+    padding: 0;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  scale: 0.7;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .2s;
+  transition: .2s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .2s;
+  transition: .2s;
+}
+
+input:checked + .slider {
+  background-color: var(--blue-button);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--blue-button);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.row {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.row > h3 {
+    margin: 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#save-button {
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+    margin-top: 30px;
+    margin-bottom: 5px;
+    border: none;
+    background-color: var(--blue-button);
+    color: white;
+    border-radius: 10px;
+    font-size: 1.4rem;
+    text-align: center;
+    padding: 8px 34px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+#save-button:hover {
+    background-color: var(--blue-button-hover);
+}
+
+#save-button:active {
+    transform: scale(0.97);
+}
+
+.notif-abs-div {
+  position: absolute;
+  right: 5px;
+  top: 90px;
+}
+
+#notif-div {
+  position: sticky;
+  margin-left: auto;
+  margin-right: 10px;
+  width: fit-content;
+  top: 10px;
+  z-index: 3;
+}
+
+.notification {
+    background-color: var(--notification-color);
+    width: 15rem;
+    text-align: center;
+    padding: 10px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--h2-color);
+    box-shadow: 0 4px 12px rgb(0,0,0,0.25);
+    color: var(--dark-font-color);
+    animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; 
+       display: flex;
+    }
+  100% { opacity: 1; }
+}
+
+.fade-out { animation: fadeOut 2.5s; }
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.error {
+  color: var(--error-color);
+}

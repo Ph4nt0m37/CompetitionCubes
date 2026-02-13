@@ -22,19 +22,38 @@ export let matchData;
 
 export let currentScramble = "";
 
-let oppId = null;
+export let oppId = null;
 
 let matchWinner = null;
 
 let userElo = -1;
 let oppElo = -1;
 
+const searchingUsersText = document.getElementById("searching-users-text");
+
 export function setScramble(scramble) {
+    shrinkTextToContainerSize();
     if (!matchWinner) {
         if (scramble!=="Waiting for Opponent to solve..." && scramble!=="Waiting for Opponent to confirm solve...") {
             currentScramble = scramble;
+            fetch("/api/reset-inactivity-timer", {
+                method: "POST",
+                body: JSON.stringify({
+                    userId: userId,
+                    maxTime: 120
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            });
         }else{
             currentScramble = "";
+            fetch(`/api/remove-inactivity-timer/${userId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            });
         }
         scrambleText.textContent = scramble;
     }
@@ -51,7 +70,7 @@ fetch(`${window.location.origin}/get-match-info/${roomId}`).then(response=>{
             oppId = matchJson.users[0];
         }
         //getting elos
-        fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
+        fetch(`/api/public/get-user-data-by-id/${userId}`).then((response)=> {
             return response.json();
             }).then(function(data) {
                 userElo=data.elos[matchData.event];
@@ -60,7 +79,7 @@ fetch(`${window.location.origin}/get-match-info/${roomId}`).then(response=>{
                 console.log('Failed to fetch!', err);
             });
 
-        fetch(`/api/get-user-data-by-id/${oppId}`).then((response)=> {
+        fetch(`/api/public/get-user-data-by-id/${oppId}`).then((response)=> {
             return response.json();
             }).then(function(data) {
                 oppElo=data.elos[matchData.event];
@@ -114,7 +133,7 @@ export function endMatch(matchData) {
     let winner = matchData.winner['username'];
     let eloChange = matchData.eloChange;
     if (matchData.quitUser) {
-        scrambleText.innerHTML = `${matchData.quitUser['username']} has disconnected from the match!<br>${winner} has won the match!`
+        scrambleText.innerHTML = `${matchData.quitUser['username']} forfeit the match!<br>${winner} has won the match!`
     }else {
         scrambleText.textContent = `${winner} has won the match!`;
     }
@@ -129,6 +148,8 @@ export function endMatch(matchData) {
     homeButton.classList.add("fade-in-element");
     footerDiv.style.display="flex";
     footerDiv.classList.add("fade-in-element");
+    getWaitingUserCount()
+    setInterval(getWaitingUserCount,10000);
     let eloChangeText = document.getElementById("elo-change-text");
     let oppEloChangeText = document.getElementById("opp-elo-change-text");
     matchWinner=matchData.winner;
@@ -175,4 +196,27 @@ function timeToFloat(time) {
         return parseFloat(times[0]);
     }
 }*/
+
+function shrinkTextToContainerSize() {
+    for(const element of document.getElementsByClassName("shrink"))
+    {
+        var size = parseInt(getComputedStyle(element).getPropertyValue('font-size'));
+        const parent_width = parseInt(getComputedStyle(element.parentElement).getPropertyValue('width'));
+        while(element.offsetWidth > parent_width)
+        {
+            element.style.fontSize = size + "px";
+            size -= 1;
+        }
+    }
+}
+
+function getWaitingUserCount() {
+    fetch("/api/waiting-list/3x3").then((response)=>{
+        return response.json();
+    }).then((numSearching)=>{
+        let userWord = "users";
+        if (numSearching==1) userWord = "user";
+        searchingUsersText.textContent=`${numSearching} ${userWord} searching for match...`;
+    });
+}
 

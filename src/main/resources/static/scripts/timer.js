@@ -1,5 +1,5 @@
 import { stompClient } from "./comp_connect.js";
-import { currentScramble, roomId, userId } from "./competition.js";
+import { currentScramble, roomId, userId, oppId } from "./competition.js";
 export const timerStates = {
     TIMING: 0,
     INSPECTION: 1,
@@ -18,6 +18,8 @@ export function setTimerEnabled(enabled) {
     timerEnabled=enabled;
 }
 
+const matchJoinAudio = document.getElementById("match-join-audio");
+
 window.onload = ()=>{
     const userTimer = document.getElementById("user-timer");
     const okButton = document.getElementById("ok-button");
@@ -26,6 +28,169 @@ window.onload = ()=>{
     const plusTwoButton = document.getElementById("plus-2-button");
     const dnfButton = document.getElementById("dnf-button");
     const penaltyText = document.getElementById("penalty-text");
+
+    const menuButton = document.getElementById("menu-button");
+    const actionsPopup = document.getElementById("background-overlay");
+    menuButton.addEventListener("click",()=>{
+        actionsPopup.style.display="grid";
+    });
+
+    const forfeitPopup = document.getElementById("forfeit-confirm-popup");
+    forfeitPopup.style.display="none";
+    const forfeitButton = document.getElementById("forfeit-button");
+    forfeitButton.addEventListener("click",(event)=>{
+        forfeitPopup.style.display="flex";
+    });
+
+    const forfeitConfirmButton = document.getElementById("forfeit-confirm");
+    forfeitConfirmButton.addEventListener("click",()=>{
+        actionsPopup.style.display="none";
+        forfeitPopup.style.display="none";
+        fetch("/api/forfeit-match", {
+            method: "POST",
+            body: JSON.stringify(Number(userId)),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        });
+    });
+
+    const forfeitDenyButton = document.getElementById("forfeit-deny");
+    forfeitDenyButton.addEventListener("click",()=>{
+        forfeitPopup.style.display="none";
+    });
+
+    const reportButton = document.getElementById("confirm-report-button");
+    reportButton.addEventListener("click",()=>{
+        const reportReason = reportReasonDropdown.value;
+        if (reportReason!=="default") {
+            if (reportReason!=="time-wasting") {
+                fetch("/api/report-user", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        userId: oppId,
+                        reason: reportReasonDropdown.value,
+                    }),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8"
+                    }
+                }).then((resp)=>{
+                    if (resp.ok) {
+                        actionsPopup.style.display="none";
+                        reportPopup.style.display="none";
+                        createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`);
+                        reportReasonDropdown.children[0].selected = "selected";
+                    }else {
+                        createNotification(`Something went wrong reporting this user. Please try again later or contact a developer.`);
+                    }
+                });
+            }else {
+                fetch(`/api/get-inactivity-time/${oppId}`)
+                .then(resp=>{
+                    return resp.json();
+                }).then(inactivityTime=>{
+                    fetch("/api/report-user", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            userId: oppId,
+                            reason: reportReasonDropdown.value,
+                            info: inactivityTime['time']
+                        }),
+                        headers: {
+                            "Content-type": "application/json; charset=UTF-8"
+                        }
+                    }).then((resp)=>{
+                        if (resp.ok) {
+                            actionsPopup.style.display="none";
+                            reportPopup.style.display="none";
+                            createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`);
+                            reportReasonDropdown.children[0].selected = "selected";
+                        }else {
+                            createNotification(`Something went wrong reporting this user. Please try again later or contact a developer.`);
+                        }
+                    });
+                })
+            }
+        }else {
+            createNotification(`Please select a reason for reporting!`);
+        }
+    });
+
+    let userSettings = null;
+    fetch(`/api/get-user-settings/${userId}`).then((resp)=>{
+        if (resp.ok)
+            return resp.json();
+        createNotification("Something went wrong loading your settings, so some thing may not work as expected.");
+    }).then(settings=>{
+        userSettings = settings;
+        if (userSettings['inspectionAudio']) {
+            matchJoinAudio.play();
+        }
+    }); 
+
+    actionsPopup.addEventListener("click",(event)=>{
+        if (event.target===event.currentTarget && forfeitPopup.style.display==="none") {
+            if (reportPopup.style.display==="none") {
+                actionsPopup.style.display="none";
+            }
+            //resetting and hiding the report popup
+            reportReasonDropdown.children[0].selected = "selected";
+            reportPopup.style.display="none";
+        }
+    });
+
+    document.addEventListener("keydown",(event)=>{
+        if (event.key=="Escape" && forfeitPopup.style.display==="none") {
+            if (reportPopup.style.display==="none") {
+                actionsPopup.style.display="none";
+            }
+            //resetting and hiding the report popup
+            reportReasonDropdown.children[0].selected = "selected";
+            reportPopup.style.display="none";
+        }
+    });
+
+    const reportReasonDropdown = document.getElementById("report-reason-dropdown");
+
+    const reportPopup = document.getElementById("report-popup")
+    const reportUserButtons = document.getElementById("report-user-button");
+    reportUserButtons.addEventListener("click",()=>{
+        if (forfeitPopup.style.display==="none")
+            reportPopup.style.display="flex";
+    });
+
+    const closeReportButton = document.getElementById("close-report-button");
+    closeReportButton.addEventListener("click",()=>{
+        //resetting and hiding the report popup
+        reportReasonDropdown.children[0].selected = "selected";
+        reportPopup.style.display="none";
+    });
+
+    const closeMenuButton = document.getElementById("close-menu-button");
+    closeMenuButton.addEventListener("click",()=>{
+        if (forfeitPopup.style.display==="none") {
+            actionsPopup.style.display="none";
+            reportPopup.style.display="none";
+        }
+    });
+
+    const reportSolveButton = document.getElementById("report-solve-button");
+    reportSolveButton.addEventListener("click",()=>{
+        reportSolveButton.blur();
+        fetch(`/api/report-solve?userId=${oppId}`, {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        }).then(resp=>{
+            if (resp.ok) {
+                createNotification("Successfully reported this solve.");
+            }else {
+                createNotification("Something went wrong reporting this solve!");
+            }
+        });
+    });
+
     let timerState = timerStates.STOPPED;
 
     let timerInterval = null;
@@ -39,6 +204,9 @@ window.onload = ()=>{
     let time = "99:00.00";
 
     let currentPenalty = Penalty.OK;
+
+    const eightSecondsAudio = document.getElementById("8s-audio");
+    const twelveSecondsAudio = document.getElementById("12s-audio");
 
     okButton.addEventListener("click",()=>{
         if (timerState===timerStates.STOPPED) {
@@ -107,7 +275,7 @@ window.onload = ()=>{
                 if (!spaceDown) startSpaceDown = Date.now().valueOf();
                 spaceDown=true;
                 if (timerState===timerStates.INSPECTION) {
-                    if (Date.now().valueOf()-startSpaceDown>499) {
+                    if (Date.now().valueOf()-startSpaceDown>299) {
                         userTimer.style.color="rgb(0,255,0)";
                         canStartTimer=true;
                     }else{
@@ -117,6 +285,16 @@ window.onload = ()=>{
             }
             if (timerState===timerStates.TIMING) {
                 clearInterval(timerInterval);
+                fetch("/api/reset-inactivity-timer", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        userId: userId,
+                        maxTime: 60
+                    }),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8"
+                    }
+                });
                 userTimer.style.color="black";
 
                 rawTime = Date.now()-startTime;
@@ -178,6 +356,13 @@ window.onload = ()=>{
                         inspectionTime--;
                         if (inspectionTime>0) {
                             userTimer.textContent=inspectionTime.toString();
+                            if (userSettings['inspectionAudio']) {
+                                if (inspectionTime==7) {
+                                    eightSecondsAudio.play();
+                                }else if (inspectionTime==3) {
+                                    twelveSecondsAudio.play();
+                                }
+                            }
                         }else if (inspectionTime<1 && inspectionTime>-2) {
                             userTimer.textContent="+2";
                             penaltyText.style.display="block";
@@ -201,6 +386,16 @@ window.onload = ()=>{
                         canStartTimer = false;
                         timerState = timerStates.TIMING;
                         userTimer.style.color = "black";
+                        fetch("/api/reset-inactivity-timer", {
+                            method: "POST",
+                            body: JSON.stringify({
+                                userId: userId,
+                                maxTime: 2147483647
+                            }),
+                            headers: {
+                                "Content-type": "application/json; charset=UTF-8"
+                            }
+                        });
                         //sending start data
                         stompClient.publish({
                             destination: "/app/switchTimer",
@@ -259,4 +454,20 @@ window.onload = ()=>{
             });
         }, 100);
     }
+}
+
+const notificationTemplate = document.querySelector(".notification.template");
+const notificationBox = document.getElementById("notif-div");
+
+function createNotification(text) {
+    const notif = notificationTemplate.cloneNode(true);
+    notif.textContent = text;
+    notif.classList.remove("template");
+    notificationBox.appendChild(notif);
+    setTimeout(()=>{
+        notif.classList.add("fade-out");
+        setTimeout(()=>{
+            notif.remove();
+        },1500);
+    },5000);
 }

@@ -2,6 +2,7 @@ package dev.pakn.competitioncubes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -16,10 +17,11 @@ public class Match {
     private int solverIndex = 0;
     private int currentSolve = 0;
     private String currentScramble;
-    private HashMap<Integer,ArrayList<String>> userTimes = new HashMap<>();
+    private HashMap<Integer,ArrayList<SolveData>> userSolves = new HashMap<>();
     private HashMap<Integer,String> userAo5s = new HashMap<>();
     private HashMap<Integer,Integer> userScores = new HashMap<>();
-    private HashMap<Integer,ArrayList<Penalty>> userPenalties = new HashMap<>();
+    private HashMap<Integer,Double> userWcaSinglePbs = new HashMap<>();
+    private HashMap<Integer,Double> userWcaAveragePbs = new HashMap<>();
 
     private User winner = null;
     private int eloChange = 0;
@@ -27,12 +29,7 @@ public class Match {
     private User quitUser = null;
 
     public Match() {
-        currentSolver = users[0];
-        for (int user:users) userScores.put(user, 0);
-        for (int user:users) userTimes.put(user, new ArrayList<String>());
-        for (int user:users) userPenalties.put(user, new ArrayList<Penalty>());
-        event=Event.THREE_BY_THREE;
-        generateNewScramble(EventToPuzzle.eventToPuzzle(event));
+        
     }
 
     public Match(Event event, int[] users, int roomId) {
@@ -40,9 +37,12 @@ public class Match {
         this.roomId=roomId;
         this.event=event;
         currentSolver = users[0];
-        for (int user:users) userScores.put(user, 0);
-        for (int user:users) userTimes.put(user, new ArrayList<String>());
-        for (int user:users) userPenalties.put(user, new ArrayList<Penalty>());
+        for (int user:users) {
+            userScores.put(user, 0);
+            userSolves.put(user, new ArrayList<SolveData>());
+            userWcaSinglePbs.put(user, AntiCheat.getWCASingle(DBController.getUserByIDList(user).getWcaId(), event));
+            userWcaAveragePbs.put(user, AntiCheat.getWCAAverage(DBController.getUserByIDList(user).getWcaId(), event));
+        }
         generateNewScramble(EventToPuzzle.eventToPuzzle(event));
     }
 
@@ -90,8 +90,8 @@ public class Match {
         currentSolver = userId;
     }
 
-    public HashMap<Integer,ArrayList<String>> getUserTimes() {
-        return userTimes;
+    public HashMap<Integer,ArrayList<SolveData>> getUserSolves() {
+        return userSolves;
     }
 
     public HashMap<Integer,Integer> getUserScores() {
@@ -102,12 +102,26 @@ public class Match {
         return userAo5s;
     }
 
-    public HashMap<Integer,ArrayList<Penalty>> getUserPenalties() {
-        return userPenalties;
+    public double getUserWcaPbSingle(int userId) {
+        return userWcaSinglePbs.get(userId);
+    }
+
+    public double getUserWcaPbAvg(int userId) {
+        return userWcaAveragePbs.get(userId);
     }
 
     public int getEloChange() {
         return eloChange;
+    }
+
+    public boolean addSolve(int userId, SolveData solve) {
+        boolean isValidSolve = AntiCheat.validateSolve(solve, getUserWcaPbAvg(solve.getUserId()), getUserWcaPbSingle(solve.getUserId()));
+
+        User user = DBController.getUserByIDList(userId);
+        if (isValidSolve && solve.getPenalizedTime()<=user.getLastStoredPbSingle(event)) {
+            user.addSingle(event, solve.getPenalizedTime());
+        }
+        return userSolves.get(userId).add(solve);
     }
 
     public String generateNewScramble(PuzzleRegistry puzzle) {
@@ -123,27 +137,28 @@ public class Match {
             solverIndex=solverIndex%users.length;
             currentSolver = users[solverIndex];
             for (int userId:users) {
-                if (userTimes.get(userId).size()>4) {
+                if (userSolves.get(userId).size()>4) {
                     double ao5 = calculateAo5(userId);
                     User user = DBController.getUsers().get(userId);
                     double userPbAverage = user.getAverage(event) < 0 ? Integer.MAX_VALUE : user.getAverage(event);
-                    if (ao5>0 && ao5<userPbAverage) {
-                        user.setAverage(event, ao5);
+                    boolean isValidAverage = AntiCheat.validateAverage(user,event, ao5, userWcaAveragePbs.get(userId), userWcaSinglePbs.get(userId));
+                    if (isValidAverage && ao5>0 && ao5<userPbAverage) {
+                        user.addAverage(event, ao5);
                     }
                 }
             }
             if (solverIndex==0) {
                 double fastestTime = Integer.MAX_VALUE;
                 for (int userId:users) {
-                    double userTime = TimeConversions.timeToDouble(userTimes.get(userId).get(currentSolve));
-                    if (userPenalties.get(userId).get(currentSolve)==Penalty.DNF) userTime=Integer.MAX_VALUE;
+                    SolveData solve = userSolves.get(userId).get(currentSolve);
+                    double userTime = solve.getPenalizedTime();
                     if (userTime<fastestTime) {
                         fastestTime=userTime;
                     }
                 }
                 for (int userId:users) {
-                    double userTime = TimeConversions.timeToDouble(userTimes.get(userId).get(currentSolve));
-                    if (userPenalties.get(userId).get(currentSolve)==Penalty.DNF) userTime=Integer.MAX_VALUE;
+                    SolveData solve = userSolves.get(userId).get(currentSolve);
+                    double userTime = solve.getPenalizedTime();
                     if (userTime==fastestTime) {
                         userScores.put(userId, userScores.get(userId)+1);
                     }
@@ -164,16 +179,11 @@ public class Match {
 
     public double calculateAo5(int user) {
         double timeTotal = 0;
-        ArrayList<String> solveTimes = userTimes.get(user);
+        ArrayList<SolveData> solves = userSolves.get(user);
         ArrayList<Double> solveTimesDouble = new ArrayList<>();
-        ArrayList<Penalty> penalties = userPenalties.get(user);
         //getting the last 5 solves ONLY.
-        for (int i = solveTimes.size()-5; i<solveTimes.size(); i++) {
-            if (penalties.get(i)==Penalty.DNF) {
-                solveTimesDouble.add((double) Integer.MAX_VALUE);
-            }else {
-                solveTimesDouble.add(TimeConversions.timeToDouble(solveTimes.get(i)));
-            }
+        for (int i = solves.size()-5; i<solves.size(); i++) {
+            solveTimesDouble.add(solves.get(i).getPenalizedTime());
         }
         //removing biggest and smallest
         solveTimesDouble.remove(Collections.max(solveTimesDouble));
@@ -188,6 +198,10 @@ public class Match {
         }
         double averageDouble = (Math.round((timeTotal/3.0)*100))/100.0;
         userAo5s.put(user, TimeConversions.doubleToTime(averageDouble));
+        User userObj = DBController.getUserByIDList(user);
+        if (averageDouble<=userObj.getLastStoredPbAverage(event)) {
+            userObj.addAverage(event, averageDouble);
+        }
         return averageDouble;
     }
 
@@ -207,40 +221,26 @@ public class Match {
                     }
                     eloChange=Math.abs(Math.max(5,Math.min(100, eloChange)));
                 }
-                //check pb single
-                double userSingle = loser.getSingle(event) < 0 ? Integer.MAX_VALUE : loser.getSingle(event);
-                if (userTimes.get(loserUserId).size()>0) {
-                    double matchPbSingle = Double.parseDouble(Collections.min(userTimes.get(loserUserId)));
-                    if (matchPbSingle!=Integer.MAX_VALUE && matchPbSingle<userSingle) {
-                        loser.setSingle(event, matchPbSingle);
-                    }
-                }
 
                 int loserNewElo = loserElo-eloChange;
                 //whoop whoop ternary operator :D
                 loserNewElo = loserNewElo>=0 ? loserNewElo : 0;
                 loser.setElo(event, loserNewElo);
                 loser.addLoss();
+                BadgeController.calculateAndGrantBadges(this);
                 loser.saveUserData();
                 loser.setCurrentMatch(null);
                 DBController.saveDataForEvent(loserUserId, event, loserNewElo, loser.getSingle(event), loser.getAverage(event));
-            }
-        }
-        //check pb single
-        double userSingle = winner.getSingle(event) < 0 ? Integer.MAX_VALUE : winner.getSingle(event);
-        if (userTimes.get(userId).size()>0) {
-            double matchPbSingle = Double.parseDouble(Collections.min(userTimes.get(userId)));
-            if (matchPbSingle!=Integer.MAX_VALUE && matchPbSingle<userSingle) {
-                winner.setSingle(event, matchPbSingle);
             }
         }
 
         int winnerNewElo = winnerElo+eloChange;
         winner.setElo(event, winnerNewElo);
         winner.addWin();
-        winner.saveUserData();
         winner.setCurrentMatch(null);
+        BadgeController.calculateAndGrantBadges(this);
         DBController.saveDataForEvent(userId, event, winnerNewElo, winner.getSingle(event), winner.getAverage(event));
+        winner.saveUserData();
         MatchController.getMatches().remove(this);
     }
 }

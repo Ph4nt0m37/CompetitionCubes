@@ -7,42 +7,44 @@ fetch("/header.html")
         .then(html => {
         header.innerHTML = html;
 
-        const leaderboardButton = document.getElementById("leaderboard-button");
+        /*const leaderboardButton = document.getElementById("leaderboard-button");
 
         leaderboardButton.addEventListener("click",()=>{
             window.location.href=`/rankings`;
-        });
+        });*/
 
-        const rulesButton = document.getElementById("rules-button");
+        /*const rulesButton = document.getElementById("rules-button");
 
         rulesButton.addEventListener("click",()=>{
             window.location.href=`/rules`;
-        });
+        });*/
 
-        const bugButton = document.getElementById("bug-button");
+        /*const bugButton = document.getElementById("bug-button");
 
         bugButton.addEventListener("click",()=>{
             window.open("https://forms.gle/XqEMeJ8JavkhuhVD7","_blank");
-        });
+        });*/
 
-        const feedbackButton = document.getElementById("feedback-button");
+        /*const feedbackButton = document.getElementById("feedback-button");
 
         feedbackButton.addEventListener("click",()=>{
             window.open("https://forms.gle/j8VnwBCfFiT52ryCA","_blank");
-        });
+        });*/
 
         const signInButton = document.getElementById("sign-in-button");
 
+        /*
         //sign in stuff
         signInButton.addEventListener("click",()=>{
-            window.location.replace(`${window.location.origin}/wca-auth`);
-        });
+            window.location.replace(`/wca-auth`);
+        });*/
 
         const profileButton = document.getElementById("profile-button");
         const profileDropdown = document.getElementById("profile-dropdown")
         const profileDropdownContent = document.getElementById("profile-dropdown-content");
 
         const profileDropdownLink = document.getElementById("profile-dropdown-link");
+        const settingsDropdownLink = document.getElementById("settings-dropdown-link");
         const tutorialDropdownLink = document.getElementById("tutorial-dropdown-link");
         const signOutDropdownLink = document.getElementById("sign-out-dropdown-link");
 
@@ -59,7 +61,11 @@ fetch("/header.html")
 
         profileDropdownLink.addEventListener("click",()=>{
             profileDropdownContent.style.visibility="hidden";
-            window.location.href=`/user/${userId}`;
+        });
+
+        settingsDropdownLink.addEventListener("click",()=>{
+            profileDropdownContent.style.visibility="hidden";
+            window.location.href=`/settings`;
         });
 
         tutorialDropdownLink.addEventListener("click",()=>{
@@ -68,6 +74,17 @@ fetch("/header.html")
         });
 
         signOutDropdownLink.addEventListener("click",()=>{
+            fetch(`/api/waiting-list`, {
+                method: "DELETE",
+                body: JSON.stringify({
+                    userId: userId
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            }).catch(error=>{
+                //do nothing!
+            });
             fetch('/wca-auth/sign-out', {
                 method: 'DELETE'
             }).then(() => {
@@ -75,9 +92,9 @@ fetch("/header.html")
             });
         });
 
-        signInButton.addEventListener("click",()=>{
+        /*signInButton.addEventListener("click",()=>{
             window.location.replace(`${window.location.origin}/wca-auth`);
-        });
+        });*/
 
         const searchBar = document.getElementById("search-bar");
         searchBar.addEventListener("keydown",(event)=>{
@@ -92,15 +109,26 @@ fetch("/header.html")
         });
 
         fetch(`/api/get-user-data`).then((response)=> {
-            return response.json();
+            if (response.ok)
+                return response.json();
+            createNotification("Something went wrong loading your data, so some things may not work as expected. Please contact a developer if this keeps happening.");
             }).then(function(data) {
                 userId=data.userId;
+                profileButton.textContent = data.username;
+                profileDropdownLink.href=`/user/${userId}`;
+                const chevronIcon = document.createElement("img");
+                chevronIcon.src="/images/chevron-down.svg";
+                profileButton.appendChild(chevronIcon);
                 if (userId>0) {
                     signInButton.style.display="none";
-                    profileButton.style.display="block";
+                    profileButton.style.display="flex";
                 }else {
                     profileButton.style.display="none";
                     signInButton.style.display="block";
+                }
+
+                if (data['permissionLevel']['hasAdminDashboardAccess']) {
+                    document.getElementById("admin-dropdown-link").style.display="block";
                 }
             }).catch(function(err) {
                 //console.log('Failed to fetch!', err);

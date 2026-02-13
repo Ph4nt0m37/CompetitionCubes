@@ -1,0 +1,52 @@
+import { user } from "./profile.js";
+const viewInfoButton = document.getElementById("view-info-button");
+const actionsPopup = document.getElementById("background-overlay");
+const body = document.getElementsByTagName("body")[0];
+
+const infoPopup = document.getElementById("info-popup")
+const activeWarningsText = document.getElementById("active-warnings-text");
+const allWarningsText = document.getElementById("all-warnings-text");
+const bansText = document.getElementById("bans-text");
+
+const closeInfoX = document.getElementById("close-info-x");
+closeInfoX.addEventListener("click",()=>{
+    actionsPopup.style.display="none";
+    infoPopup.style.display = "none";
+    body.style.overflowY="visible";
+});
+
+const currBannedText = document.getElementById("curr-banned-text");
+
+viewInfoButton.addEventListener("click",()=>{
+    actionsPopup.style.display="grid";
+    infoPopup.style.display = "flex";
+    activeWarningsText.textContent = `Active Warnings: ${user['userWarnings'].length}`;
+    allWarningsText.textContent = `All Warnings: ${user['strikes']}`;
+    bansText.textContent = `Bans: ${user['bans']}`;
+    const userBan = user['userBan'];
+    if (userBan) {
+        currBannedText.style.display="block";
+        if (userBan['expirationDate']>=0) {
+            currBannedText.textContent = `Currently banned until ${new Date(userBan['expirationDate']).toLocaleString()} (local time) for "${userBan['reason']}"`;
+        }else {
+            currBannedText.textContent = `Permanently banned for "${userBan['reason']}"`;
+        }
+    }
+    body.style.overflowY="hidden";
+});
+
+actionsPopup.addEventListener("click",(event)=>{
+    if (event.target===event.currentTarget) {
+        actionsPopup.style.display="none";
+        infoPopup.style.display = "none";
+        body.style.overflowY="visible";
+    }
+});
+
+document.addEventListener("keydown",(event)=>{
+    if (event.key=="Escape") {
+        actionsPopup.style.display="none";
+        infoPopup.style.display = "none";
+        body.style.overflowY="visible";
+    }
+});

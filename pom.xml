@@ -47,6 +47,16 @@
 			<artifactId>spring-boot-starter-logging</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.worldcubeassociation.tnoodle/lib-scrambles -->
 		<dependency>
 			<groupId>org.worldcubeassociation.tnoodle</groupId>
@@ -79,6 +89,10 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>42.7.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 	</dependencies>
 

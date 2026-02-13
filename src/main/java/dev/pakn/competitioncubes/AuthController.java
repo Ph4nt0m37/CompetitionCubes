@@ -84,7 +84,7 @@ public class AuthController {
             response.addCookie(secretCookie);
 
             String userWcaId = AuthController.getWCAId(accessToken);
-            if (userWcaId!=null && DBController.getUserDataByWCAId(userWcaId).next()) {
+            if (userWcaId!=null && DBController.getUserDataByWCAId(userWcaId)!=null) {
                 DBController.setUserSecretByWCAId(userWcaId, userSecret);
                 finalRedirectURL="/";
             }else {

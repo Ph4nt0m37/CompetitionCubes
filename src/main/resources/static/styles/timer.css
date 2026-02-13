@@ -1,11 +1,12 @@
-body {
-    font-family: 'Trebuchet MS', monospace;
+html, body {
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     flex-direction: column;
     background-color: var(--main-bg-color);
     margin: 0;
     padding: 0;
     overflow: hidden;
+    height: 100%;
 }
 
 
@@ -14,9 +15,9 @@ body {
 }
 
 h1 {
-    font-size: 2vw;
+    font-size: 2.4rem;
     text-align: center;
-    margin: 1.5vh;
+    margin: 1.125rem;
 }
 
 #scramble-div {
@@ -28,46 +29,57 @@ h1 {
 
 #scramble-text {
     color: var(--timer-color);
-    font-size: 3vw;
+    font-size: 4.25vw;
     margin: 15px;
     text-align: center;
+    max-width: 72.5%;
 }
 
 #timer-main-div {
     overflow: hidden;
     display: flex;
     /*border: 10px solid rgb(255, 0, 0);*/
-    height: 85vh;
+    height: 100%;
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
 }
 
 .timer-div {
-    display: block;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 50%;
     height: 100%;
-    /*border: 10px solid black;*/
-    align-content: center;
+    justify-content: center;
     text-align: center;
+    flex-grow: 1;
 }
 
 .timer {
-    font-size: 7vw;
+    font-size: 7.8vw;
     /*border: 10px solid black;*/
     color: var(--timer-color);
+    margin: 0;
 }
 
 .ao5 {
-    font-size: 2.75vw;
+    font-size: 3.8vw;
     /*border: 10px solid black;*/
     color: var(--timer-color);
+    padding: 0;
+    margin: 1vh;
+}
+
+.penalty-button {
+    font-size: 3vw;
 }
 
 .winsText {
-    font-size: 2.75vw;
+    font-size: 3.8vw;
     transition: color 2s ease-out;
     color: var(--timer-color);
+    margin: 1vh;
+    padding: 0;
 }
 
 .winsText.wonRound {
@@ -81,8 +93,10 @@ h1 {
 }
 
 .username {
-    font-size: 2.9vw;
+    font-size: 3.8vw;
     color: var(--dark-blue-color);
+    margin-bottom: 1.5vh;
+    padding: 0;
 }
 
 #penalties-div {
@@ -92,10 +106,10 @@ h1 {
 }
 
 button {
-    border-radius: 1.2vw;
+    border-radius: 1.65vw;
     border: none;
     font-weight: bold;
-    font-size: 2.25vw;
+    font-size: 3vw;
     cursor: pointer;
     padding: 6px 10px;
     transition: background-color 0.3s ease, transform 0.1s ease;
@@ -139,8 +153,8 @@ button {
 
 .penalty-text {
     color: var(--timer-color);
-    margin: -1vh;
-    font-size: 2.75vw;
+    margin: -0.75rem;
+    font-size: 3.3vw;
     display: none;
 }
 
@@ -155,7 +169,7 @@ button {
     align-items: center;
     bottom: 0;
     padding: 20px 0px;
-    width: 100vw;
+    width: 100%;
     background-color: var(--header-color);
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
 }
@@ -163,8 +177,19 @@ button {
 .fade-in-element { animation: fadeIn 2s; }
 
 @keyframes fadeIn {
-  0% { opacity: 0; }
+  0% { opacity: 0; 
+       display: flex;
+    }
   100% { opacity: 1; }
+}
+
+.fade-out-report { animation: fadeOut 0.15s; }
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0;
+         display: none;
+    }
 }
 
 #searching-div {
@@ -199,7 +224,7 @@ button {
     font-size: 1.3rem;
     display: none;
     color: #555;
-    margin-top: 20px;
+    margin: 0px;
 }
 
 .elo-change-text {
@@ -230,4 +255,405 @@ button {
 
 #home-button:active {
     transform: scale(0.97);
+}
+
+#menu-button {
+    border: none;
+    position: absolute;
+    color: white;
+    border-radius: 17.5px;
+    font-size: 3vw;
+    font-weight: bold;
+    background-color: var(--blue-button);
+    padding: 12.5px 25px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: block;
+    right: 0;
+}
+
+#menu-button:hover {
+    background-color: var(--blue-button-hover);
+}
+
+#menu-button:active {
+    transform: scale(0.97);
+}
+
+#confirm-report-button {
+    padding: 10px 40px;
+    border-radius: 12px;
+    margin: 15px;
+}
+
+.report-button {
+    border: none;
+    color: white;
+    border-radius: 12.5px;
+    font-size: 1.25rem;
+    padding: 10px 20px;
+    font-weight: bold;
+    background-color: var(--dark-red-button);
+    padding: 12.5px 22.5px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: block;
+}
+
+.report-button:hover {
+    background-color: var(--dark-red-button-hover);
+}
+
+.report-button:active {
+    transform: scale(0.97);
+}
+
+#background-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    display: none;
+    place-items: center;
+    justify-content: center;
+    align-items: center;
+    z-index: 5;
+    grid-template-columns: 1fr;
+}
+
+#report-popup {
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+    width: 22rem;
+    height: 30rem;
+    display: none;
+    background-color: var(--main-bg-color);
+    z-index: 4;
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: fadeIn 0.15s ease-out;
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+}
+
+.report-user-text {
+    color: var(--ban-color);
+    font-size: 1.8rem;
+    margin: 15px;
+}
+
+.report-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.report-form-text {
+    color: black;
+    font-size: 1.2rem;
+}
+
+#report-reason-dropdown {
+    font-weight: 700;
+    border: #555 2px solid;
+    padding: 3px 35px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+#report-reason-dropdown, ::picker(select) {
+    appearance: base-select;
+}
+
+#report-reason-dropdown:hover {
+    background-color: var(--high-defecit-color);
+}
+
+#report-reason-dropdown::picker-icon {
+    position: relative;
+    top: 3px;
+    content: url("../images/chevron-down-gray.svg");
+    transform-origin: center 12px;
+    transition: 0.15s rotate;
+    transform: scale(0.85);
+}
+
+#report-reason-dropdown:open::picker-icon {
+  rotate: 180deg;
+}
+
+#report-reason-dropdown > option {
+    border: 2px solid #555;
+    background-color: var(--defecit-color);
+    font-weight: 100;
+    outline: none;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+#report-reason-dropdown > option:first-of-type {
+  border-radius: 4px 4px 0 0;
+}
+
+#report-reason-dropdown > option:last-of-type {
+  border-radius: 0 0 4px 4px;
+}
+
+::picker(select) {
+  border-radius: 4px;
+  border: none;
+}
+
+#report-reason-dropdown > option:not(option:last-of-type) {
+  border-bottom: none;
+}
+
+#report-reason-dropdown > option:checked {
+    font-weight: bold;
+}
+
+#report-reason-dropdown > option:hover {
+    background-color: var(--high-defecit-color);
+}
+
+#report-reason-dropdown > option::checkmark {
+    order: 1;
+    margin-left: auto;
+    content: url("../images/check_gray.svg");
+    scale: 0.85;
+    position: relative;
+    top: 2px;
+}
+
+#menu-popup {
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+    width: 18rem;
+    height: 24rem;
+    display: flex;
+    background-color: var(--main-bg-color);
+    z-index: 3;
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: fadeIn 0.15s ease-out;
+    grid-row: 1;
+    grid-column: 1;
+}
+
+.menu-text {
+    color: rgb(36,36,36);
+    font-size: 1.8rem;
+    margin: 15px;
+}
+
+#report-user-button {
+    width: 250px;
+    padding: 10px 0px;
+    box-shadow: none;
+    background-color: var(--yellow-button);
+}
+
+#report-user-button:hover {
+    background-color: var(--yellow-button-hover);
+}
+
+#forfeit-button {
+    border: none;
+    color: white;
+    border-radius: 12.5px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    background-color: var(--dark-red-button);
+    width: 250px;
+    padding: 10px 0px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    display: block;
+}
+
+#forfeit-button:hover {
+    background-color: var(--dark-red-button-hover);
+}
+
+#forfeit-button:active {
+    transform: scale(0.97);
+}
+
+.menu-buttons {
+    flex-grow: 1;
+}
+
+.menu-buttons > button{
+    margin-bottom: 10px;
+}
+
+#close-menu-button {
+    border: none;
+    color: white;
+    border-radius: 12.5px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    background-color: var(--blue-button );
+    width: 250px;
+    padding: 10px 0px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    display: block;
+    margin: 10px 0px;
+}
+
+#close-menu-button:hover {
+    background-color: var(--blue-button-hover);
+}
+
+#close-menu-button:active {
+    scale: 0.97;
+}
+
+#close-report-button {
+    position: absolute;
+    right: 0px;
+    background-color: rgb(0,0,0,0);
+    padding: 0;
+    margin: 5px 7px;
+    padding: 2px
+}
+
+#forfeit-confirm-popup {
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+    width: 22rem;
+    height: 8.5rem;
+    display: none;
+    background-color: var(--main-bg-color);
+    z-index: 4;
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: fadeIn 0.15s ease-out;
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+}
+
+.forfeit-buttons {
+    display: flex;
+}
+
+.forfeit-confirm-text {
+    font-size: 1.15rem;
+    margin-bottom: 22.5px;
+}
+
+.forfeit-page-button {
+    border: none;
+    color: white;
+    border-radius: 12.5px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    width: 75px;
+    padding: 10px 0px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    display: block;
+    margin: 0px 20px;
+}
+
+.forfeit-page-button:active {
+    scale: 0.97;
+}
+
+#forfeit-confirm {
+    background-color: var(--red-button);
+}
+
+#forfeit-confirm:hover {
+    background-color: var(--red-button-hover);
+}
+
+#forfeit-deny {
+    background-color: var(--green-button);
+}
+
+#forfeit-deny:hover {
+    background-color: var(--green-button-hover);
+}
+
+.notif-abs-div {
+  position: absolute;
+  right: 5px;
+  top: 90px;
+}
+
+#notif-div {
+  position: sticky;
+  margin-left: auto;
+  margin-right: 10px;
+  width: fit-content;
+  top: 10px;
+}
+
+.notification {
+    background-color: var(--notification-color);
+    width: 15rem;
+    text-align: center;
+    padding: 10px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--h2-color);
+    box-shadow: 0 4px 12px rgb(0,0,0,0.25);
+    color: var(--dark-font-color);
+    animation: fadeIn 0.15s ease-out;
+    z-index: 2;
+}
+
+.template {
+    display: none;
+}
+
+#report-solve-button {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--report-button);
+  padding: 6px 6px 4px 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5vmax;
+  height: 4.5vmax;
+  margin: 0.3rem;
+}
+
+#report-solve-button > img {
+  width: 2.8vmax;
+  height: 2.8vmax;
+}
+
+#report-solve-button:hover {
+  background-color: #c31717;
+}
+
+#report-solve-button:active {
+  scale: 0.95;
+}
+
+#searching-users-text {
+    font-size: 1.15rem;
+    color: var(--success-color);
+    margin-top: 3px;
+    font-weight: 700;
 }
