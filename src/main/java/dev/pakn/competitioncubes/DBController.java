@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -180,16 +181,16 @@ public class DBController {
     }
 
     @GetMapping("/api/get-user-data")
-    public ResponseEntity<User> getUserBySecretRequest(@CookieValue(value="user_secret", required = false) String userSecret) {
-        User user = getUserBySecret(userSecret);
+    public ResponseEntity<User> getUserBySecretRequest(@AuthenticationPrincipal User user) {
+        logger.info(String.valueOf(user));
         if (user!=null) {
             return new ResponseEntity<>(user, HttpStatus.OK);
         }else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
-    @GetMapping("/api/get-user-data-by-id/{userId}")
+    @GetMapping("/api/public/get-user-data-by-id/{userId}")
     public User getUserByUserIDRequest(@PathVariable int userId) {
         return userList.get(userId);
     }
@@ -610,12 +611,12 @@ public class DBController {
         return userList;
     }
 
-    @GetMapping("/api/get-sorted-users-by-elo/{event}")
+    @GetMapping("/api/public/get-sorted-users-by-elo/{event}")
     public ArrayList<LeaderboardEntry> getEloSortedListRequest(@PathVariable String event) {
         return getSortedUsersByEloList(stringToEventMap.get(event),100);
     }
 
-    @GetMapping("/api/get-user-elo-ranks/{userId}")
+    @GetMapping("/api/public/get-user-elo-ranks/{userId}")
     public static HashMap<Event, Integer> getUserEloRanks(@PathVariable int userId) {
         try {
             HashMap<Event, Integer> userRanks = new HashMap<>();
@@ -669,7 +670,7 @@ public class DBController {
         return -1;
     }
 
-    @GetMapping("/api/get-user-single-ranks/{userId}")
+    @GetMapping("/api/public/get-user-single-ranks/{userId}")
     public static HashMap<Event, Integer> getUserSingleRanks(@PathVariable int userId) {
         try {
             HashMap<Event, Integer> userRanks = new HashMap<>();
@@ -723,7 +724,7 @@ public class DBController {
         return -1;
     }
 
-    @GetMapping("/api/get-user-average-ranks/{userId}")
+    @GetMapping("/api/public/get-user-average-ranks/{userId}")
     public static HashMap<Event, Integer> getUserAverageRanks(@PathVariable int userId) {
         try {
             HashMap<Event, Integer> userRanks = new HashMap<>();
@@ -823,7 +824,7 @@ public class DBController {
         }
     }
 
-    @GetMapping("/api/get-sorted-users-by-single/{event}")
+    @GetMapping("/api/public/get-sorted-users-by-single/{event}")
     public ArrayList<LeaderboardEntry> getSingleSortedListRequest(@PathVariable String event) {
         return getSortedUsersBySingleList(stringToEventMap.get(event),100);
     }
@@ -880,7 +881,7 @@ public class DBController {
         }
     }
 
-    @GetMapping("/api/get-sorted-users-by-average/{event}")
+    @GetMapping("/api/public/get-sorted-users-by-average/{event}")
     public ArrayList<LeaderboardEntry> getSortedAverageListRequest(@PathVariable String event) {
         return getSortedUsersByAverageList(stringToEventMap.get(event),100);
     }
@@ -937,7 +938,7 @@ public class DBController {
         }
     }
 
-    @GetMapping("/api/search/{query}")
+    @GetMapping("/api/public/search/{query}")
     private ArrayList<SearchResult> getUsersByQuery(@PathVariable("query") String queryStr) {
         try (Connection conn = dataSource.getConnection();) {
             ArrayList<SearchResult> searchResults = new ArrayList<>();
@@ -1207,7 +1208,9 @@ public class DBController {
                 int userId = usersSet.getInt("id");
                 String reason = usersSet.getString("reason");
                 String info = usersSet.getString("info");
-                reportedUsers.add(new ReportedUser(userId, getUserByIDList(userId).getUsername() ,reason, info));
+                User user = getUserByIDList(userId);
+                if (user==null) continue;
+                reportedUsers.add(new ReportedUser(userId, user.getUsername() ,reason, info));
             }
 
             return reportedUsers;
@@ -1491,8 +1494,8 @@ public class DBController {
             //auto login here!
             User userRequester = DBController.getUserBySecret(userSecret);
             //if login succeeded. if they somehow have user_secret cookie but it doesn't exist, user will be null
-            if (userRequester!=null && (userRequester.getUserId()==userId || userRequester.getPermissionLevel().hasChangeUsernameAccess())) {
-                if (!userRequester.getPermissionLevel().hasChangeUsernameAccess()) {
+            if (userRequester!=null && (userRequester.getUserId()==userId || userRequester.getPermissionLevel().hasRenameUserAccess())) {
+                if (!userRequester.getPermissionLevel().hasRenameUserAccess()) {
                     for (UserWarning warning:userRequester.getUserWarnings()) {
                         if (warning.getReason().equals("username"))
                             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

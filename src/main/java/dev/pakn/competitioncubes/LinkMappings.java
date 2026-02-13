@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -13,11 +14,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
+import org.slf4j.Logger;
 
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class LinkMappings {
+    private static Logger logger = LoggerFactory.getLogger(LinkMappings.class);
+
     private static final long launchEpoch = 0;
     //private static final long launchEpoch = 1774728000000l;
 
@@ -54,6 +61,7 @@ public class LinkMappings {
     }
 
     @GetMapping("/")
+    //im NOT using @AuthenticationPrinciple here because I need to accept unauthorized users. if I add @PreAuthorized, then non-authed users will get 401
     public String mainPage(@CookieValue(value="user_secret", required = false) String userSecret, HttpServletResponse response) {
         //prevent browser caching
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
@@ -100,7 +108,7 @@ public class LinkMappings {
         User user = DBController.getUserBySecret(userSecret);
         if (DBController.userExists(userId)) {
             if (user == null) {
-                return "forward:/profile_pages/profile.html";
+                return "forward:/profile_pages/profile_unauthed.html";
             }else {
                 if (user.getPermissionLevel().hasBanAccess())
                     return "forward:/profile_pages/profile_admin.html";

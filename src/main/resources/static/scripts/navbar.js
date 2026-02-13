@@ -74,7 +74,7 @@ fetch("/header.html")
         });
 
         signOutDropdownLink.addEventListener("click",()=>{
-            fetch(`/waiting-list`, {
+            fetch(`/api/waiting-list`, {
                 method: "DELETE",
                 body: JSON.stringify({
                     userId: userId

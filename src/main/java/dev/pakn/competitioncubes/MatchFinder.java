@@ -17,7 +17,7 @@ public class MatchFinder {
 
     private static ArrayList<WaitlistRequest> waitingList = new ArrayList<>();
 
-    @PostMapping("/waiting-list")
+    @PostMapping("/api/waiting-list")
     private WaitlistResult addToWaitingList(@RequestBody String userIdJSON) {
         try {
             JSONObject requestJson = new JSONObject(userIdJSON);
@@ -58,20 +58,14 @@ public class MatchFinder {
         }
     }
 
-    //Idk what i was doing when i wrote this lol
-    /*@GetMapping("/waiting-list/{userId}")
-    private int getFromWaitingList(@PathVariable int userId) {
-        return userId;
-    }*/
-
-    @DeleteMapping("/waiting-list")
+    @DeleteMapping("/api/waiting-list")
     private void removeFromWaitingListReq(@RequestBody String userIdJSON) {
         int userId = new JSONObject(userIdJSON).getInt("userId");
         logger.debug("removed "+userId+" from waiting list");
         removeFromWaitingList(userId);
     }
 
-    @GetMapping("/waiting-list/{event}")
+    @GetMapping("/api/waiting-list/{event}")
     public int getFromWaitingList(@PathVariable String event) {
         int usersInWaitingList = 0;
         for (WaitlistRequest req:waitingList) {

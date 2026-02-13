@@ -71,7 +71,7 @@ function removeLeaderboardEntries() {
 
 
 function sortByElo(selectedEvent) {
-    fetch(`/api/get-sorted-users-by-elo/${selectedEvent}`).then((response)=> {
+    fetch(`/api/public/get-sorted-users-by-elo/${selectedEvent}`).then((response)=> {
         return response.json();
         }).then(function(data) {
             eloSortedUsers=data;
@@ -103,7 +103,7 @@ function sortByElo(selectedEvent) {
 }
 
 function sortBySingle(selectedEvent) {
-    fetch(`/api/get-sorted-users-by-single/${selectedEvent}`).then((response)=> {
+    fetch(`/api/public/get-sorted-users-by-single/${selectedEvent}`).then((response)=> {
         return response.json();
         }).then(function(data) {
             let singleSortedUsers=data;
@@ -137,7 +137,7 @@ function sortBySingle(selectedEvent) {
 }
 
 function sortByAverage(selectedEvent) {
-    fetch(`/api/get-sorted-users-by-average/${selectedEvent}`).then((response)=> {
+    fetch(`/api/public/get-sorted-users-by-average/${selectedEvent}`).then((response)=> {
         return response.json();
         }).then(function(data) {
             let averageSortedUsers=data;

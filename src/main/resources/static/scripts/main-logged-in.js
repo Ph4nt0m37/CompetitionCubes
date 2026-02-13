@@ -79,7 +79,7 @@ onload = (event)=>{
                     let users = match.users;
                     let roomId = match.roomId;
                     if (users && users.includes(userId)) {
-                        fetch(`/waiting-list`, {
+                        fetch(`/api/waiting-list`, {
                             method: "DELETE",
                             body: JSON.stringify({
                                 userId: userId
@@ -99,7 +99,7 @@ onload = (event)=>{
             stompClient.onDisconnect = (frame)=>{
                 console.log("disconnected: "+ frame);
                 //delete request to remove user from waiting list
-                fetch(`/waiting-list`, {
+                fetch(`/api/waiting-list`, {
                     method: "DELETE",
                     body: JSON.stringify({
                         userId: userId
@@ -141,7 +141,7 @@ onload = (event)=>{
 }
 
 function getWaitingUserCount() {
-    fetch("/waiting-list/3x3").then((response)=>{
+    fetch("/api/waiting-list/3x3").then((response)=>{
         return response.json();
     }).then((numSearching)=>{
         let userWord = "users";
@@ -152,7 +152,7 @@ function getWaitingUserCount() {
 
 function startMatchSearch(stompClient) {
     //post request to add user to waiting list
-    fetch(`/waiting-list`, {
+    fetch(`/api/waiting-list`, {
         method: "POST",
         body: JSON.stringify({
             'userId': userId,
@@ -221,7 +221,7 @@ function startMatchSearch(stompClient) {
 
 function cancelMatchSearch(stompClient) {
     stompClient.deactivate();
-    fetch(`/waiting-list`, {
+    fetch(`/api/waiting-list`, {
         method: "DELETE",
         body: JSON.stringify({
             userId: userId

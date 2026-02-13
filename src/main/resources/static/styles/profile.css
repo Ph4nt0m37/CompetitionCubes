@@ -937,6 +937,7 @@ button {
 .ban-confirm-text {
     font-size: 1.15rem;
     margin-bottom: 22.5px;
+    text-align: center;
 }
 
 .ban-page-button {

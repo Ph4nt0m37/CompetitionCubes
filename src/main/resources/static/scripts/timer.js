@@ -75,12 +75,14 @@ window.onload = ()=>{
                         "Content-type": "application/json; charset=UTF-8"
                     }
                 }).then((resp)=>{
-                    return resp.json();
-                }).then((data)=>{
-                    actionsPopup.style.display="none";
-                    reportPopup.style.display="none";
-                    createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`);
-                    reportReasonDropdown.children[0].selected = "selected";
+                    if (resp.ok) {
+                        actionsPopup.style.display="none";
+                        reportPopup.style.display="none";
+                        createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`);
+                        reportReasonDropdown.children[0].selected = "selected";
+                    }else {
+                        createNotification(`Something went wrong reporting this user. Please try again later or contact a developer.`);
+                    }
                 });
             }else {
                 fetch(`/api/get-inactivity-time/${oppId}`)
@@ -98,12 +100,14 @@ window.onload = ()=>{
                             "Content-type": "application/json; charset=UTF-8"
                         }
                     }).then((resp)=>{
-                        return resp.json();
-                    }).then((data)=>{
-                        actionsPopup.style.display="none";
-                        reportPopup.style.display="none";
-                        createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`);
-                        reportReasonDropdown.children[0].selected = "selected";
+                        if (resp.ok) {
+                            actionsPopup.style.display="none";
+                            reportPopup.style.display="none";
+                            createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`);
+                            reportReasonDropdown.children[0].selected = "selected";
+                        }else {
+                            createNotification(`Something went wrong reporting this user. Please try again later or contact a developer.`);
+                        }
                     });
                 })
             }
@@ -179,7 +183,7 @@ window.onload = ()=>{
                 "Content-type": "application/json; charset=UTF-8"
             }
         }).then(resp=>{
-            if (resp.status==200) {
+            if (resp.ok) {
                 createNotification("Successfully reported this solve.");
             }else {
                 createNotification("Something went wrong reporting this solve!");

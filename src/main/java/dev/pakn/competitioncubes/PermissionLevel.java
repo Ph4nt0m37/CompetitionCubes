@@ -21,21 +21,23 @@ public class PermissionLevel {
     @JsonProperty
     private boolean hasBanAccess = false;
     @JsonProperty
-    private boolean hasChangeUsernameAccess = false;
+    private boolean hasRenameUserAccess = false;
     @JsonProperty
     private boolean hasUserInfoAccess = false;
 
-    private PermissionLevel(int levelVal, boolean hasAdminDashboardAccess, boolean hasBanAccess, boolean hasChangeUsernameAccess, boolean hasUserInfoAccess) {
+    private PermissionLevel(int levelVal, boolean hasAdminDashboardAccess, boolean hasBanAccess, boolean hasChangeUsernameAccess, boolean hasRenameUserAccess, boolean hasUserInfoAccess) {
         this.levelVal = levelVal;
         this.hasAdminDashboardAccess = hasAdminDashboardAccess;
         this.hasBanAccess = hasBanAccess;
+        this.hasRenameUserAccess = hasRenameUserAccess;
         this.hasUserInfoAccess = hasUserInfoAccess;
     }
 
-    private PermissionLevel(boolean hasAdminDashboardAccess, boolean hasBanAccess, boolean hasChangeUsernameAccess, boolean hasUserInfoAccess) {
+    private PermissionLevel(boolean hasAdminDashboardAccess, boolean hasBanAccess, boolean hasRenameUserAccess, boolean hasUserInfoAccess) {
         this.levelVal = currLevelVal++; //post increment so that levelVal starts at 0
         this.hasAdminDashboardAccess = hasAdminDashboardAccess;
         this.hasBanAccess = hasBanAccess;
+        this.hasRenameUserAccess = hasRenameUserAccess;
         this.hasUserInfoAccess = hasUserInfoAccess;
     }
 
@@ -56,8 +58,8 @@ public class PermissionLevel {
         return hasUserInfoAccess;
     }
 
-    public boolean hasChangeUsernameAccess() {
-        return hasChangeUsernameAccess;
+    public boolean hasRenameUserAccess() {
+        return hasRenameUserAccess;
     }
 
     public static PermissionLevel valueToPermissionLevel(int value) {

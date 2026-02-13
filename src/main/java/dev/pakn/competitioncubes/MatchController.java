@@ -89,7 +89,7 @@ public class MatchController {
         staticSimpMessagingTemplate.convertAndSend("/room/matches/"+match.getRoomId(),match);
     }
 
-    @GetMapping("/get-match-info/{roomId}")
+    @GetMapping("/api/get-match-info/{roomId}")
     public Match getMatchInfo(@PathVariable int roomId) {
         for (Match currMatch:matches) {
             if (currMatch.getRoomId()==roomId) {

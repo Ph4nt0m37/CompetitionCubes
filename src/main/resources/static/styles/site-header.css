@@ -87,7 +87,7 @@ header {
     font-family: inherit;
     color: var(--h2-color);
     transition: box-shadow 0.2s ease;
-    font-weight: 500;
+    font-weight: 200;
 }
 
 #search-bar:focus {

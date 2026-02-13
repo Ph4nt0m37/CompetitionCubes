@@ -213,4 +213,26 @@ public class PostRequestClass {
                     + matchSounds + "]";
         }
     }
+
+    public static class SetUserWarningsReq {
+        private int warnedId;
+        private int warnings;
+
+        public SetUserWarningsReq(int warnedId, int warnings) {
+            this.warnedId = warnedId;
+            this.warnings = warnings;
+        }
+        public int getWarnedId() {
+            return warnedId;
+        }
+        public void setWarnedId(int warnedId) {
+            this.warnedId = warnedId;
+        }
+        public int getWarnings() {
+            return warnings;
+        }
+        public void setWarnings(int warnings) {
+            this.warnings = warnings;
+        }
+    }
 }

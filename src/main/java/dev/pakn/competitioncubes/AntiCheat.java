@@ -10,7 +10,10 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -156,65 +159,81 @@ public class AntiCheat {
     }
 
     @PostMapping("/api/ok-single")
-    public boolean okSingle(@RequestBody PostRequestClass.DNFTime dnfTime) {
+    public ResponseEntity<String> okSingle(@AuthenticationPrincipal User admin, @RequestBody PostRequestClass.DNFTime dnfTime) {
         int userId = dnfTime.getUserId();
         String event = dnfTime.getEvent();
         double time = dnfTime.getTime();
         String scramble = dnfTime.getScramble();
         try {
+            PermissionLevel adminPermLevel = admin.getPermissionLevel();
+            if (!adminPermLevel.hasAdminDashboardAccess()) {
+                return new ResponseEntity<>("You are not allowed to do this.",HttpStatus.FORBIDDEN);
+            }
             DBController.removeSingle(userId, Event.valueOf(event), time, scramble);
-            return true;
+            return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/api/ok-average")
-    public boolean okAverage(@RequestBody PostRequestClass.DNFTime dnfTime) {
+    public ResponseEntity<String> okAverage(@AuthenticationPrincipal User admin, @RequestBody PostRequestClass.DNFTime dnfTime) {
         int userId = dnfTime.getUserId();
         String event = dnfTime.getEvent();
         double time = dnfTime.getTime();
         try {
+            PermissionLevel adminPermLevel = admin.getPermissionLevel();
+            if (!adminPermLevel.hasAdminDashboardAccess()) {
+                return new ResponseEntity<>("You are not allowed to do this.",HttpStatus.FORBIDDEN);
+            }
             DBController.removeAverage(userId, Event.valueOf(event), time);
-            return true;
+            return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/api/dnf-single")
-    public boolean dnfSingle(@RequestBody PostRequestClass.DNFTime dnfTime) {
+    public ResponseEntity<String> dnfSingle(@AuthenticationPrincipal User admin, @RequestBody PostRequestClass.DNFTime dnfTime) {
         int userId = dnfTime.getUserId();
         String event = dnfTime.getEvent();
         double time = dnfTime.getTime();
         String scramble = dnfTime.getScramble();
         try {
+            PermissionLevel adminPermLevel = admin.getPermissionLevel();
+            if (!adminPermLevel.hasAdminDashboardAccess()) {
+                return new ResponseEntity<>("You are not allowed to do this.",HttpStatus.FORBIDDEN);
+            }
             DBController.dnfSingle(userId, Event.valueOf(event), time, scramble);
-            return true;
+            return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/api/dnf-average")
-    public boolean dnfAverage(@RequestBody PostRequestClass.DNFTime dnfTime) {
+    public ResponseEntity<String> dnfAverage(@AuthenticationPrincipal User admin, @RequestBody PostRequestClass.DNFTime dnfTime) {
         int userId = dnfTime.getUserId();
         String event = dnfTime.getEvent();
         double time = dnfTime.getTime();
         try {
+            PermissionLevel adminPermLevel = admin.getPermissionLevel();
+            if (!adminPermLevel.hasAdminDashboardAccess()) {
+                return new ResponseEntity<>("You are not allowed to do this.",HttpStatus.FORBIDDEN);
+            }
             DBController.dnfAverage(userId, Event.valueOf(event), time);
-            return true;
+            return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/api/report-solve")
-    public void reportUser(@RequestParam("userId") int userId) {
+    public void reportUser(@RequestParam int userId) {
         try {
             Match userMatch = DBController.getUserByIDList(userId).getCurrentMatch();
             ArrayList<SolveData> userSolves = userMatch.getUserSolves().get(userId);
@@ -232,34 +251,38 @@ public class AntiCheat {
     }
 
     @PostMapping("/api/report-user")
-    public boolean reportUser(@RequestBody PostRequestClass.UserReport userReport) {
+    public ResponseEntity<String> reportUser(@RequestBody PostRequestClass.UserReport userReport) {
         try {
             DBController.addUserReport(userReport.getUserId(), userReport.getReason(), userReport.getInfo());
-            return true;
+            return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/api/remove-user-report")
-    public boolean removeUserReport(@RequestBody ReportedUser reportedUser) {
+    public ResponseEntity<String> removeUserReport(@AuthenticationPrincipal User admin, @RequestBody ReportedUser reportedUser) {
         try {
+            PermissionLevel adminPermLevel = admin.getPermissionLevel();
+            if (!adminPermLevel.hasAdminDashboardAccess()) {
+                return new ResponseEntity<>("You are not allowed to do this.",HttpStatus.FORBIDDEN);
+            }
             DBController.removeUserReport(reportedUser);
-            return true;
+            return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/api/warn-user")
-    public boolean warnUser(@RequestBody PostRequestClass.UserWarningReq userWarning) {
+    public ResponseEntity<String> warnUser(@AuthenticationPrincipal User admin, @RequestBody PostRequestClass.UserWarningReq userWarning) {
         int userId = userWarning.getUserId();
         long duration = userWarning.getDuration();
         String reason = userWarning.getReason();
 
-        return warnUser(userId, reason, duration);
+        return warnUser(admin, userId, reason, duration);
     }
 
     public static boolean warnUser(int userId, String reason) {
@@ -275,70 +298,122 @@ public class AntiCheat {
         }
     }
 
-    public static boolean warnUser(int userId, String reason, long duration) {
+    public static ResponseEntity<String> warnUser(User admin, int userId, String reason, long duration) {
         long expirationDate = System.currentTimeMillis()+duration;
 
         try {
+            PermissionLevel adminPermLevel = admin.getPermissionLevel();
+            PermissionLevel userPermLevel = DBController.getUserByIDList(userId).getPermissionLevel();
+            if (!adminPermLevel.hasBanAccess() || userPermLevel.getPermissionValue()>=adminPermLevel.getPermissionValue()) {
+                return new ResponseEntity<>("You are not allowed to warn this user.",HttpStatus.FORBIDDEN);
+            }
             DBController.addUserWarning(userId, expirationDate, reason);
-            return true;
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e){
             e.printStackTrace();
-            return false;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
 
     @PostMapping("/api/set-user-warnings")
-    public boolean setUserWarnings(@RequestParam("id") int userId, @RequestParam("warnings") int warnings) {
+    public ResponseEntity<String> setUserWarnings(@AuthenticationPrincipal User admin, @RequestBody PostRequestClass.SetUserWarningsReq userWarnReq) {
         try {
-            DBController.setUserWarnings(userId, warnings);
-            return true;
+            PermissionLevel adminPermLevel = admin.getPermissionLevel();
+            PermissionLevel userPermLevel = DBController.getUserByIDList(userWarnReq.getWarnedId()).getPermissionLevel();
+            if (!adminPermLevel.hasBanAccess() || userPermLevel.getPermissionValue()>=adminPermLevel.getPermissionValue()) {
+                return new ResponseEntity<>("You are not allowed to change this user's warnings.",HttpStatus.FORBIDDEN);
+            }
+            DBController.setUserWarnings(userWarnReq.getWarnedId(), userWarnReq.getWarnings());
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e){
-            return false;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/api/ban-user")
-    public boolean banUser(@RequestBody PostRequestClass.UserBan userBan) {
-        int userId = userBan.getUserId();
+    public ResponseEntity<String> banUser(@AuthenticationPrincipal User admin, @RequestBody PostRequestClass.UserBan userBan) {
+        int bannedId = userBan.getUserId();
         long duration = userBan.getDuration();
         String reason = userBan.getReason();
 
-        return banUser(userId, duration, reason);
+        return banUser(admin, bannedId, duration, reason);
     }
 
-    public static boolean banUser(int userId, long duration, String reason) {
+    public static ResponseEntity<String> banUser(User admin, int bannedId, long duration, String reason) {
+        long expirationDate = System.currentTimeMillis()+duration;
+
+        try {
+            PermissionLevel adminPermLevel = admin.getPermissionLevel();
+            PermissionLevel bannedPermLevel = DBController.getUserByIDList(bannedId).getPermissionLevel();
+            if (!adminPermLevel.hasBanAccess() || bannedPermLevel.getPermissionValue()>=adminPermLevel.getPermissionValue()) {
+                return new ResponseEntity<>("You are not allowed to ban this user.",HttpStatus.FORBIDDEN);
+            }
+            if (duration<0) {
+                DBController.addBannedUser(bannedId, -1, reason);
+            }else {
+                DBController.addBannedUser(bannedId, expirationDate, reason);
+            }
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public static ResponseEntity<String> banUser(int bannedId, long duration, String reason) {
         long expirationDate = System.currentTimeMillis()+duration;
 
         try {
             if (duration<0) {
-                DBController.addBannedUser(userId, -1, reason);
+                DBController.addBannedUser(bannedId, -1, reason);
             }else {
-                DBController.addBannedUser(userId, expirationDate, reason);
+                DBController.addBannedUser(bannedId, expirationDate, reason);
             }
-            return true;
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e){
-            return false;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/api/unban-user")
-    public boolean unbanUser(@RequestParam("id") int userId) {
+    public ResponseEntity<String> unbanUser(@AuthenticationPrincipal User admin, @RequestParam("id") int userId) {
         try {
+            PermissionLevel adminPermLevel = admin.getPermissionLevel();
+            PermissionLevel unBannedPermLevel = DBController.getUserByIDList(userId).getPermissionLevel();
+            if (!adminPermLevel.hasBanAccess() || unBannedPermLevel.getPermissionValue()>=adminPermLevel.getPermissionValue()) {
+                return new ResponseEntity<>("You are not allowed to unban this user.",HttpStatus.FORBIDDEN);
+            }
             DBController.removeBannedUser(userId);
-            return true;
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e){
-            return false;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/api/rename-user-random")
-    public boolean renameUserRandom(@RequestParam("id") int userId) {
-        String[] adjectives = {"Fast","Speedy","Average","Smooth","Dry","Sandy","Tough","Smart","Nimble","Goofy","Focused","Ready","Broken","Bent","Chipped"};
-        String[] nouns = {"Cube","Plastic","DNF","Corner","Edge","Center","Screw","Timer","Mat","Cover","Puzzle","Judge","Winner","Podium"};
-        Random rand = new Random();
-        String generatedUsername = adjectives[rand.nextInt(adjectives.length)] + nouns[rand.nextInt(nouns.length)] + String.format("%02d",rand.nextInt(99)+1);
-        return DBController.changeUsername(userId, generatedUsername);
+    public ResponseEntity<String> renameUserRandom(@AuthenticationPrincipal User admin, @RequestParam("id") int userId) {
+        try {
+            //if getUserByIDList returns null, it ok since it will be caught!
+            PermissionLevel adminPermLevel = admin.getPermissionLevel();
+            PermissionLevel actionedPermLevel = DBController.getUserByIDList(userId).getPermissionLevel();
+            logger.info("admin username access: "+!adminPermLevel.hasRenameUserAccess());
+            logger.info("admin perm level: "+adminPermLevel.getPermissionValue());
+            logger.info("user perm level: "+actionedPermLevel.getPermissionValue());
+            if (!adminPermLevel.hasRenameUserAccess() || actionedPermLevel.getPermissionValue()>=adminPermLevel.getPermissionValue()) {
+                return new ResponseEntity<>("You are not allowed to rename this user.", HttpStatus.FORBIDDEN);
+            }
+            String[] adjectives = {"Fast","Speedy","Average","Smooth","Dry","Sandy","Tough","Smart","Nimble","Goofy","Focused","Ready","Broken","Bent","Chipped"};
+            String[] nouns = {"Cube","Plastic","DNF","Corner","Edge","Center","Screw","Timer","Mat","Cover","Puzzle","Judge","Winner","Podium"};
+            Random rand = new Random();
+            String generatedUsername = adjectives[rand.nextInt(adjectives.length)] + nouns[rand.nextInt(nouns.length)] + String.format("%02d",rand.nextInt(99)+1);
+            boolean success =  DBController.changeUsername(userId, generatedUsername);
+            if (success) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 

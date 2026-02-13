@@ -107,7 +107,7 @@ eloRankText.classList.add("rank-highlight");
 
 let currentSortingMethod = sortingMethodMap.ELO;
 
-fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
+fetch(`/api/public/get-user-data-by-id/${userId}`).then((response)=> {
     return response.json();
     }).then(function(data) {
         user = data;
@@ -121,7 +121,7 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
             badgesDiv.appendChild(clonedBadge);
         }
 
-        fetch(`/api/get-user-elo-ranks/${userId}`).then((response)=> {
+        fetch(`/api/public/get-user-elo-ranks/${userId}`).then((response)=> {
             return response.json();
         }).then(function(worldRanks) {
             rankList.elo = worldRanks;
@@ -156,13 +156,13 @@ fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
             sortByRankList(rankList.elo);
         });
 
-        fetch(`/api/get-user-single-ranks/${userId}`).then((response)=> {
+        fetch(`/api/public/get-user-single-ranks/${userId}`).then((response)=> {
             return response.json();
         }).then(function(worldRanks) {
             rankList.single = worldRanks;
         });
 
-        fetch(`/api/get-user-average-ranks/${userId}`).then((response)=> {
+        fetch(`/api/public/get-user-average-ranks/${userId}`).then((response)=> {
             return response.json();
         }).then(function(worldRanks) {
             rankList.average = worldRanks;
@@ -266,12 +266,14 @@ reportButton.addEventListener("click",()=>{
                 "Content-type": "application/json; charset=UTF-8"
             }
         }).then((resp)=>{
-            return resp.json();
-        }).then((data)=>{
-            actionsPopup.style.display="none";
-            reportPopup.style.display="none";
-            createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`);
-            reportReasonDropdown.children[0].selected = "selected";
+            if (resp.ok) {
+                actionsPopup.style.display="none";
+                reportPopup.style.display="none";
+                createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`);
+                reportReasonDropdown.children[0].selected = "selected";
+            }else {
+            createNotification(`Something went wrong reporting this user. Please try again later or contact a developer.`);
+        }
         });
     }else {
         createNotification(`Please select a reason for reporting!`);

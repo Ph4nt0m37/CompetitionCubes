@@ -36,7 +36,7 @@ export function startMatchSearchClient() {
             let roomId = match.roomId;
             if (users && users.includes(Number.parseInt(userId))) {
                 console.log("hellooo");
-                fetch(`${window.location.origin}/waiting-list`, {
+                fetch(`/api/waiting-list`, {
                     method: "DELETE",
                     body: JSON.stringify({
                         userId: userId
@@ -57,7 +57,7 @@ export function startMatchSearchClient() {
     stompClient.onDisconnect = (frame)=>{
         console.log("disconnected: "+ frame);
         //delete request to remove user from waiting list
-        fetch(`${window.location.origin}/waiting-list`, {
+        fetch(`/api/waiting-list`, {
             method: "DELETE",
             body: JSON.stringify({
                 userId: userId
@@ -84,7 +84,7 @@ export function startMatchSearchClient() {
 
 function startMatchSearch(stompClient) {
     //post request to add user to waiting list
-    fetch(`${window.location.origin}/waiting-list`, {
+    fetch(`/api/waiting-list`, {
         method: "POST",
         body: JSON.stringify({
             'userId': userId,
@@ -137,7 +137,7 @@ function startMatchSearch(stompClient) {
 
 function cancelMatchSearch(stompClient) {
     stompClient.deactivate();
-    fetch(`${window.location.origin}/waiting-list`, {
+    fetch(`/api/waiting-list`, {
         method: "DELETE",
         body: JSON.stringify({
             userId: userId

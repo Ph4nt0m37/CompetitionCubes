@@ -20,9 +20,7 @@ unbanConfirmButton.addEventListener("click",()=>{
             "Content-type": "application/json; charset=UTF-8"
         }
     }).then(resp=>{
-        return resp.json();
-    }).then(async success=>{
-        if (success) {
+        if (resp.ok) {
             createNotification(`Successfully unbanned ${user['username']}`);
             actionsPopup.style.display="none";
             unbanConfirmPopup.style.display="none";
@@ -129,9 +127,7 @@ warnConfirmButton.addEventListener("click", async ()=>{
                 "Content-type": "application/json; charset=UTF-8"
             }
         }).then(resp=>{
-            return resp.json();
-        }).then(success=>{
-            if (!success) {
+            if (!resp.ok) {
                 createNotification(`Something went wrong renaming this user. Please try renaming manually or contact a developer.`);
             }
         }).catch(error=>{
@@ -150,9 +146,7 @@ warnConfirmButton.addEventListener("click", async ()=>{
             "Content-type": "application/json; charset=UTF-8"
         }
     }).then(resp=>{
-        return resp.json();
-    }).then(async success=>{
-        if (success) {
+        if (resp.ok) {
             createNotification(`Successfully warned ${user['username']} for "${reason}"`);
             actionsPopup.style.display="none";
             warnPopup.style.display="none"
@@ -219,9 +213,7 @@ banConfirmButton.addEventListener("click",()=>{
             "Content-type": "application/json; charset=UTF-8"
         }
     }).then(resp=>{
-        return resp.json();
-    }).then(async success=>{
-        if (success) {
+        if (resp.ok) {
             createNotification(`Successfully banned ${user['username']} for "${reason}"`);
             actionsPopup.style.display="none";
             banPopup.style.display="none"

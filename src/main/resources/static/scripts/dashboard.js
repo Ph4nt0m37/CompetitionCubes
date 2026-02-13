@@ -113,9 +113,7 @@ banConfirmButton.addEventListener("click", async ()=>{
                 "Content-type": "application/json; charset=UTF-8"
             }
         }).then(resp=>{
-            return resp.json();
-        }).then(success=>{
-            if (!success) {
+            if (!resp.ok) {
                 createNotification(`Something went wrong renaming this user. Please try renaming manually or contact a developer.`);
             }
         });
@@ -131,10 +129,8 @@ banConfirmButton.addEventListener("click", async ()=>{
         headers: {
             "Content-type": "application/json; charset=UTF-8"
         }
-    }).then(resp=>{
-        return resp.json();
-    }).then(async success=>{
-        if (success) {
+    }).then(async resp=>{
+        if (resp.ok) {
             createNotification(`Successfully banned ${currUserReport.username} for "${reason}"`);
             currAction.remove();
             await removeReport(currUserReport.userId, currUserReport.username, reason);
@@ -177,9 +173,7 @@ warnConfirmButton.addEventListener("click", async ()=>{
                 "Content-type": "application/json; charset=UTF-8"
             }
         }).then(resp=>{
-            return resp.json();
-        }).then(success=>{
-            if (!success) {
+            if (!resp.ok) {
                 createNotification(`Something went wrong renaming this user. Please try renaming manually or contact a developer.`);
             }
         });
@@ -195,10 +189,8 @@ warnConfirmButton.addEventListener("click", async ()=>{
         headers: {
             "Content-type": "application/json; charset=UTF-8"
         }
-    }).then(resp=>{
-        return resp.json();
-    }).then(async success=>{
-        if (success) {
+    }).then(async resp=>{
+        if (resp.ok) {
             createNotification(`Successfully warned ${currUserReport.username} for "${reason}"`);
             currAction.remove();
             await removeReport(currUserReport.userId, currUserReport.username, reason);
@@ -463,9 +455,7 @@ async function removeReport(userId, username, reason) {
             "Content-type": "application/json; charset=UTF-8"
         }
     }).then((resp)=>{
-        return resp.json();
-    }).then((success)=>{
-        return success;
+        return resp.ok;
     });
 }
 
@@ -482,9 +472,7 @@ async function okSingle(userId, event, time, scramble) {
             "Content-type": "application/json; charset=UTF-8"
         }
     }).then((resp)=>{
-        return resp.json();
-    }).then((success)=>{
-        return success;
+        return resp.ok;
     });
 }
 
@@ -501,10 +489,7 @@ async function okAverage(userId, event, time) {
             "Content-type": "application/json; charset=UTF-8"
         }
     }).then((resp)=>{
-        return resp.json();
-    }).then((success)=>{
-        console.log(success);
-        return success;
+        return resp.ok;
     });
 }
 
@@ -521,9 +506,7 @@ async function dnfSingle(userId, event, time, scramble) {
             "Content-type": "application/json; charset=UTF-8"
         }
     }).then((resp)=>{
-        return resp.json();
-    }).then((success)=>{
-        return success;
+        return resp.ok;
     });
 }
 
@@ -540,9 +523,7 @@ async function dnfAverage(userId, event, time) {
             "Content-type": "application/json; charset=UTF-8"
         }
     }).then((resp)=>{
-        return resp.json();
-    }).then((success)=>{
-        return success;
+        return resp.ok;
     });
 }
 

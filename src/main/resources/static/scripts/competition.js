@@ -70,7 +70,7 @@ fetch(`${window.location.origin}/get-match-info/${roomId}`).then(response=>{
             oppId = matchJson.users[0];
         }
         //getting elos
-        fetch(`/api/get-user-data-by-id/${userId}`).then((response)=> {
+        fetch(`/api/public/get-user-data-by-id/${userId}`).then((response)=> {
             return response.json();
             }).then(function(data) {
                 userElo=data.elos[matchData.event];
@@ -79,7 +79,7 @@ fetch(`${window.location.origin}/get-match-info/${roomId}`).then(response=>{
                 console.log('Failed to fetch!', err);
             });
 
-        fetch(`/api/get-user-data-by-id/${oppId}`).then((response)=> {
+        fetch(`/api/public/get-user-data-by-id/${oppId}`).then((response)=> {
             return response.json();
             }).then(function(data) {
                 oppElo=data.elos[matchData.event];
@@ -211,7 +211,7 @@ function shrinkTextToContainerSize() {
 }
 
 function getWaitingUserCount() {
-    fetch("/waiting-list/3x3").then((response)=>{
+    fetch("/api/waiting-list/3x3").then((response)=>{
         return response.json();
     }).then((numSearching)=>{
         let userWord = "users";

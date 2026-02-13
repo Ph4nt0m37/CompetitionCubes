@@ -1,7 +1,7 @@
 const urlParams = new URLSearchParams(window.location.search);
 
 const query = urlParams.get('query');
-fetch(`/api/search/${query}`).then((result)=>{
+fetch(`/api/public/search/${query}`).then((result)=>{
     return result.json();
 }).then((data)=>{
     const resultsDiv = document.getElementById("results-div");

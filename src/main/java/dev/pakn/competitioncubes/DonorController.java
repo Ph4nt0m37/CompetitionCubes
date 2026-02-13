@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class DonorController {
+    //idk maybe implement later
     @PostMapping("/api/add-donor")
     public ResponseEntity<?> addDonor(@RequestParam String data) {
         JSONObject dataJson = new JSONObject(data);
-        System.out.println("received!");
-        System.out.println(dataJson);
+        //System.out.println("received!");
+        //System.out.println(dataJson);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
