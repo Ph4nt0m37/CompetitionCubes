@@ -48,7 +48,8 @@ public class InactivityTimer {
 
     @Scheduled(fixedRate = 1000)
     public void incrementInactivityTimer() {
-        for (UserInactivity userInactivity:userInactivityTimers) {
+        for (int i=0;i<userInactivityTimers.size();i++) {
+            UserInactivity userInactivity = userInactivityTimers.get(i);
             //System.out.println(userInactivity.getUserId()+" | "+userInactivity.getTime()+" | "+userInactivity.getMaxTime());
             try {
                 userInactivity.incrementTime();
@@ -56,6 +57,8 @@ public class InactivityTimer {
                 Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
                 if (userMatch!=null && userInactivity.getTime()>userInactivity.getMaxTime()) {
                     userInactivityTimers.remove(userInactivity);
+                    //gotta subtract i by one to account for the fact that we just removed a user inactivity timer
+                    i--;
                     for (int matchUserId:userMatch.getUsers()) {
                         if (matchUserId!=(int) userId) {
                             User quitUser = DBController.getUsers().get(userId);

@@ -98,7 +98,7 @@ stompClient.onConnect = (frame)=>{
         }
     });
     
-    fetch(`${window.location.origin}/get-match-info/${roomId}`).then(response=>{
+    fetch(`api/get-match-info/${roomId}`).then(response=>{
         return response.json()
     }).then(matchJson=>{
         setMatchData(matchJson);

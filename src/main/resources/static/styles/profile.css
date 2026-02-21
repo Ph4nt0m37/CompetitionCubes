@@ -198,7 +198,8 @@ button {
   background-color: #999999;
   border-radius: 20px;
   padding: 4px 10px;
-  width: 5rem;
+  min-width: 5rem;
+  max-width: 6rem;
   text-align: center;
   font-weight: 600;
   font-size: 1rem;

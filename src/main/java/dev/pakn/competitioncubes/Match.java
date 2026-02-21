@@ -118,8 +118,10 @@ public class Match {
         boolean isValidSolve = AntiCheat.validateSolve(solve, getUserWcaPbAvg(solve.getUserId()), getUserWcaPbSingle(solve.getUserId()));
 
         User user = DBController.getUserByIDList(userId);
-        if (isValidSolve && solve.getPenalizedTime()<=user.getLastStoredPbSingle(event)) {
-            user.addSingle(event, solve.getPenalizedTime());
+        if (isValidSolve) {
+            if (user.getAllSinglesArray(event).length<5 || solve.getPenalizedTime()<=user.getLastStoredPbSingle(event)) {
+                user.addSingle(event, solve.getPenalizedTime());
+            }
         }
         return userSolves.get(userId).add(solve);
     }

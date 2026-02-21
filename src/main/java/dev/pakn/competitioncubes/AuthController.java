@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.http.HttpResponse;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
@@ -11,6 +12,8 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +29,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class AuthController {
+
+    private static Logger logger = LoggerFactory.getLogger(AuthController.class);
     
     @Value("${wca.app.id}")
     private String appId;
@@ -39,13 +44,13 @@ public class AuthController {
         + "&redirect_uri=" + request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/wca-auth/callback"
         + "&response_type=code&scope=public";*/
 
-        /*String authURL = "https://www.worldcubeassociation.org/oauth/authorize?client_id=" + appId
-        + "&redirect_uri=" + request.getScheme()+"://"+request.getServerName()+"/wca-auth/callback"
-        + "&response_type=code&scope=public";*/
-
         String authURL = "https://www.worldcubeassociation.org/oauth/authorize?client_id=" + appId
-        + "&redirect_uri=https://compcube.pakn.dev/wca-auth/callback"
+        + "&redirect_uri=https://"+request.getServerName()+"/wca-auth/callback"
         + "&response_type=code&scope=public";
+
+        /*String authURL = "https://www.worldcubeassociation.org/oauth/authorize?client_id=" + appId
+        + "&redirect_uri=https://compcubetest2.pakn.dev/wca-auth/callback"
+        + "&response_type=code&scope=public";*/
 
         return new RedirectView(authURL);
     }
@@ -56,8 +61,8 @@ public class AuthController {
         
         //getting token through a post request
         //String redirectUri = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()+"/wca-auth/callback";
-        //String redirectUri = request.getScheme() + "://" + request.getServerName() + "/wca-auth/callback";
-        String redirectUri = "https://compcube.pakn.dev/wca-auth/callback";
+        String redirectUri = "https://" + request.getServerName() + "/wca-auth/callback";
+        //String redirectUri = "https://compcube.pakn.dev/wca-auth/callback";
 
         HashMap<String, String> params = new HashMap<>();
         params.put("grant_type", "authorization_code");
@@ -118,7 +123,9 @@ public class AuthController {
     public static String getWCAId(String accessToken) {
         try {
             //getting me data, including wca id
-            String meJsonString = WebRequests.sendGetRequest("https://www.worldcubeassociation.org/api/v0/me", accessToken);
+            HttpResponse<String> resp = WebRequests.sendGetRequest("https://www.worldcubeassociation.org/api/v0/me", accessToken);
+            if (resp.statusCode()==401) return null;
+            String meJsonString = resp.body();
             JSONObject meJson = new JSONObject(meJsonString);
             String userWcaId = meJson.getJSONObject("me").getString("wca_id");
             return userWcaId;

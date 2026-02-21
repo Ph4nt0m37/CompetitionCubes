@@ -45,7 +45,7 @@ public class WebRequests {
         return response.body();
     }
 
-    public static String sendGetRequest(String url, String bearer) throws IOException, InterruptedException {
+    public static HttpResponse<String> sendGetRequest(String url, String bearer) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newBuilder().build();
         HttpRequest httpReq = HttpRequest.newBuilder()
             .uri(URI.create(url))
@@ -57,7 +57,7 @@ public class WebRequests {
         HttpResponse<String> response = client.send(httpReq,
             HttpResponse.BodyHandlers.ofString());
     
-        return response.body();
+        return response;
     }
 
     public static HttpResponse<String> sendGetRequest(String url) throws IOException, InterruptedException {

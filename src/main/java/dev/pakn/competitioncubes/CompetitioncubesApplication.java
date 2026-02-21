@@ -12,8 +12,16 @@ public class CompetitioncubesApplication {
 
 	private static Logger logger = LoggerFactory.getLogger(CompetitioncubesApplication.class);
 
+	//public static final long launchEpoch = 0;
+    public static final long launchEpoch = 1774728000000l;
+
 	public static void main(String[] args) {
 		SpringApplication.run(CompetitioncubesApplication.class, args);
+	}
+
+	public static boolean hasLaunched() {
+		long currentEpoch = System.currentTimeMillis();
+		return currentEpoch >= CompetitioncubesApplication.launchEpoch;
 	}
 
 }
