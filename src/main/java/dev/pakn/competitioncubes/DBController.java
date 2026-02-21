@@ -115,6 +115,7 @@ public class DBController {
 
             if (accessToken!=null) {
                 String userWcaId = AuthController.getWCAId(accessToken);
+                if (userWcaId==null || getUserDataByWCAId(userWcaId)!=null) return false;
                 String username = validateUsername(new JSONObject(userDataJSON).getString("username"));
             
                 //creating sql query

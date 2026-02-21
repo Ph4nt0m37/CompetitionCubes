@@ -52,7 +52,8 @@ public class WebSocketEventListener {
 
     @Scheduled(fixedRate = 1000)
     public void decrementDisconnect() {
-        for (Integer userId:matchDisconnectTimer.keySet()) {
+        Integer[] matchDisconnectArr = matchDisconnectTimer.keySet().toArray(new Integer[0]);
+        for (Integer userId:matchDisconnectArr) {
             try {
                 matchDisconnectTimer.put(userId,matchDisconnectTimer.get(userId)-1);
                 Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
