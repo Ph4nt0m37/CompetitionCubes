@@ -3,6 +3,8 @@ package dev.pakn.competitioncubes;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Component;
@@ -19,22 +21,28 @@ public class InactivityTimer {
     ArrayList<UserInactivity> userInactivityTimers = new ArrayList<>();
 
     @PostMapping("/api/reset-inactivity-timer")
-    public void resetInactivityTimer(@RequestBody UserInactivity userInactivity) {
+    public ResponseEntity<?> resetInactivityTimer(@AuthenticationPrincipal User user, @RequestBody UserInactivity userInactivity) {
+        if (user.getUserId()!=userInactivity.getUserId()) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         for (int i=0;i<userInactivityTimers.size();i++) {
             if (userInactivityTimers.get(i).getUserId()==userInactivity.getUserId()) {
                 userInactivityTimers.remove(i);
             }
         }
         userInactivityTimers.add(userInactivity);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/api/remove-inactivity-timer/{userId}")
-    public void deleteInactivityTimer(@PathVariable int userId) {
+    public ResponseEntity<?> deleteInactivityTimer(@AuthenticationPrincipal User user) {
         for (int i=0;i<userInactivityTimers.size();i++) {
-            if (userInactivityTimers.get(i).getUserId()==userId) {
+            //should probably just write an equals method but im lazy
+            if (userInactivityTimers.get(i).getUserId()==user.getUserId()) {
                 userInactivityTimers.remove(i);
             }
         }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/api/get-inactivity-time/{userId}")
