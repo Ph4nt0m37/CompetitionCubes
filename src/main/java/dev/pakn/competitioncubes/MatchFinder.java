@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,15 +14,22 @@ import java.util.*;
 @RestController
 public class MatchFinder {
 
+    private final ServerInfo serverInfo;
+
     private static Logger logger = LoggerFactory.getLogger(MatchFinder.class);
 
     private static ArrayList<WaitlistRequest> waitingList = new ArrayList<>();
 
+    MatchFinder(ServerInfo serverInfo) {
+        this.serverInfo = serverInfo;
+    }
+
     @PostMapping("/api/waiting-list")
-    private WaitlistResult addToWaitingList(@RequestBody String userIdJSON) {
+    private WaitlistResult addToWaitingList(@AuthenticationPrincipal User user, @RequestBody String userIdJSON) {
+        if (ServerInfo.isUnderMaintenance() || !ServerInfo.hasLaunched()) return new WaitlistResult(WaitlistCode.MAINTENANCE);
         try {
             JSONObject requestJson = new JSONObject(userIdJSON);
-            int userId = requestJson.getInt("userId");
+            int userId = user.getUserId();
             String event = requestJson.getString("event");
 
             //check if the user is banned
@@ -59,8 +67,8 @@ public class MatchFinder {
     }
 
     @DeleteMapping("/api/waiting-list")
-    private void removeFromWaitingListReq(@RequestBody String userIdJSON) {
-        int userId = new JSONObject(userIdJSON).getInt("userId");
+    private void removeFromWaitingListReq(@AuthenticationPrincipal User user) {
+        int userId = user.getUserId();
         logger.debug("removed "+userId+" from waiting list");
         removeFromWaitingList(userId);
     }

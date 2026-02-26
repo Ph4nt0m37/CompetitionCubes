@@ -5,17 +5,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 //this class is not an enum because jackson serialization of enums only allows for one json value
 public class PermissionLevel {
-    public final static PermissionLevel USER = new PermissionLevel(false, false, false, false);
-    public final static PermissionLevel TRAINEE = new PermissionLevel(false, false, true, true);
-    public final static PermissionLevel MODERATOR = new PermissionLevel(true, true, true, true);
-    public final static PermissionLevel ADMIN = new PermissionLevel(true, true, true, true);
-    public final static PermissionLevel OWNER = new PermissionLevel(true, true, true, true);
+    public final static PermissionLevel USER = new PermissionLevel(false, false, false, false, false);
+    public final static PermissionLevel TRAINEE = new PermissionLevel(false, false, false, true, true);
+    public final static PermissionLevel MODERATOR = new PermissionLevel(false, true, true, true, true);
+    public final static PermissionLevel ADMIN = new PermissionLevel(true, true, true, true, true);
+    public final static PermissionLevel OWNER = new PermissionLevel(true, true, true, true, true);
 
     private static int currLevelVal = 0;
 
     private int levelVal = 0;
 
     //permissions
+    @JsonProperty
+    private boolean canAddMaintenanceTime = false;
     @JsonProperty
     private boolean hasAdminDashboardAccess = false;
     @JsonProperty
@@ -25,16 +27,18 @@ public class PermissionLevel {
     @JsonProperty
     private boolean hasUserInfoAccess = false;
 
-    private PermissionLevel(int levelVal, boolean hasAdminDashboardAccess, boolean hasBanAccess, boolean hasChangeUsernameAccess, boolean hasRenameUserAccess, boolean hasUserInfoAccess) {
+    private PermissionLevel(int levelVal, boolean canAddMaintenanceTime, boolean hasAdminDashboardAccess, boolean hasBanAccess, boolean hasChangeUsernameAccess, boolean hasRenameUserAccess, boolean hasUserInfoAccess) {
         this.levelVal = levelVal;
+        this.canAddMaintenanceTime = canAddMaintenanceTime;
         this.hasAdminDashboardAccess = hasAdminDashboardAccess;
         this.hasBanAccess = hasBanAccess;
         this.hasRenameUserAccess = hasRenameUserAccess;
         this.hasUserInfoAccess = hasUserInfoAccess;
     }
 
-    private PermissionLevel(boolean hasAdminDashboardAccess, boolean hasBanAccess, boolean hasRenameUserAccess, boolean hasUserInfoAccess) {
+    private PermissionLevel(boolean canAddMaintenanceTime, boolean hasAdminDashboardAccess, boolean hasBanAccess, boolean hasRenameUserAccess, boolean hasUserInfoAccess) {
         this.levelVal = currLevelVal++; //post increment so that levelVal starts at 0
+        this.canAddMaintenanceTime = canAddMaintenanceTime;
         this.hasAdminDashboardAccess = hasAdminDashboardAccess;
         this.hasBanAccess = hasBanAccess;
         this.hasRenameUserAccess = hasRenameUserAccess;
@@ -60,6 +64,10 @@ public class PermissionLevel {
 
     public boolean hasRenameUserAccess() {
         return hasRenameUserAccess;
+    }
+    
+    public boolean canAddMaintenanceTime() {
+        return canAddMaintenanceTime;
     }
 
     public static PermissionLevel valueToPermissionLevel(int value) {

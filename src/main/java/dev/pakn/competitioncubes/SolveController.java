@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -18,13 +19,13 @@ public class SolveController {
 
 
     @MessageMapping("/solveData")
-    public void sendSolveData(SentSolveData data) {
+    public void sendSolveData(@AuthenticationPrincipal User user, SentSolveData data) {
         try {
             ArrayList<Match> matches = MatchController.getMatches();
             for (Match currMatch:matches) {
                 if (currMatch.getRoomId()==data.getRoomId()) {
-                    SolveData solveData = new SolveData(currMatch.getEvent(),data.getTime(),data.getScramble(),Penalty.stringToPenalty(data.getPenalty()),data.getUserId());
-                    currMatch.addSolve(data.getUserId(),solveData);
+                    SolveData solveData = new SolveData(currMatch.getEvent(),data.getTime(),data.getScramble(),Penalty.stringToPenalty(data.getPenalty()),user.getUserId());
+                    currMatch.addSolve(user.getUserId(),solveData);
                 }
             }
             simpMessagingTemplate.convertAndSend("/room/solves/"+data.getRoomId(),data);
