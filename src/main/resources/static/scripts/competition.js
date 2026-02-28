@@ -48,7 +48,7 @@ export function setScramble(scramble) {
             });
         }else{
             currentScramble = "";
-            fetch(`/api/remove-inactivity-timer/${userId}`, {
+            fetch(`/api/remove-inactivity-timer`, {
                 method: "DELETE",
                 headers: {
                     "Content-type": "application/json; charset=UTF-8"

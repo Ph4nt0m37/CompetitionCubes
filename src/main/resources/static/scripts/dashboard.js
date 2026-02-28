@@ -318,7 +318,8 @@ function getInvalidTimes() {
     currReportMethod=reportingMethods.SOLVES;
     reportTypeText.textContent = "Reported Solves";
     fetch("/api/get-invalid-times").then((promise)=>{
-        return promise.json();
+        if (promise.ok) return promise.json();
+        createNotification("Something went wrong loading this data. Please try again later or contact a developer.");
     }).then((solves)=>{
         const dashboardDivContent = document.getElementById("div-content");
         if (solves.length>0) {
@@ -387,7 +388,8 @@ function getReportedUsers() {
     currReportMethod=reportingMethods.USERS;
     reportTypeText.textContent = "Reported Users";
     fetch("/api/get-reported-users").then((promise)=>{
-        return promise.json();
+        if (promise.ok) return promise.json();
+        createNotification("Something went wrong loading this data. Please try again later or contact a developer.");
     }).then((users)=>{
         const dashboardDivContent = document.getElementById("div-content");
         if (users.length>0) {

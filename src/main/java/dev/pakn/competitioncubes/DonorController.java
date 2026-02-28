@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.giffing.bucket4j.spring.boot.starter.context.RateLimiting;
+
 @RestController
 public class DonorController {
     //idk maybe implement later
+    @RateLimiting(name = "default")
     @PostMapping("/api/add-donor")
     public ResponseEntity<?> addDonor(@RequestParam String data) {
         JSONObject dataJson = new JSONObject(data);
