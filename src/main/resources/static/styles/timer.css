@@ -29,7 +29,7 @@ h1 {
 
 #scramble-text {
     color: var(--timer-color);
-    font-size: 4.25vw;
+    font-size: min(4.25vw,5rem);
     margin: 15px;
     text-align: center;
     max-width: 72.5%;
@@ -56,14 +56,14 @@ h1 {
 }
 
 .timer {
-    font-size: 7.8vw;
+    font-size: min(7.8vw,8.55rem);
     /*border: 10px solid black;*/
     color: var(--timer-color);
     margin: 0;
 }
 
 .ao5 {
-    font-size: 3.8vw;
+    font-size: min(3.8vw,4.55rem);
     /*border: 10px solid black;*/
     color: var(--timer-color);
     padding: 0;
@@ -71,11 +71,13 @@ h1 {
 }
 
 .penalty-button {
-    font-size: 3vw;
+    font-size: min(3vw,3.75rem);
+    border-radius: 25px;
+    padding: 6px 15px;
 }
 
 .winsText {
-    font-size: 3.8vw;
+    font-size: min(3.8vw,4.55rem);
     transition: color 2s ease-out;
     color: var(--timer-color);
     margin: 1vh;
@@ -93,7 +95,7 @@ h1 {
 }
 
 .username {
-    font-size: 3.8vw;
+    font-size: min(3.8vw,4.55rem);
     color: var(--dark-blue-color);
     margin-bottom: 1.5vh;
     padding: 0;
@@ -109,7 +111,7 @@ button {
     border-radius: 1.65vw;
     border: none;
     font-weight: bold;
-    font-size: 3vw;
+    font-size: min(3vw,3.75rem);
     cursor: pointer;
     padding: 6px 10px;
     transition: background-color 0.3s ease, transform 0.1s ease;
@@ -154,7 +156,7 @@ button {
 .penalty-text {
     color: var(--timer-color);
     margin: -0.75rem;
-    font-size: 3.3vw;
+    font-size: min(3.3vw,4.05rem);
     display: none;
 }
 
@@ -262,7 +264,7 @@ button {
     position: absolute;
     color: white;
     border-radius: 17.5px;
-    font-size: 3vw;
+    font-size: min(3vw,3.75rem);
     font-weight: bold;
     background-color: var(--blue-button);
     padding: 12.5px 25px;
@@ -633,14 +635,14 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 4.5vmax;
-  height: 4.5vmax;
+  width: min(4.5vmax,5.25rem);
+  height: min(4.5vmax,5.25rem);
   margin: 0.3rem;
 }
 
 #report-solve-button > img {
-  width: 2.8vmax;
-  height: 2.8vmax;
+  width: min(2.8vmax,3.55);
+  height: min(2.8vmax,3.55);
 }
 
 #report-solve-button:hover {
