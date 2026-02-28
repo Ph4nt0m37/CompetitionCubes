@@ -3,14 +3,11 @@ package dev.pakn.competitioncubes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.PostConstruct;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -41,9 +37,8 @@ public class MatchController {
 
     @MessageMapping("/find-match")
     @SendTo("/room/found-match")
-    public Match findMatch(WaitlistRequest waitlistRequest, @Header("user_secret") String user_secret) {
+    public Match findMatch(@AuthenticationPrincipal User user, WaitlistRequest waitlistRequest) {
         try {
-            User user = DBController.getUserBySecret(user_secret);
             //cloning waitlist because we want to ignore userId and if we don't clone it we will accidentally remove userId from actual waitlist
             ArrayList<WaitlistRequest> waitList = (ArrayList<WaitlistRequest>) MatchFinder.getWaitingList().clone();
             for (int i=0;i<waitList.size();i++) {
