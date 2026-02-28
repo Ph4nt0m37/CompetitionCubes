@@ -7,7 +7,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,23 +36,24 @@ public class MatchController {
 
     @MessageMapping("/find-match")
     @SendTo("/room/found-match")
-    public Match findMatch(@AuthenticationPrincipal User user, WaitlistRequest waitlistRequest) {
+    public Match findMatch(WaitlistRequest waitlistRequest) {
         try {
             //cloning waitlist because we want to ignore userId and if we don't clone it we will accidentally remove userId from actual waitlist
             ArrayList<WaitlistRequest> waitList = (ArrayList<WaitlistRequest>) MatchFinder.getWaitingList().clone();
             for (int i=0;i<waitList.size();i++) {
-                if (waitList.get(i).getUserId()==user.getUserId()) waitList.remove(i);
+                if (waitList.get(i).getUserId()==waitlistRequest.getUserId()) waitList.remove(i);
             }
+            User user = DBController.getUsers().get(waitlistRequest.getUserId());
             for (WaitlistRequest oppReq:waitList) {
                 User oppUser = DBController.getUsers().get(oppReq.getUserId());
                 int oppId = oppReq.getUserId();
                 Event event = DBController.stringToEventMap.get(waitlistRequest.getEvent());
                 if (oppReq.getEvent().equals(waitlistRequest.getEvent()) && Math.abs(user.getElo(event)-oppUser.getElo(event))<100) {
                     //fix
-                    MatchFinder.removeFromWaitingList(user.getUserId());
+                    MatchFinder.removeFromWaitingList(waitlistRequest.getUserId());
                     MatchFinder.removeFromWaitingList(oppId);
-                    logger.info("match found between "+user.getUserId()+" and "+oppId);
-                    Match match = new Match(event,new int[]{user.getUserId(),oppId},(int)(Math.random()*9999999));
+                    logger.info("match found between "+waitlistRequest.getUserId()+" and "+oppId);
+                    Match match = new Match(event,new int[]{waitlistRequest.getUserId(),oppId},(int)(Math.random()*9999999));
                     matches.add(match);
                     user.setCurrentMatch(match);
                     oppUser.setCurrentMatch(match);

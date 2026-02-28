@@ -34,8 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.giffing.bucket4j.spring.boot.starter.context.RateLimiting;
-
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
@@ -1044,8 +1042,7 @@ public class DBController {
     }
 
     @GetMapping("/api/get-invalid-times")
-    public ResponseEntity<ArrayList<InvalidTime>> getInvalidTimes(@AuthenticationPrincipal User user) {
-        if (!user.getPermissionLevel().hasAdminDashboardAccess()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    public ArrayList<InvalidTime> getInvalidTimes() {
         try (Connection conn = dataSource.getConnection()) {
             String sqlQuerySingle = "SELECT * FROM invalid_solves WHERE NOT single IS null;";
             PreparedStatement statementSingle = conn.prepareStatement(sqlQuerySingle);
@@ -1085,12 +1082,12 @@ public class DBController {
                 invalidTimes.add(time);
             }
 
-            return new ResponseEntity<>(invalidTimes,HttpStatus.OK);
+            return invalidTimes;
 
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return null;
         }
     }
 
@@ -1166,8 +1163,7 @@ public class DBController {
 
     //TODO: Add insane rate limiting
     @GetMapping("/api/refresh-user/{userId}")
-    public ResponseEntity<String> refreshUserReq(@AuthenticationPrincipal User user, @PathVariable int userId) {
-        if (!user.getPermissionLevel().hasAdminDashboardAccess()) return new ResponseEntity<>("You are not allowed to do this.",HttpStatus.FORBIDDEN);
+    public ResponseEntity<String> refreshUserReq(@PathVariable int userId) {
         try (Connection conn = staticDataSource.getConnection();) {
 
             //checking for userId
@@ -1199,8 +1195,7 @@ public class DBController {
     }
 
     @GetMapping("/api/get-reported-users")
-    public ResponseEntity<ArrayList<ReportedUser>> getReportedUsers(@AuthenticationPrincipal User requestingUser) {
-        if (!requestingUser.getPermissionLevel().hasAdminDashboardAccess()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    public ArrayList<ReportedUser> getReportedUsers() {
         try (Connection conn = dataSource.getConnection()) {
             String sqlQuerySingle = "SELECT * FROM reported_users";
             PreparedStatement statementSingle = conn.prepareStatement(sqlQuerySingle);
@@ -1219,12 +1214,12 @@ public class DBController {
                 reportedUsers.add(new ReportedUser(userId, user.getUsername() ,reason, info));
             }
 
-            return new ResponseEntity<>(reportedUsers,HttpStatus.OK);
+            return reportedUsers;
 
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return null;
         }
     }
 
@@ -1411,11 +1406,9 @@ public class DBController {
         }
     }
 
-    @RateLimiting(name = "default")
     @GetMapping("/api/get-banned-users")
-    public ResponseEntity<ArrayList<UserBan>> getBannedUsersRequest(@AuthenticationPrincipal User user) {
-        if (!user.getPermissionLevel().hasBanAccess()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        return new ResponseEntity<>(getBannedUsers(),HttpStatus.OK);
+    public ArrayList<UserBan> getBannedUsersRequest() {
+        return getBannedUsers();
     }
 
     public static UserBan getBannedUser(int userId) {
@@ -1497,18 +1490,17 @@ public class DBController {
     }
 
     @PostMapping("/api/rename-user")
-    public static ResponseEntity<?> changeUsernameReq(@AuthenticationPrincipal User userRequester, @RequestParam int userId, @RequestParam String newUsername) {
-        if (userRequester!=null) {
-            if (userRequester.getPermissionLevel().hasRenameUserAccess()) {
-                boolean success = changeUsername(userId, newUsername);
-                if (success) {
-                    return new ResponseEntity<>(HttpStatus.OK);
-                }
-            }
-            if (userRequester.getUserId()==userId) {
-                for (UserWarning warning:userRequester.getUserWarnings()) {
-                    if (warning.getReason().equals("username"))
-                        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    public static ResponseEntity<?> changeUsernameReq(@CookieValue(value="user_secret", required = false) String userSecret, @RequestParam int userId, @RequestParam String newUsername) {
+        if (userSecret!=null) {
+            //auto login here!
+            User userRequester = DBController.getUserBySecret(userSecret);
+            //if login succeeded. if they somehow have user_secret cookie but it doesn't exist, user will be null
+            if (userRequester!=null && (userRequester.getUserId()==userId || userRequester.getPermissionLevel().hasRenameUserAccess())) {
+                if (!userRequester.getPermissionLevel().hasRenameUserAccess()) {
+                    for (UserWarning warning:userRequester.getUserWarnings()) {
+                        if (warning.getReason().equals("username"))
+                            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                    }
                 }
                 boolean success = changeUsername(userId, newUsername);
                 if (success) {
@@ -1550,7 +1542,7 @@ public class DBController {
     }
 
     @PostMapping("/api/save-user-settings")
-    public ResponseEntity<String> saveUserSettings(@AuthenticationPrincipal User user, @RequestBody PostRequestClass.UserSettingsReq userSettingsReq) {
+    public ResponseEntity<String> saveUserSettings(@RequestBody PostRequestClass.UserSettingsReq userSettingsReq) {
         try (Connection conn = dataSource.getConnection();) {
 
             //checking for userSecret
@@ -1558,11 +1550,12 @@ public class DBController {
             PreparedStatement userSecretStatement = conn.prepareStatement(findUserSecretQuery);
             userSecretStatement.setBoolean(1, userSettingsReq.isInspectionAudio());
             userSecretStatement.setBoolean(2, userSettingsReq.isMatchSounds());
-            userSecretStatement.setInt(3, user.getUserId());
+            userSecretStatement.setInt(3, userSettingsReq.getUserId());
 
             //getting resultset
             int rowsChanged = userSecretStatement.executeUpdate();
 
+            User user = userList.get(userSettingsReq.getUserId());
             if (user!=null) {
                 user.setUserSettings(new UserSettings(userSettingsReq.isInspectionAudio(), userSettingsReq.isMatchSounds()));
             }
@@ -1570,7 +1563,7 @@ public class DBController {
             if (rowsChanged>0) {
                 return new ResponseEntity<>("Success",HttpStatus.OK);
             }
-            return new ResponseEntity<>("No user found.",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("No user with this userId found.",HttpStatus.NOT_FOUND);
         }catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Something went wrong.",HttpStatus.INTERNAL_SERVER_ERROR);

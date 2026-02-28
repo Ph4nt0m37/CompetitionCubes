@@ -83,8 +83,11 @@ stompClient.onConnect = (frame)=>{
         let users = match.users;
         let roomId = match.roomId;
         if (users && users.includes(userId)) {
-            fetch(`/api/waiting-list`, {
+            fetch(`${window.location.origin}/waiting-list`, {
                 method: "DELETE",
+                body: JSON.stringify({
+                    userId: userId
+                }),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8"
                 }

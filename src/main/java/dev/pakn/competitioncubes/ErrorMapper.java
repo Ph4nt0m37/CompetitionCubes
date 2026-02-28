@@ -13,7 +13,7 @@ public class ErrorMapper implements ErrorController {
     //error mapping
     @RequestMapping("/error")
     public String error(HttpServletRequest req) {
-        if (!ServerInfo.hasLaunched()) return "launch-waiting.html";
+        if (!CompetitioncubesApplication.hasLaunched()) return "launch-waiting.html";
         Object status = req.getAttribute("jakarta.servlet.error.status_code");
         if (status!=null) {
             int code = Integer.parseInt(status.toString());

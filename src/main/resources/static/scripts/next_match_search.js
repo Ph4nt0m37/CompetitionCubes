@@ -38,6 +38,9 @@ export function startMatchSearchClient() {
                 console.log("hellooo");
                 fetch(`/api/waiting-list`, {
                     method: "DELETE",
+                    body: JSON.stringify({
+                        userId: userId
+                    }),
                     headers: {
                         "Content-type": "application/json; charset=UTF-8"
                     }
@@ -56,6 +59,9 @@ export function startMatchSearchClient() {
         //delete request to remove user from waiting list
         fetch(`/api/waiting-list`, {
             method: "DELETE",
+            body: JSON.stringify({
+                userId: userId
+            }),
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             }
@@ -92,56 +98,40 @@ function startMatchSearch(stompClient) {
         return result.json();
     }).then((data)=> {
         searchText.style.display="block";
-        const waitlistCode = data['waitlistCode'];
-        if (waitlistCode==="SUCCESS") {
-            searchButton.textContent = "Cancel Search";
-            searchText.textContent = `Searching...`;
-            searchText.style.color="#555";
+        if (!data) {
             searchText.style.visibility="visible";
-
-            stompClient.activate();
-
-            //searching for user interval. also controls dots
-            let dotCount = 1;
-            searchInt = setInterval(()=>{
-                //search
-                if (dotCount===3) {
-                    stompClient.publish({
-                        destination: "/app/find-match",
-                        body: JSON.stringify({
-                            'userId':userId,
-                            'event':'3x3'
-                        })
-                    });
-                }
-
-                //dots
-                searchText.textContent = `Searching${".".repeat(dotCount)}`;
-                dotCount++;
-                if (!(dotCount%4)) {
-                    dotCount=1;
-                }
-            },250);
-        }else {
-            searchText.style.visibility="visible";
-            searchText.style.display="block";
             searchText.style.color="#e23333";
-            if (waitlistCode==="IN_MATCH") {
-                searchText.textContent = "You are already searching for a match!"
-            }else if (waitlistCode==="NOT_COMPETED") {
-                searchText.innerHTML = "You have not competed in this event yet.";
-            }else if (waitlistCode==="BANNED") {
-                searchText.innerHTML = `You have been banned from competing.`;
-            }else if (waitlistCode==="BANNED_PERMANENTLY") {
-                searchText.innerHTML = `You have been permanently banned from competing.`;
-            }else if (waitlistCode==="ERROR") {
-                searchText.textContent = `Something went wrong. Please try again later!`;
-            }else if (waitlistCode==="MAINTENANCE") {
-                searchText.textContent = `Competing is currently in maintenance!`;
-            }
+            searchText.textContent = "You are already searching for (or are in) a match!"
             return;
         }
-        
+        searchButton.textContent = "Cancel Search";
+        searchText.textContent = `Searching...`;
+        searchText.style.color="#555";
+        searchText.style.visibility="visible";
+
+        stompClient.activate();
+
+        //searching for user interval. also controls dots
+        let dotCount = 1;
+        searchInt = setInterval(()=>{
+            //search
+            if (dotCount===3) {
+                stompClient.publish({
+                    destination: "/app/find-match",
+                    body: JSON.stringify({
+                        'userId':userId,
+                        'event':'3x3'
+                    })
+                });
+            }
+
+            //dots
+            searchText.textContent = `Searching${".".repeat(dotCount)}`;
+            dotCount++;
+            if (!(dotCount%4)) {
+                dotCount=1;
+            }
+        },250);
     });
 }
 
@@ -149,6 +139,9 @@ function cancelMatchSearch(stompClient) {
     stompClient.deactivate();
     fetch(`/api/waiting-list`, {
         method: "DELETE",
+        body: JSON.stringify({
+            userId: userId
+        }),
         headers: {
             "Content-type": "application/json; charset=UTF-8"
         }

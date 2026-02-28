@@ -28,7 +28,7 @@ public class LinkMappings {
     /*@GetMapping("/{path:[^\\.]*}")
     public String catchAll() {
         try {
-            if (!ServerInfo.hasLaunched()) {
+            if (!CompetitioncubesApplication.hasLaunched()) {
                 return "launch-waiting.html";
             }else {
                 throw new HttpNotFoundException();
@@ -41,7 +41,7 @@ public class LinkMappings {
 
     @GetMapping("/competition")
     public String compPage(@CookieValue(value="user_secret", required = false) String userSecret, @RequestParam("roomId") String roomIdStr) {
-        if (!ServerInfo.hasLaunched()) {
+        if (!CompetitioncubesApplication.hasLaunched()) {
             return "launch-waiting.html";
         }
         User user = DBController.getUserBySecret(userSecret);
@@ -65,7 +65,7 @@ public class LinkMappings {
         response.setHeader("Pragma", "no-cache"); // For HTTP/1.0
         response.setDateHeader("Expires", 0); // For proxies
 
-        if (!ServerInfo.hasLaunched()) {
+        if (!CompetitioncubesApplication.hasLaunched()) {
             return "launch-waiting.html";
         }
 
@@ -82,7 +82,7 @@ public class LinkMappings {
 
     @GetMapping("/create-account")
     public String createAccountPage(@CookieValue(value="user_secret", required = false) String userSecret) {
-        if (!ServerInfo.hasLaunched()) {
+        if (!CompetitioncubesApplication.hasLaunched()) {
             return "launch-waiting.html";
         }
         if (userSecret==null) {
@@ -98,7 +98,7 @@ public class LinkMappings {
         response.setHeader("Pragma", "no-cache"); // For HTTP/1.0
         response.setDateHeader("Expires", 0); // For proxies
 
-        if (!ServerInfo.hasLaunched()) {
+        if (!CompetitioncubesApplication.hasLaunched()) {
             return "launch-waiting.html";
         }
         
@@ -120,7 +120,7 @@ public class LinkMappings {
 
     @GetMapping("/rankings")
     public String rankingsPage() {
-        if (!ServerInfo.hasLaunched()) {
+        if (!CompetitioncubesApplication.hasLaunched()) {
             return "launch-waiting.html";
         }
         return "leaderboard.html";
@@ -128,7 +128,7 @@ public class LinkMappings {
 
     @GetMapping("/search") 
     public String searchPage() {
-        if (!ServerInfo.hasLaunched()) {
+        if (!CompetitioncubesApplication.hasLaunched()) {
             return "launch-waiting.html";
         }
         return "search-page.html";
@@ -136,7 +136,7 @@ public class LinkMappings {
 
     @GetMapping("/rules")
     public String rulesPage() {
-        if (!ServerInfo.hasLaunched()) {
+        if (!CompetitioncubesApplication.hasLaunched()) {
             return "launch-waiting.html";
         }
         return "rules.html";
@@ -144,7 +144,7 @@ public class LinkMappings {
 
     @GetMapping("/settings")
     public String settingsPage(@CookieValue(value="user_secret", required = false) String userSecret) {
-        if (!ServerInfo.hasLaunched()) {
+        if (!CompetitioncubesApplication.hasLaunched()) {
             return "launch-waiting.html";
         }
         if (userSecret!=null) {
@@ -160,7 +160,7 @@ public class LinkMappings {
 
     @GetMapping("/admin")
     public String adminDashboard(@CookieValue(value="user_secret", required = false) String userSecret) {
-        if (!ServerInfo.hasLaunched()) {
+        if (!CompetitioncubesApplication.hasLaunched()) {
             return "launch-waiting.html";
         }
         if (userSecret!=null) {
@@ -174,7 +174,7 @@ public class LinkMappings {
 
     @GetMapping("/donate")
     public String donatePage() {
-        if (!ServerInfo.hasLaunched()) {
+        if (!CompetitioncubesApplication.hasLaunched()) {
             return "launch-waiting.html";
         }
         return "donate.html";

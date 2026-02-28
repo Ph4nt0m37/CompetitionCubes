@@ -76,6 +76,9 @@ fetch("/header.html")
         signOutDropdownLink.addEventListener("click",()=>{
             fetch(`/api/waiting-list`, {
                 method: "DELETE",
+                body: JSON.stringify({
+                    userId: userId
+                }),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8"
                 }

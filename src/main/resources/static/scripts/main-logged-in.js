@@ -81,6 +81,9 @@ onload = (event)=>{
                     if (users && users.includes(userId)) {
                         fetch(`/api/waiting-list`, {
                             method: "DELETE",
+                            body: JSON.stringify({
+                                userId: userId
+                            }),
                             headers: {
                                 "Content-type": "application/json; charset=UTF-8"
                             }
@@ -91,15 +94,6 @@ onload = (event)=>{
                         window.location.replace(`${window.location.origin}/competition?roomId=${roomId}`);
                     }
                 });
-
-                stompClient.subscribe('/room/under-maintenance', (maintenance) =>{
-                    if (maintenance) {
-                        searchText.textContent = `Competing is currently in maintenance! Please come back later.`;
-                    }else {
-                        searchText.textContent="Searching...";
-                        searchText.style.display="none";
-                    }
-                });
             }
 
             stompClient.onDisconnect = (frame)=>{
@@ -107,6 +101,9 @@ onload = (event)=>{
                 //delete request to remove user from waiting list
                 fetch(`/api/waiting-list`, {
                     method: "DELETE",
+                    body: JSON.stringify({
+                        userId: userId
+                    }),
                     headers: {
                         "Content-type": "application/json; charset=UTF-8"
                     }
@@ -226,6 +223,9 @@ function cancelMatchSearch(stompClient) {
     stompClient.deactivate();
     fetch(`/api/waiting-list`, {
         method: "DELETE",
+        body: JSON.stringify({
+            userId: userId
+        }),
         headers: {
             "Content-type": "application/json; charset=UTF-8"
         }

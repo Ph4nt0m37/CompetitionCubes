@@ -171,14 +171,24 @@ public class PostRequestClass {
     }
 
     public static class UserSettingsReq {
+        private int userId;
         private boolean inspectionAudio = true;
         private boolean matchSounds = true;
 
         public UserSettingsReq() {}
         
-        public UserSettingsReq(boolean inspectionAudio, boolean matchSounds) {
+        public UserSettingsReq(int userId, boolean inspectionAudio, boolean matchSounds) {
+            this.userId = userId;
             this.inspectionAudio = inspectionAudio;
             this.matchSounds = matchSounds;
+        }
+
+        public int getUserId() {
+            return userId;
+        }
+
+        public void setUserId(int userId) {
+            this.userId = userId;
         }
 
         public boolean isInspectionAudio() {
@@ -199,11 +209,9 @@ public class PostRequestClass {
 
         @Override
         public String toString() {
-            return "UserSettingsReq [inspectionAudio=" + inspectionAudio + ", matchSounds=" + matchSounds
-                    + ", isInspectionAudio()=" + isInspectionAudio() + ", isMatchSounds()=" + isMatchSounds() + "]";
+            return "UserSettingsReq [userId=" + userId + ", inspectionAudio=" + inspectionAudio + ", matchSounds="
+                    + matchSounds + "]";
         }
-
-        
     }
 
     public static class SetUserWarningsReq {
@@ -225,32 +233,6 @@ public class PostRequestClass {
         }
         public void setWarnings(int warnings) {
             this.warnings = warnings;
-        }
-    }
-
-    public static class MaintenanceRequest {
-        private long time;
-        private String reason;
-        
-        public MaintenanceRequest(long time, String reason) {
-            this.time = time;
-            this.reason = reason;
-        }
-
-        public long getTime() {
-            return time;
-        }
-
-        public void setTime(long time) {
-            this.time = time;
-        }
-
-        public String getReason() {
-            return reason;
-        }
-
-        public void setReason(String reason) {
-            this.reason = reason;
         }
     }
 }
