@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -19,8 +20,9 @@ public class SolveController {
 
 
     @MessageMapping("/solveData")
-    public void sendSolveData(@AuthenticationPrincipal User user, SentSolveData data) {
+    public void sendSolveData(SentSolveData data, @Header("user_secret") String user_secret) {
         try {
+            User user = DBController.getUserBySecret(user_secret);
             ArrayList<Match> matches = MatchController.getMatches();
             for (Match currMatch:matches) {
                 if (currMatch.getRoomId()==data.getRoomId()) {
