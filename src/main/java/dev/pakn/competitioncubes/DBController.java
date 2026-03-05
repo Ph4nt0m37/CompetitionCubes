@@ -185,7 +185,6 @@ public class DBController {
 
     @GetMapping("/api/get-user-data")
     public ResponseEntity<User> getUserBySecretRequest(@AuthenticationPrincipal User user) {
-        logger.info(String.valueOf(user));
         if (user!=null) {
             return new ResponseEntity<>(user, HttpStatus.OK);
         }else {

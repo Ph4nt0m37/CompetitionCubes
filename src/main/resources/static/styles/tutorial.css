@@ -1,0 +1,75 @@
+.tutorial-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    right: calc(50vw - calc(15rem / 2));
+    top: 3rem;
+    background-color: var(--notification-color);
+    width: 15rem;
+    max-height: 50rem;
+    text-align: center;
+    padding: 10px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--h2-color);
+    box-shadow: 0 4px 12px rgb(0,0,0,0.25);
+    color: var(--dark-font-color);
+    animation: fadeIn 0.15s ease-out;
+    z-index: 2;
+}
+
+.tutorial-box > * {
+    padding: 0;
+    margin: 0;
+}
+
+#next-text-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.next-text {
+    flex-grow: 1;
+    padding: 0;
+    margin: 0;
+    color: var(--h3-color);
+}
+
+.next-text.button {
+    cursor: pointer;
+}
+
+.next-text.button:hover {
+    color: var(--h2-color);
+    text-decoration: underline;
+}
+
+#next-text {
+    text-align: center;
+}
+
+#menu-button {
+    border: none;
+    position: absolute;
+    color: white;
+    border-radius: 17.5px;
+    font-size: min(3vw,3.75rem);
+    font-weight: bold;
+    background-color: var(--blue-button);
+    padding: 12.5px 25px;
+    cursor: not-allowed;
+    margin: 5px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: block;
+    right: 0;
+}
+
+#menu-button:hover {
+    background-color: var(--blue-button-hover);
+}
+
+#menu-button:active {
+    transform: scale(1);
+}

@@ -68,11 +68,6 @@ fetch("/header.html")
             window.location.href=`/settings`;
         });
 
-        tutorialDropdownLink.addEventListener("click",()=>{
-            document.cookie = "tutorial_complete=false;";
-            window.location.replace("/");
-        });
-
         signOutDropdownLink.addEventListener("click",()=>{
             fetch(`/api/waiting-list`, {
                 method: "DELETE",

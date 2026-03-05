@@ -125,19 +125,6 @@ onload = (event)=>{
                 console.error('Additional details: ' + frame.body);
             };
 
-            let tutorial_complete = false;
-            //cookie example: tutorial_complete=false
-            const tutorialCompleteCookie = getCookie("tutorial_complete");
-            tutorial_complete = (tutorialCompleteCookie==="true");
-
-            if (!tutorial_complete) {
-                tutorialDiv.style.display="flex";
-                tutorialButton.addEventListener("click",()=>{
-                    document.cookie = "tutorial_complete=true;";
-                    tutorialDiv.style.display="none";
-                });
-            }
-
         }).catch(function(err) {
             console.log('Failed to fetch!', err);
         });

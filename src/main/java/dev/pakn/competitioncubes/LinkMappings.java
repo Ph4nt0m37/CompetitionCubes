@@ -126,6 +126,19 @@ public class LinkMappings {
         return "leaderboard.html";
     }
 
+    @GetMapping("/tutorial")
+    public String tutorialPage() {
+        if (!ServerInfo.hasLaunched()) {
+            return "launch-waiting.html";
+        }
+        return "tutorial.html";
+    }
+
+    @GetMapping("/demo")
+    public String demoPage() {
+        return "demo.html";
+    }
+
     @GetMapping("/search") 
     public String searchPage() {
         if (!ServerInfo.hasLaunched()) {

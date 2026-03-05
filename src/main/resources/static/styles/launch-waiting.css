@@ -8,10 +8,6 @@ html, body {
     font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.launch-text {
-
-}
-
 .time-until-launch-text {
     font-size: 2rem;
     color: var(--h2-color);
@@ -41,4 +37,9 @@ html, body {
 .learn-more-text {
     font-weight: 500;
     font-size: 1.15rem;
+}
+
+.demo-text {
+    font-weight: 700;
+    font-size: 1.25rem;
 }

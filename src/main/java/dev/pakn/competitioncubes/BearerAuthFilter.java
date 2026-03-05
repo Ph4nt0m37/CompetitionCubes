@@ -28,7 +28,7 @@ public class BearerAuthFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         String token = null;
 
-        if (request.getRequestURI().startsWith("/api/") && !request.getRequestURI().startsWith("/api/public") && !request.getRequestURI().equals("/api/create-user")) {
+        if ((request.getRequestURI().startsWith("/api/") || request.getRequestURI().startsWith("/tutorial")) && !request.getRequestURI().startsWith("/api/public") && !request.getRequestURI().equals("/api/create-user")) {
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 token = authHeader.substring(7);
             }else {
