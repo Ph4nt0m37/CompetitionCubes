@@ -32,7 +32,6 @@ let oppElo = -1;
 const searchingUsersText = document.getElementById("searching-users-text");
 
 export function setScramble(scramble) {
-    shrinkTextToContainerSize();
     if (!matchWinner) {
         if (scramble!=="Waiting for Opponent to solve..." && scramble!=="Waiting for Opponent to confirm solve...") {
             currentScramble = scramble;
@@ -48,7 +47,7 @@ export function setScramble(scramble) {
             });
         }else{
             currentScramble = "";
-            fetch(`/api/remove-inactivity-timer/${userId}`, {
+            fetch(`/api/remove-inactivity-timer`, {
                 method: "DELETE",
                 headers: {
                     "Content-type": "application/json; charset=UTF-8"
@@ -196,19 +195,6 @@ function timeToFloat(time) {
         return parseFloat(times[0]);
     }
 }*/
-
-function shrinkTextToContainerSize() {
-    for(const element of document.getElementsByClassName("shrink"))
-    {
-        var size = parseInt(getComputedStyle(element).getPropertyValue('font-size'));
-        const parent_width = parseInt(getComputedStyle(element.parentElement).getPropertyValue('width'));
-        while(element.offsetWidth > parent_width)
-        {
-            element.style.fontSize = size + "px";
-            size -= 1;
-        }
-    }
-}
 
 function getWaitingUserCount() {
     fetch("/api/waiting-list/3x3").then((response)=>{

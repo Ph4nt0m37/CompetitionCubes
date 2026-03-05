@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Language" content="en">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex">
     <link rel="stylesheet" href="styles/root.css">
     <link rel="stylesheet" href="styles/timer.css">
+    <link rel="stylesheet" href="styles/tutorial.css">
     <link rel="icon" href="/images/compcubelogo.png">
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
-    <title>1v1 | Competition Cubes</title>
+    <title>Demo | Competition Cubes</title>
 </head>
 <body>
     <audio id="match-join-audio" src="./audios/match-join.mp3"></audio>
@@ -25,44 +25,12 @@
             <p class="notification template">Notification</p>
         </div>
     </div>
-    <div id="background-overlay">
-        <div id="menu-popup">
-            <h1 class="menu-text">Menu</h1>
-            <div class="menu-buttons">
-                <button id="report-user-button" class="report-button">Report Opponent</button>
-                <button id="forfeit-button">Forfeit</button>
-            </div>
-            <button id="close-menu-button">Close</button>
-        </div>
-        <div id="report-popup">
-            <button id="close-report-button">
-                <img src="/images/x.svg" draggable="false">
-            </button>
-            <h1 class="report-user-text">Report User</h1>
-            <div class="report-section">
-                <h2 class="report-form-text">Report Reason</h2>
-                <select id="report-reason-dropdown">
-                    <option value="default" selected="selected">Report reason...</option>
-                    <option value="username">Username</option>
-                    <option value="time-wasting">Time Wasting</option>
-                </select>
-            </div>
-            <button id="confirm-report-button" class="report-button">Report</button>
-        </div>
-        <div id="forfeit-confirm-popup">
-            <p class="forfeit-confirm-text">Are you sure you want to forfeit?</p>
-            <div class="forfeit-buttons">
-                <button id="forfeit-confirm" class="forfeit-page-button">Yes</button>
-                <button id="forfeit-deny" class="forfeit-page-button">No</button>
-            </div>
-        </div>
-    </div>
     <div id="scramble-div" style="border-bottom: 10px solid #242424">
         <h2 id="scramble-text" class="shrink">Waiting for Opponent to solve...</h2>
     </div>
     <div id="timer-main-div">
         <div class="timer-div" style="border-right: 5px solid #242424;">
-            <h2 class="username" id="username">Username Not Found</h2>
+            <h2 class="username" id="username">User</h2>
             <h2 class="winsText" id="user-wins">Wins: 0</h1>
             <h2 class="penalty-text" id="penalty-text">+2</h2>
             <h1 class="timer" id="user-timer">00:00.00</h1>
@@ -74,7 +42,7 @@
             </div>
         </div>
         <div class="timer-div" style="border-left: 5px solid #242424;">
-            <h2 class="username" id="opp-username">Username Not Found</h2>
+            <h2 class="username" id="opp-username">Demo Bot</h2>
             <h2 class="winsText" id="opp-wins">Wins: 0</h1>
             <h2 class="penalty-text" id="penalty-text-opp">+2</h2>
             <h1 class="timer" id="opp-timer">00:00.00</h1>
@@ -87,9 +55,7 @@
     <div id="footer-div">
         <h1 class="elo-change-text" id="elo-change-text">ELO: 100>>100</h1>
         <div id="searching-div">
-            <button type="button" id="search-button">Next Match</button>
-            <h1 id="searching-users-text">Unknown users searching for match...</h1>
-            <h1 id="searching-text">Searching...</h1>
+            <button type="button" id="search-button">Home</button>
         </div>
         <h1 class="elo-change-text" id="opp-elo-change-text">ELO: 100>>100</h1>
     </div>
@@ -98,7 +64,5 @@
 	  fitText(document.getElementById('scramble-text'), 2)
 	</script>
 </body>
-<script type="module" src="scripts/competition.js"></script>
-<script type="module" src="scripts/comp_connect.js"></script>
-<script type="module" src="scripts/next_match_search.js"></script>
+<script type="module" src="scripts/demo.js"></script>
 </html>

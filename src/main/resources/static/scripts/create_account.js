@@ -13,8 +13,7 @@ createButton.addEventListener("click",()=>{
             }
         }).then((response) => response.json())
         .then((json) => {
-            document.cookie = "tutorial_complete=false;"
-            window.location.replace("/")
+            window.location.replace("/tutorial");
         });
     }else {
         console.log("textbox empty!");

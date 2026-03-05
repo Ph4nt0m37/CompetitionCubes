@@ -81,9 +81,6 @@ onload = (event)=>{
                     if (users && users.includes(userId)) {
                         fetch(`/api/waiting-list`, {
                             method: "DELETE",
-                            body: JSON.stringify({
-                                userId: userId
-                            }),
                             headers: {
                                 "Content-type": "application/json; charset=UTF-8"
                             }
@@ -94,6 +91,15 @@ onload = (event)=>{
                         window.location.replace(`${window.location.origin}/competition?roomId=${roomId}`);
                     }
                 });
+
+                stompClient.subscribe('/room/under-maintenance', (maintenance) =>{
+                    if (maintenance) {
+                        searchText.textContent = `Competing is currently in maintenance! Please come back later.`;
+                    }else {
+                        searchText.textContent="Searching...";
+                        searchText.style.display="none";
+                    }
+                });
             }
 
             stompClient.onDisconnect = (frame)=>{
@@ -101,9 +107,6 @@ onload = (event)=>{
                 //delete request to remove user from waiting list
                 fetch(`/api/waiting-list`, {
                     method: "DELETE",
-                    body: JSON.stringify({
-                        userId: userId
-                    }),
                     headers: {
                         "Content-type": "application/json; charset=UTF-8"
                     }
@@ -121,19 +124,6 @@ onload = (event)=>{
                 console.error('Broker reported error: ' + frame.headers['message']);
                 console.error('Additional details: ' + frame.body);
             };
-
-            let tutorial_complete = false;
-            //cookie example: tutorial_complete=false
-            const tutorialCompleteCookie = getCookie("tutorial_complete");
-            tutorial_complete = (tutorialCompleteCookie==="true");
-
-            if (!tutorial_complete) {
-                tutorialDiv.style.display="flex";
-                tutorialButton.addEventListener("click",()=>{
-                    document.cookie = "tutorial_complete=true;";
-                    tutorialDiv.style.display="none";
-                });
-            }
 
         }).catch(function(err) {
             console.log('Failed to fetch!', err);
@@ -223,9 +213,6 @@ function cancelMatchSearch(stompClient) {
     stompClient.deactivate();
     fetch(`/api/waiting-list`, {
         method: "DELETE",
-        body: JSON.stringify({
-            userId: userId
-        }),
         headers: {
             "Content-type": "application/json; charset=UTF-8"
         }

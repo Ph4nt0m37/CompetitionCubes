@@ -16,24 +16,26 @@ public class BadgeController {
     public static final int SNS_FALL_25_BADGE = 12;
 
     public static void calculateAndGrantBadges(Match match) {
-        for (int userId:match.getUsers()) {
-            User user = DBController.getUserByIDList(userId);
-            int rank = DBController.getUserEloRank(userId,match.getEvent());
-            if (rank>0) {
-                if (rank<=100 && !user.getBadges().contains(BRONZE_BADGE)) {
-                    user.getBadges().add(BRONZE_BADGE);
+        if (ServerInfo.canAwardBadges()) {
+            for (int userId:match.getUsers()) {
+                User user = DBController.getUserByIDList(userId);
+                int rank = DBController.getUserEloRank(userId,match.getEvent());
+                if (rank>0) {
+                    if (rank<=100 && !user.getBadges().contains(BRONZE_BADGE)) {
+                        user.getBadges().add(BRONZE_BADGE);
+                    }
+                    if (rank<=50 && !user.getBadges().contains(SILVER_BADGE)) {
+                        user.getBadges().add(SILVER_BADGE);
+                    }
+                    if (rank<=10 && !user.getBadges().contains(GOLD_BADGE)) {
+                        user.getBadges().add(GOLD_BADGE);
+                    }
+                    if (rank==1 && !user.getBadges().contains(DIAMOND_BADGE)) {
+                        user.getBadges().add(DIAMOND_BADGE);
+                    }
                 }
-                if (rank<=50 && !user.getBadges().contains(SILVER_BADGE)) {
-                    user.getBadges().add(SILVER_BADGE);
-                }
-                if (rank<=10 && !user.getBadges().contains(GOLD_BADGE)) {
-                    user.getBadges().add(GOLD_BADGE);
-                }
-                if (rank==1 && !user.getBadges().contains(DIAMOND_BADGE)) {
-                    user.getBadges().add(DIAMOND_BADGE);
-                }
+                user.sortBadges();
             }
-            user.sortBadges();
         }
     }
 }

@@ -3,10 +3,14 @@ package dev.pakn.competitioncubes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.PostConstruct;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -50,10 +55,10 @@ public class MatchController {
                 Event event = DBController.stringToEventMap.get(waitlistRequest.getEvent());
                 if (oppReq.getEvent().equals(waitlistRequest.getEvent()) && Math.abs(user.getElo(event)-oppUser.getElo(event))<100) {
                     //fix
-                    MatchFinder.removeFromWaitingList(waitlistRequest.getUserId());
+                    MatchFinder.removeFromWaitingList(user.getUserId());
                     MatchFinder.removeFromWaitingList(oppId);
-                    logger.info("match found between "+waitlistRequest.getUserId()+" and "+oppId);
-                    Match match = new Match(event,new int[]{waitlistRequest.getUserId(),oppId},(int)(Math.random()*9999999));
+                    logger.info("match found between "+user.getUserId()+" and "+oppId);
+                    Match match = new Match(event,new int[]{user.getUserId(),oppId},(int)(Math.random()*9999999));
                     matches.add(match);
                     user.setCurrentMatch(match);
                     oppUser.setCurrentMatch(match);

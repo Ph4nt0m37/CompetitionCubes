@@ -43,7 +43,6 @@ saveButton.addEventListener("click",()=>{
     fetch("/api/save-user-settings",{
         method: "POST",
         body: JSON.stringify({
-            userId: userId,
             inspectionAudio: inspectionAudioToggle.checked,
             matchSounds: matchSoundsToggle.checked
         }),
