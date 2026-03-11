@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +22,7 @@ import jakarta.annotation.PostConstruct;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 @RestController
 public class MatchController {
@@ -33,6 +35,8 @@ public class MatchController {
     private static SimpMessagingTemplate staticSimpMessagingTemplate;
 
     private static ArrayList<Match> matches = new ArrayList<>();
+
+    private static HashMap<PrivateMatchRequest, Integer> privateMatchRequests = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -58,7 +62,7 @@ public class MatchController {
                     MatchFinder.removeFromWaitingList(user.getUserId());
                     MatchFinder.removeFromWaitingList(oppId);
                     logger.info("match found between "+user.getUserId()+" and "+oppId);
-                    Match match = new Match(event,new int[]{user.getUserId(),oppId},(int)(Math.random()*9999999));
+                    Match match = new Match(event,new int[]{user.getUserId(),oppId},(int)(Math.random()*9999999),false);
                     matches.add(match);
                     user.setCurrentMatch(match);
                     oppUser.setCurrentMatch(match);
@@ -106,5 +110,87 @@ public class MatchController {
 
     public static ArrayList<Match> getMatches() {
         return matches;
+    }
+
+    //very sloppy code, might fix later (probably not lol)
+    @MessageMapping("/private-match-request")
+    @SendTo("/room/private-match-update/")
+    public PrivateMatchRequest privateMatchRequest(PrivateMatchRequest privateMatchRequest) {
+        try {
+            //for some reason keySet().contains does not work (im assuming because its parameter is an Object type on a PrivateMatchRequest type)
+            for (PrivateMatchRequest pMatchReq:privateMatchRequests.keySet()) {
+                logger.info(String.valueOf(pMatchReq.equals(privateMatchRequest)));
+                if (pMatchReq.equals(privateMatchRequest)) {
+                    privateMatchRequests.remove(pMatchReq);
+                    if (privateMatchRequest.accepted()) {
+                        int userId = pMatchReq.getUserId();
+                        User user = DBController.getUserByIDList(userId);
+                        if (user.getCurrentMatch()!=null) {
+                            privateMatchRequest.setPrivateRequestCode(PrivateRequestCode.IN_MATCH);
+                            return privateMatchRequest;
+                        }
+                        int oppId = pMatchReq.getOppId();
+                        User opp = DBController.getUserByIDList(oppId);
+                        if (opp.getCurrentMatch()!=null) {
+                            privateMatchRequest.setPrivateRequestCode(PrivateRequestCode.OPP_IN_MATCH);
+                            return privateMatchRequest;
+                        }
+                        Event event = DBController.stringToEventMap.get(pMatchReq.getEvent());
+                        MatchFinder.removeFromWaitingList(userId);
+                        MatchFinder.removeFromWaitingList(oppId);
+                        logger.info("private match created between "+userId+" and "+oppId);
+                        PrivateMatch match = new PrivateMatch(event,new int[]{userId,oppId},(int)(Math.random()*9999999));
+                        matches.add(match);
+                        user.setCurrentMatch(match);
+                        opp.setCurrentMatch(match);
+                        privateMatchRequest.setPrivateRequestCode(PrivateRequestCode.ACCEPTED);
+                        privateMatchRequest.setMatch(match);
+                        return privateMatchRequest;   
+                    }else {
+                        privateMatchRequest.setPrivateRequestCode(PrivateRequestCode.REJECTED);
+                        return privateMatchRequest;
+                    }
+                }
+            }
+            if (privateMatchRequest.getRequestId()==-1) {
+                int userId = privateMatchRequest.getUserId();
+                User user = DBController.getUserByIDList(userId);
+                if (user.getCurrentMatch()!=null) {
+                    privateMatchRequest.setPrivateRequestCode(PrivateRequestCode.IN_MATCH);
+                    return privateMatchRequest;
+                }
+                int oppId = privateMatchRequest.getOppId();
+                User opp = DBController.getUserByIDList(oppId);
+                if (opp.getCurrentMatch()!=null) {
+                    privateMatchRequest.setPrivateRequestCode(PrivateRequestCode.OPP_IN_MATCH);
+                    return privateMatchRequest;
+                }
+                privateMatchRequest.setRequestId((int)(Math.random()*9999999));
+                privateMatchRequest.setPrivateRequestCode(PrivateRequestCode.WAITING);
+                privateMatchRequests.put(privateMatchRequest,60);
+                simpMessagingTemplate.convertAndSend("/room/private-match-receiver/"+privateMatchRequest.getOppId(),privateMatchRequest);
+                return privateMatchRequest;
+            }else {
+                privateMatchRequest.setPrivateRequestCode(PrivateRequestCode.EXPIRED);
+                return privateMatchRequest;
+            }
+        }catch (Exception e) {
+            logger.error("Something went wrong with the private match", e);
+            privateMatchRequest.setPrivateRequestCode(PrivateRequestCode.ERROR);
+            return privateMatchRequest;
+        }
+    }
+
+    @Scheduled(fixedRate = 1000)
+    private void decrementPrivateRequestExpiration() {
+        //need to be weary of concurrentmodificationexception
+        PrivateMatchRequest[] requests = privateMatchRequests.keySet().toArray(new PrivateMatchRequest[0]);
+        for (int i=0;i<requests.length;i++) {
+            PrivateMatchRequest req = requests[i];
+            privateMatchRequests.put(req, privateMatchRequests.get(req)-1);
+            if (privateMatchRequests.get(req)<0) {
+                privateMatchRequests.remove(req);
+            }
+        }
     }
 }

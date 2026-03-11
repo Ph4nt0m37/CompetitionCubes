@@ -2,6 +2,7 @@
 export let roomId = new URLSearchParams(window.location.search).get("roomId");
 export let userId = sessionStorage.getItem("userId");
 sessionStorage.removeItem("userId");
+import { connectPrivateReceiver } from "./private_match_receiver.js";
 import { setTimerEnabled } from "./timer.js";
 
 let scrambleText = document.getElementById("scramble-text");
@@ -159,7 +160,7 @@ export function endMatch(matchData) {
         eloChangeText.innerHTML=`ELO: ${userElo}<span style="color:rgb(255,0,0)">>></span>${userElo-eloChange}`;
         oppEloChangeText.innerHTML=`ELO: ${oppElo}<span style="color:rgb(0,255,0)">>></span>${oppElo+eloChange}`;
     }
-
+    connectPrivateReceiver();
 }
 
 export function setAo5s(ao5Json) {

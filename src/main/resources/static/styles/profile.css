@@ -362,6 +362,26 @@ button {
   scale: 0.95;
 }
 
+#challenge-button {
+  border: none;
+  border-radius: 5px;
+  background-color: var(--challenge-color);
+  padding: 6px 6px 4px 7px;
+}
+
+#challenge-button:hover {
+  background-color: var(--challenge-color-hover);
+}
+
+#challenge-button:active {
+  scale: 0.95;
+}
+
+#challenge-button > img {
+  width: 24px;
+  height: 24px;
+}
+
 #background-overlay {
     position: fixed;
     inset: 0;
@@ -524,47 +544,6 @@ button {
 
 .template {
     display: none;
-}
-
-.notif-abs-div {
-  position: absolute;
-  right: 5px;
-  top: 90px;
-}
-
-#notif-div {
-  position: sticky;
-  margin-left: auto;
-  margin-right: 10px;
-  width: fit-content;
-  top: 10px;
-  z-index: 3;
-}
-
-.notification {
-    background-color: var(--notification-color);
-    width: 15rem;
-    text-align: center;
-    padding: 10px 10px;
-    border-radius: 10px;
-    border: 1px solid var(--h2-color);
-    box-shadow: 0 4px 12px rgb(0,0,0,0.25);
-    color: var(--dark-font-color);
-    animation: fadeIn 0.15s ease-out;
-}
-
-@keyframes fadeIn {
-  0% { opacity: 0; 
-       display: flex;
-    }
-  100% { opacity: 1; }
-}
-
-.fade-out { animation: fadeOut 2.5s; }
-
-@keyframes fadeOut {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
 }
 
 #view-info-button {
@@ -1167,18 +1146,35 @@ button {
     color: var(--warning-color);
 }
 
-#warn-confirm {
+.deny-button {
     background-color: var(--red-button);
 }
 
-#warn-confirm:hover {
+.deny-button:hover {
     background-color: var(--red-button-hover);
 }
 
-#warn-deny {
+.confirm-button {
     background-color: var(--green-button);
 }
 
-#warn-deny:hover {
+.confirm-button:hover {
     background-color: var(--green-button-hover);
+}
+
+#challenge-popup {
+    font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+    width: 22rem;
+    height: 8.5rem;
+    display: none;
+    background-color: var(--main-bg-color);
+    z-index: 5;
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: fadeIn 0.15s ease-out;
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
 }

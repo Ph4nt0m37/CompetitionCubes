@@ -659,3 +659,56 @@ button {
     margin-top: 3px;
     font-weight: 700;
 }
+
+.challenge-req {
+  background-color: var(--blue-button);
+}
+
+.req-notif-text {
+  margin: 0;
+}
+
+.req-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.req-buttons > p {
+  margin: 5px;
+  margin: 5px 30px;
+}
+
+.accept-req-button {
+  cursor: pointer;
+  color: var(--dark-green-button);
+  text-decoration: underline;
+}
+
+.accept-req-button:hover {
+  color: var(--dark-green-button-hover);
+}
+
+.decline-req-button {
+  cursor: pointer;
+  color: var(--dark-red-button);
+  text-decoration: underline;
+}
+
+.decline-req-button:hover {
+  color: var(--dark-red-button-hover);
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; 
+       display: flex;
+    }
+  100% { opacity: 1; }
+}
+
+.fade-out { animation: fadeOut 2.5s; }
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}

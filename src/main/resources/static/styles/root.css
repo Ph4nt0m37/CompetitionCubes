@@ -13,6 +13,8 @@
     --green-button-hover: #29b866;
     --bright-green-button: #3df188;
     --bright-green-button-hover: #37d97a;
+    --dark-green-button: #118642;
+    --dark-green-button-hover: #0f793b;
     --blue-button: #3498db;
     --blue-button-hover: #2980b9;
     --yellow-button: #d7e233;
@@ -33,6 +35,8 @@
     --report-button: #d91919;
     --notification-color: #c53838;
     --gray-border: #cccccc;
+    --challenge-color: #e66f00;
+    --challenge-color-hover: #d56700;
     /* Icon Color: #565656*/
 }
 

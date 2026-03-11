@@ -30,24 +30,32 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketConnectListener(final SessionConnectEvent event) {
         StompHeaderAccessor headers = StompHeaderAccessor.wrap(event.getMessage());
-        try {
-            //here
-            int userId = Integer.parseInt(headers.getFirstNativeHeader("user_id"));
-            sessionUserIdMap.put(headers.getSessionId(), userId);
-            matchDisconnectTimer.remove(userId);
-        }catch (NumberFormatException e) {
-            logger.error("wth how did they get a userId that is not a number???",e);
-            e.printStackTrace();
+        boolean doDisconnect = Boolean.parseBoolean(headers.getFirstNativeHeader("do_disconnect"));
+        if (doDisconnect) {
+            try {
+                int userId = Integer.parseInt(headers.getFirstNativeHeader("user_id"));
+                sessionUserIdMap.put(headers.getSessionId(), userId);
+                matchDisconnectTimer.remove(userId);
+            }catch (NumberFormatException e) {
+                logger.error("wth how did they get a userId that is not a number???",e);
+                e.printStackTrace();
+            }
         }
     }
 
     @EventListener
     public void handleWebSocketDisconnectListener(final SessionDisconnectEvent event) {
-        int userId = sessionUserIdMap.get(event.getSessionId());
-        MatchFinder.removeFromWaitingList(userId);
-        logger.debug("removed "+userId+" from waiting list!");
-        Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
-        if (userMatch!=null && userMatch.getWinner()==null) matchDisconnectTimer.put(userId, 3);
+        int userId = sessionUserIdMap.get(event.getSessionId()) != null ? sessionUserIdMap.get(event.getSessionId()) : -1;
+        if (userId>=0) {
+            try {
+                MatchFinder.removeFromWaitingList(userId);
+                //logger.info("removed "+userId+" from waiting list!");
+                Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
+                if (userMatch!=null && userMatch.getWinner()==null) matchDisconnectTimer.put(userId, 3);
+            }catch (Exception e) {
+                logger.error("Something went wrong when disconnecting!",e);
+            }
+        }
     }
 
     @Scheduled(fixedRate = 1000)

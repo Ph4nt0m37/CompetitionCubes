@@ -152,8 +152,15 @@
         <div id="warn-confirm-popup">
             <p class="ban-confirm-text">Are you sure you want to warn this user?</p>
             <div class="ban-buttons">
-                <button id="warn-confirm" class="ban-page-button">Yes</button>
-                <button id="warn-deny" class="ban-page-button">No</button>
+                <button id="warn-confirm" class="ban-page-button deny-button">Yes</button>
+                <button id="warn-deny" class="ban-page-button confirm-button">No</button>
+            </div>
+        </div>
+        <div id="challenge-popup">
+            <p class="ban-confirm-text">Do you want to challenge this user?</p>
+            <div class="ban-buttons">
+                <button id="challenge-confirm" class="ban-page-button confirm-button">Yes</button>
+                <button id="challenge-deny" class="ban-page-button deny-button">No</button>
             </div>
         </div>
     </div>
@@ -163,6 +170,9 @@
             <div class="profile-buttons">
                 <button id="view-info-button">
                     <img src="/images/blue_eye.svg" draggable="false">
+                </button>
+                <button id="challenge-button">
+                    <img src="/images/two-swords.svg" draggable="false">
                 </button>
                 <button id="report-flag">
                     <img src="/images/flag.svg" draggable="false">
