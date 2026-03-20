@@ -375,10 +375,10 @@ function publishSolveData(penalty) {
             setTimeout(()=>{
                 setOppTimerState(timerStates.STOPPED);
                 setScramble("Waiting for Opponent to confirm solve...");
-                oppPenaltyText.style.color="#e23333";
-                oppPenaltyText.textContent="DNF";
-                oppPenaltyText.style.display="block";
                 setTimeout(()=>{
+                    oppPenaltyText.style.color="#e23333";
+                    oppPenaltyText.textContent="DNF";
+                    oppPenaltyText.style.display="block";
                     userWins.textContent=`Wins: 1`;
                     userWins.classList.toggle("wonRound");
                     setTimeout(() => {
