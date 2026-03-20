@@ -1,4 +1,4 @@
-const launchEpoch = 1774728000000; //March 28th, 2026 3 PM EST
+const launchEpoch = 1774724400000; //March 28th, 2026 3 PM EST
 //1774728000000
 
 const timeText = document.getElementById("time-text");
