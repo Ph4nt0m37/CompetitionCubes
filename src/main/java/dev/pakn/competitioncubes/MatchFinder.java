@@ -26,7 +26,7 @@ public class MatchFinder {
 
     @PostMapping("/api/waiting-list")
     private WaitlistResult addToWaitingList(@AuthenticationPrincipal User user, @RequestBody String userIdJSON) {
-        if (ServerInfo.isUnderMaintenance() || !ServerInfo.hasLaunched()) return new WaitlistResult(WaitlistCode.MAINTENANCE);
+        if (ServerInfo.isUnderMaintenance()) return new WaitlistResult(WaitlistCode.MAINTENANCE);
         try {
             JSONObject requestJson = new JSONObject(userIdJSON);
             int userId = user.getUserId();
