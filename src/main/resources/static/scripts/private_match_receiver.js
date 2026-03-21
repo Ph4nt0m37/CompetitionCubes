@@ -1,9 +1,9 @@
+export let stompClient = undefined;
 
 let navUser = undefined;
 let navUserId = undefined;
 
 export async function connectPrivateReceiver() {
-    let stompClient = undefined;
     await fetch(`/api/get-user-data`).then(async (response)=> {
         if (response.ok)
             return response.json();
@@ -40,7 +40,6 @@ export async function connectPrivateReceiver() {
                 let match = request['match'];
                 if (request['privateRequestCode']=="ACCEPTED") {
                     const users = match['users'];
-                    console.log(match);
                     fetch(`/api/waiting-list`, {
                         method: "DELETE",
                         headers: {
@@ -49,8 +48,8 @@ export async function connectPrivateReceiver() {
                     }).catch(error=>{
                         //do nothing!
                     });
-                    //users[0] will be the requester
-                    if (navUserId===users[0]) {
+                    //users[0] will be the requester. if roomId is -1 AND the request has been accepted, that means it's a private match
+                    if (request['requestId']==-1 || navUserId===users[0]) {
                         createNotification(`Your challenge request has been accepted. Redirecting...`,"#22eb51");
                     }
                     //unnecessary timeout, just figured it would look better when a user accepted to have a little delay instead of immediately redirecting
@@ -75,6 +74,12 @@ export async function connectPrivateReceiver() {
                 }else if (request['privateRequestCode']=="IN_MATCH") {
                     if (navUserId===request['userId'])
                         createNotification("This user is currently in a match and cannot accept your request. Please try again later.","#c53838");
+                }else if (request['privateRequestCode']=="NOT_ACCEPTING") {
+                    if (navUserId===request['userId'])
+                        createNotification("This user is not accepting challenge requests right now. Please try again later.","#c53838");
+                }else if (request['privateRequestCode']=="WAITING") {
+                    if (navUserId===request['userId'])
+                        createNotification("Successfully sent challenge request.","#22eb51");
                 }
             });
         }
@@ -144,4 +149,10 @@ export async function connectPrivateReceiver() {
             },1500);
         },60000);
     }
+}
+
+export async function connectPrivateReceiverWithData(data, userId) {
+    navUser = data;
+    navUserId=userId;
+    connectPrivateReceiver();
 }

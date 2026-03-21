@@ -131,6 +131,10 @@ public class Match {
         return eloChange;
     }
 
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
     public boolean addSolve(int userId, SolveData solve) {
         if (!isPrivate) {
             boolean isValidSolve = AntiCheat.validateSolve(solve, getUserWcaPbAvg(solve.getUserId()), getUserWcaPbSingle(solve.getUserId()));

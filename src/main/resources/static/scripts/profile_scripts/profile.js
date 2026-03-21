@@ -1,4 +1,5 @@
-import { navUserId, navUser, stompClient } from "../navbar.js";
+import { navUserId, navUser } from "../navbar.js";
+import { stompClient } from "../private_match_receiver.js";
 
 export let user = null;
 const usernameText = document.getElementById("username-text");
@@ -255,11 +256,12 @@ if (challengeButton) {
     challengeConfirmButton.addEventListener("click",()=>{
         actionsPopup.style.display = "none";
         challengePopup.style.display = "none";
-        if (user && user['username']) {
+        //createNotification(`Sending challenge request...`,"#3498db");
+        /*if (user && user['username']) {
             createNotification(`Successfully sent a challenge request to ${user['username']}!`,"#22eb51");
         }else {
             createNotification(`Successfully sent a challenge request to this user!`,"#22eb51");
-        }
+        }*/
         
         stompClient.publish({
             destination: "/app/private-match-request",

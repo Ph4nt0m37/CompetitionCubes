@@ -33,9 +33,12 @@ public class WebSocketEventListener {
         boolean doDisconnect = Boolean.parseBoolean(headers.getFirstNativeHeader("do_disconnect"));
         if (doDisconnect) {
             try {
-                int userId = Integer.parseInt(headers.getFirstNativeHeader("user_id"));
-                sessionUserIdMap.put(headers.getSessionId(), userId);
-                matchDisconnectTimer.remove(userId);
+                String userIdHeader = headers.getFirstNativeHeader("user_id");
+                if (userIdHeader!=null && !userIdHeader.isEmpty() && !userIdHeader.equals("null")) {
+                    int userId = Integer.parseInt(userIdHeader);
+                    sessionUserIdMap.put(headers.getSessionId(), userId);
+                    matchDisconnectTimer.remove(userId);
+                }
             }catch (NumberFormatException e) {
                 logger.error("wth how did they get a userId that is not a number???",e);
                 e.printStackTrace();

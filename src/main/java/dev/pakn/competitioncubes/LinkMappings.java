@@ -40,11 +40,14 @@ public class LinkMappings {
     }*/
 
     @GetMapping("/competition")
-    public String compPage(@CookieValue(value="user_secret", required = false) String userSecret, @RequestParam("roomId") String roomIdStr) {
-        if (!ServerInfo.hasLaunched()) {
+    public String compPage(@CookieValue(value="launch_override",required = false) String override, @CookieValue(value="user_secret", required = false) String userSecret, @RequestParam("roomId") String roomIdStr) {
+        if (!ServerInfo.hasLaunched() && !Boolean.valueOf(override)) {
             return "launch-waiting.html";
         }
         User user = DBController.getUserBySecret(userSecret);
+        if (user.getCurrentMatch().isPrivate()) {
+            return "comp_private.html";
+        }
         for (Match match:MatchController.getMatches()) {
             if (match.getRoomId()==Integer.parseInt(roomIdStr)) {
                 for (int matchUserId:match.getUsers()) {
@@ -59,13 +62,13 @@ public class LinkMappings {
 
     @GetMapping("/")
     //im NOT using @AuthenticationPrinciple here because I need to accept unauthorized users. if I add @PreAuthorized, then non-authed users will get 401
-    public String mainPage(@CookieValue(value="user_secret", required = false) String userSecret, HttpServletResponse response) {
+    public String mainPage(@CookieValue(value="launch_override",required = false) String override, @CookieValue(value="user_secret", required = false) String userSecret, HttpServletResponse response) {
         //prevent browser caching
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
         response.setHeader("Pragma", "no-cache"); // For HTTP/1.0
         response.setDateHeader("Expires", 0); // For proxies
 
-        if (!ServerInfo.hasLaunched()) {
+        if (!ServerInfo.hasLaunched() && !Boolean.valueOf(override)) {
             return "launch-waiting.html";
         }
 
@@ -81,8 +84,8 @@ public class LinkMappings {
     }
 
     @GetMapping("/create-account")
-    public String createAccountPage(@CookieValue(value="user_secret", required = false) String userSecret) {
-        if (!ServerInfo.hasLaunched()) {
+    public String createAccountPage(@CookieValue(value="launch_override",required = false) String override, @CookieValue(value="user_secret", required = false) String userSecret) {
+        if (!ServerInfo.hasLaunched() && !Boolean.valueOf(override)) {
             return "launch-waiting.html";
         }
         if (userSecret==null) {
@@ -92,13 +95,13 @@ public class LinkMappings {
     }
 
     @GetMapping("/user/{userId}")
-    public String userPage(@CookieValue(value="user_secret", required = false) String userSecret, @PathVariable int userId, HttpServletResponse response) {
+    public String userPage(@CookieValue(value="launch_override",required = false) String override, @CookieValue(value="user_secret", required = false) String userSecret, @PathVariable int userId, HttpServletResponse response) {
         //prevent browser caching (for users with userinfoaccess)
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
         response.setHeader("Pragma", "no-cache"); // For HTTP/1.0
         response.setDateHeader("Expires", 0); // For proxies
 
-        if (!ServerInfo.hasLaunched()) {
+        if (!ServerInfo.hasLaunched() && !Boolean.valueOf(override)) {
             return "launch-waiting.html";
         }
         
@@ -119,16 +122,16 @@ public class LinkMappings {
     }
 
     @GetMapping("/rankings")
-    public String rankingsPage() {
-        if (!ServerInfo.hasLaunched()) {
+    public String rankingsPage(@CookieValue(value="launch_override",required = false) String override) {
+        if (!ServerInfo.hasLaunched() && !Boolean.valueOf(override)) {
             return "launch-waiting.html";
         }
         return "leaderboard.html";
     }
 
     @GetMapping("/tutorial")
-    public String tutorialPage() {
-        if (!ServerInfo.hasLaunched()) {
+    public String tutorialPage(@CookieValue(value="launch_override",required = false) String override) {
+        if (!ServerInfo.hasLaunched() && !Boolean.valueOf(override)) {
             return "launch-waiting.html";
         }
         return "tutorial.html";
@@ -140,24 +143,24 @@ public class LinkMappings {
     }
 
     @GetMapping("/search") 
-    public String searchPage() {
-        if (!ServerInfo.hasLaunched()) {
+    public String searchPage(@CookieValue(value="launch_override",required = false) String override) {
+        if (!ServerInfo.hasLaunched() && !Boolean.valueOf(override)) {
             return "launch-waiting.html";
         }
         return "search-page.html";
     }
 
     @GetMapping("/rules")
-    public String rulesPage() {
-        if (!ServerInfo.hasLaunched()) {
+    public String rulesPage(@CookieValue(value="launch_override",required = false) String override) {
+        if (!ServerInfo.hasLaunched() && !Boolean.valueOf(override)) {
             return "launch-waiting.html";
         }
         return "rules.html";
     }
 
     @GetMapping("/settings")
-    public String settingsPage(@CookieValue(value="user_secret", required = false) String userSecret) {
-        if (!ServerInfo.hasLaunched()) {
+    public String settingsPage(@CookieValue(value="launch_override",required = false) String override, @CookieValue(value="user_secret", required = false) String userSecret) {
+        if (!ServerInfo.hasLaunched() && !Boolean.valueOf(override)) {
             return "launch-waiting.html";
         }
         if (userSecret!=null) {
@@ -172,8 +175,8 @@ public class LinkMappings {
     }
 
     @GetMapping("/admin")
-    public String adminDashboard(@CookieValue(value="user_secret", required = false) String userSecret) {
-        if (!ServerInfo.hasLaunched()) {
+    public String adminDashboard(@CookieValue(value="launch_override",required = false) String override, @CookieValue(value="user_secret", required = false) String userSecret) {
+        if (!ServerInfo.hasLaunched() && !Boolean.valueOf(override)) {
             return "launch-waiting.html";
         }
         if (userSecret!=null) {
@@ -186,10 +189,15 @@ public class LinkMappings {
     }
 
     @GetMapping("/donate")
-    public String donatePage() {
-        if (!ServerInfo.hasLaunched()) {
+    public String donatePage(@CookieValue(value="launch_override",required = false) String override) {
+        if (!ServerInfo.hasLaunched() && !Boolean.valueOf(override)) {
             return "launch-waiting.html";
         }
         return "donate.html";
+    }
+
+    @GetMapping("/mobile-help")
+    public String mobileHelpPage() {
+        throw new MobileNotSupportedException();
     }
 }

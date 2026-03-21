@@ -173,12 +173,14 @@ public class PostRequestClass {
     public static class UserSettingsReq {
         private boolean inspectionAudio = true;
         private boolean matchSounds = true;
+        private boolean acceptsChallengeRequests;
 
         public UserSettingsReq() {}
         
-        public UserSettingsReq(boolean inspectionAudio, boolean matchSounds) {
+        public UserSettingsReq(boolean inspectionAudio, boolean matchSounds, boolean acceptsChallengeRequests) {
             this.inspectionAudio = inspectionAudio;
             this.matchSounds = matchSounds;
+            this.acceptsChallengeRequests = acceptsChallengeRequests;
         }
 
         public boolean isInspectionAudio() {
@@ -197,12 +199,19 @@ public class PostRequestClass {
             this.matchSounds = matchSounds;
         }
 
+        public boolean acceptsChallengeRequests() {
+            return acceptsChallengeRequests;
+        }
+
+        public void setAcceptsChallengeRequests(boolean acceptsChallengeRequests) {
+            this.acceptsChallengeRequests = acceptsChallengeRequests;
+        }
+
         @Override
         public String toString() {
             return "UserSettingsReq [inspectionAudio=" + inspectionAudio + ", matchSounds=" + matchSounds
                     + ", isInspectionAudio()=" + isInspectionAudio() + ", isMatchSounds()=" + isMatchSounds() + "]";
         }
-
         
     }
 

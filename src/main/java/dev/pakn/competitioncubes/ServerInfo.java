@@ -16,15 +16,28 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties.Http;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.pakn.competitioncubes.PostRequestClass.MaintenanceRequest;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Component
+@RestController
 public class ServerInfo {
 
     private static Logger logger = LoggerFactory.getLogger(CompetitioncubesApplication.class);
@@ -39,6 +52,8 @@ public class ServerInfo {
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     private static final File serverInfoFile = new File("C:\\Users\\Phant\\Programs\\CompetitionCubes\\src\\main\\resources\\server_info.json");
+
+    private static final String overridePassword = "0v3rR1de";
 
     @PostConstruct
     public void init() {
@@ -94,4 +109,19 @@ public class ServerInfo {
     public static boolean sendMaintenance() {
         return ServerInfo.isUnderMaintenance();
     }
+
+    @GetMapping("/api/public/check-override-password")
+    public ResponseEntity<Boolean> checkOverridePassword(@RequestParam String pass, HttpServletResponse response) {
+        if (pass.equals(overridePassword)) {
+            Cookie overrideCookie = new Cookie("launch_override", "true");
+            overrideCookie.setSecure(true);
+            overrideCookie.setHttpOnly(true);
+            overrideCookie.setMaxAge(86400);
+            overrideCookie.setPath("/");
+            response.addCookie(overrideCookie);
+            return new ResponseEntity<>(true,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(false,HttpStatus.FORBIDDEN);
+    }
+    
 }

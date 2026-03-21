@@ -8,6 +8,7 @@ const usernameBox = document.getElementById("username-input");
 const changeUsernameText = document.getElementById("change-username-text");
 const inspectionAudioToggle = document.getElementById("inspection-audio-toggle");
 const matchSoundsToggle = document.getElementById("match-sounds-toggle");
+const challengeReqToggle = document.getElementById("challenge-req-toggle");
 
 let user = null;
 let userId = null;
@@ -34,6 +35,7 @@ await fetch(`/api/get-user-data`).then(async (response)=> {
     settingsDiv.classList.remove("hidden");
     inspectionAudioToggle.checked = settings['inspectionAudio'];
     matchSoundsToggle.checked = settings['matchSounds'];
+    challengeReqToggle.checked = settings['acceptsChallengeRequests'];
     return;
 });
 
@@ -44,7 +46,8 @@ saveButton.addEventListener("click",()=>{
         method: "POST",
         body: JSON.stringify({
             inspectionAudio: inspectionAudioToggle.checked,
-            matchSounds: matchSoundsToggle.checked
+            matchSounds: matchSoundsToggle.checked,
+            acceptsChallengeRequests: challengeReqToggle.checked
         }),
         headers: {
             "Content-type": "application/json; charset=UTF-8"

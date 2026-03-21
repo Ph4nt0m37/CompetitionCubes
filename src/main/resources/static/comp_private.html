@@ -16,9 +16,6 @@
     <audio id="12s-audio" src="./audios/12-seconds.mp3"></audio>
     <button type="button" id="home-button">Home</button>
     <button type="button" id="menu-button">Menu</button>
-    <button id="report-solve-button">
-        <img src="/images/flag.svg" draggable="false">
-    </button>
     <div class="notif-abs-div">
         <div id="notif-div">
             <p class="notification template">Notification</p>
@@ -50,7 +47,6 @@
                 <select id="report-reason-dropdown">
                     <option value="default" selected="selected">Report reason...</option>
                     <option value="username">Username</option>
-                    <option value="time-wasting">Time Wasting</option>
                 </select>
             </div>
             <button id="confirm-report-button" class="report-button">Report</button>
@@ -91,22 +87,19 @@
         </div>
     </div>
     <div id="footer-div">
-        <h1 class="elo-change-text" id="elo-change-text">ELO: 100>>100</h1>
-        <div id="searching-div">
-            <button type="button" class="end-match-button" id="search-button">Next Match</button>
-            <h1 id="searching-users-text">Unknown users searching for match...</h1>
-            <h1 id="searching-text">Searching...</h1>
+        <div id="searching-private-div">
+            <button type="button" class="end-match-button" id="rematch-button">Rematch?</button>
+            <h1 id="rematch-text">Your opponent wants a rematch!</h1>
+            <h1 id="searching-text">Waiting for opponent...</h1>
         </div>
-        <h1 class="elo-change-text" id="opp-elo-change-text">ELO: 100>>100</h1>
     </div>
     <script src="scripts/fittext.js"></script>
 	<script type="text/javascript">
 	  fitText(document.getElementById('scramble-text'), 2.25)
 	</script>
 </body>
-<script type="module" src="scripts/competition.js"></script>
-<script type="module" src="scripts/comp_connect.js"></script>
-<script type="module" src="scripts/next_match_search.js"></script>
+<script type="module" src="scripts/competition_private.js"></script>
+<script type="module" src="scripts/comp_connect_private.js"></script>
 <script type="module" src="scripts/private_match_receiver.js"></script>
 <script src="scripts/mobile_check.js"></script>
 </html>

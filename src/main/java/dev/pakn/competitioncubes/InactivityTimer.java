@@ -30,7 +30,7 @@ public class InactivityTimer {
                 userInactivityTimers.remove(i);
             }
         }
-        userInactivityTimers.add(userInactivity);
+        if (!user.getCurrentMatch().isPrivate()) userInactivityTimers.add(userInactivity);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -228,6 +228,10 @@ header {
   background-color: var(--blue-button);
 }
 
+.notification.challenge-req {
+    background-color: var(--blue-button);
+}
+
 .req-notif-text {
   margin: 0;
 }
