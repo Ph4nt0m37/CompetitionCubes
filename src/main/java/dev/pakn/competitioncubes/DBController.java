@@ -161,11 +161,12 @@ public class DBController {
                     eventStatement.executeUpdate();
                 }
 
-                String settingsQuery = "INSERT INTO user_settings (id, inspection_audio, match_sounds) VALUES (?, ?, ?);";
+                String settingsQuery = "INSERT INTO user_settings (id, inspection_audio, match_sounds, accepts_challenge_requests) VALUES (?, ?, ?, ?);";
                 PreparedStatement settingsStatement = conn.prepareStatement(settingsQuery);
                 settingsStatement.setInt(1, userId);
                 settingsStatement.setBoolean(2, true);
                 settingsStatement.setBoolean(3, true);
+                settingsStatement.setBoolean(4, true);
 
                 settingsStatement.executeUpdate();
 

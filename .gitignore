@@ -35,5 +35,4 @@ build/
 
 ### Logs ###
 /logs
-logs/app.log
-logs/app.log
+**/app.log

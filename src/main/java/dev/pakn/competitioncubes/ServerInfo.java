@@ -51,12 +51,13 @@ public class ServerInfo {
 
     private static ObjectMapper objectMapper = new ObjectMapper();
 
-    private static final File serverInfoFile = new File("C:\\Users\\Phant\\Programs\\CompetitionCubes\\src\\main\\resources\\server_info.json");
+    private static final File serverInfoFile = new File(System.getProperty("user.dir")+"\\src\\main\\resources\\server_info.json");
 
     private static final String overridePassword = "0v3rR1de";
 
     @PostConstruct
     public void init() {
+        logger.info("dir: "+System.getProperty("user.dir")+"\\src\\main\\resources\\server_info.json");
         try {
             JSONObject maintenanceJSONArr = new JSONObject(Files.readString(serverInfoFile.toPath())).getJSONObject("maintenance");
             maintenanceTime = new MaintenanceRequest(maintenanceJSONArr.getLong("time"), maintenanceJSONArr.getString("reason"));
