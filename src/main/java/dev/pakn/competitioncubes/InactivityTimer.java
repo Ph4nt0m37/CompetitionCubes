@@ -30,11 +30,11 @@ public class InactivityTimer {
                 userInactivityTimers.remove(i);
             }
         }
-        userInactivityTimers.add(userInactivity);
+        if (!user.getCurrentMatch().isPrivate()) userInactivityTimers.add(userInactivity);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/api/remove-inactivity-timer/{userId}")
+    @DeleteMapping("/api/remove-inactivity-timer")
     public ResponseEntity<?> deleteInactivityTimer(@AuthenticationPrincipal User user) {
         for (int i=0;i<userInactivityTimers.size();i++) {
             //should probably just write an equals method but im lazy

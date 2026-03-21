@@ -1,4 +1,4 @@
-import { userId } from "./competition.js";
+import { userId } from "./competition_private.js";
 //export let userId = Math.floor(Math.random()*100000);
 
 const searchText = document.getElementById("searching-text");

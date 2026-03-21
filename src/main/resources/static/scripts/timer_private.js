@@ -1,5 +1,5 @@
-import { stompClient } from "./comp_connect.js";
-import { currentScramble, roomId, userId, oppId } from "./competition.js";
+import { stompClient } from "./comp_connect_private.js";
+import { currentScramble, roomId, userId, oppId, userSettings } from "./competition_private.js";
 export const timerStates = {
     TIMING: 0,
     INSPECTION: 1,
@@ -17,8 +17,6 @@ let timerEnabled = true;
 export function setTimerEnabled(enabled) {
     timerEnabled=enabled;
 }
-
-const matchJoinAudio = document.getElementById("match-join-audio");
 
 window.onload = ()=>{
     const userTimer = document.getElementById("user-timer");
@@ -89,18 +87,6 @@ window.onload = ()=>{
             createNotification(`Please select a reason for reporting!`);
         }
     });
-
-    let userSettings = null;
-    fetch(`/api/get-user-settings/${userId}`).then((resp)=>{
-        if (resp.ok)
-            return resp.json();
-        createNotification("Something went wrong loading your settings, so some things may not work as expected.");
-    }).then(settings=>{
-        userSettings = settings;
-        if (userSettings['inspectionAudio']) {
-            matchJoinAudio.play();
-        }
-    }); 
 
     actionsPopup.addEventListener("click",(event)=>{
         if (event.target===event.currentTarget && forfeitPopup.style.display==="none") {
@@ -242,16 +228,6 @@ window.onload = ()=>{
             }
             if (timerState===timerStates.TIMING) {
                 clearInterval(timerInterval);
-                fetch("/api/reset-inactivity-timer", {
-                    method: "POST",
-                    body: JSON.stringify({
-                        userId: userId,
-                        maxTime: 60
-                    }),
-                    headers: {
-                        "Content-type": "application/json; charset=UTF-8"
-                    }
-                });
                 userTimer.style.color="black";
 
                 rawTime = Date.now()-startTime;
@@ -343,16 +319,6 @@ window.onload = ()=>{
                         canStartTimer = false;
                         timerState = timerStates.TIMING;
                         userTimer.style.color = "black";
-                        fetch("/api/reset-inactivity-timer", {
-                            method: "POST",
-                            body: JSON.stringify({
-                                userId: userId,
-                                maxTime: 2147483647
-                            }),
-                            headers: {
-                                "Content-type": "application/json; charset=UTF-8"
-                            }
-                        });
                         //sending start data
                         stompClient.publish({
                             destination: "/app/switchTimer",
@@ -416,7 +382,7 @@ window.onload = ()=>{
 const notificationTemplate = document.querySelector(".notification.template");
 const notificationBox = document.getElementById("notif-div");
 
-function createNotification(text) {
+export function createNotification(text) {
     const notif = notificationTemplate.cloneNode(true);
     notif.textContent = text;
     notif.classList.remove("template");

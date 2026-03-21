@@ -1,9 +1,6 @@
-import { roomId, userId, setScramble, matchData, setMatchData, setWins, endMatch, setAo5s } from "./competition.js";
-import { startMatchSearchClient } from "./next_match_search.js";
-import { setTimerState, setTime, setEarlyTime, setPenalty, clearPenalty } from "./opptimer.js"
-import { setTimerEnabled } from "./timer.js";
-
-console.log(sessionStorage.getItem("userId"));
+import { roomId, userId, setScramble, matchData, setMatchData, setWins, endMatch, setAo5s } from "./competition_private.js";
+import { setTimerState, setTime, setEarlyTime, setPenalty, clearPenalty } from "./opptimer_private.js"
+import { setTimerEnabled } from "./timer_private.js";
 
 export const stompClient = new StompJs.Client({
     brokerURL: `wss://${window.location.host}/user-connect`,
@@ -13,7 +10,7 @@ export const stompClient = new StompJs.Client({
     }
 });
 
-const searchingUsersText = document.getElementById("searching-users-text");
+const rematchText = document.getElementById("rematch-text");
 
 stompClient.activate();
 
@@ -67,8 +64,11 @@ stompClient.onConnect = (frame)=>{
 
         if (match.winner && match.winner['username']) {
             endMatch(match);
-            stompClient.deactivate();
-            startMatchSearchClient();
+            stompClient.subscribe(`/room/rematch/${roomId}/${userId}`, (usernameData)=> {
+                const username = usernameData.body;
+                rematchText.textContent=`${username} wants a rematch!`;
+                rematchText.style.display="block";
+            });
             return;
         }
 
@@ -81,23 +81,6 @@ stompClient.onConnect = (frame)=>{
         }
 
         
-    });
-
-    stompClient.subscribe('/room/found-match', (matchJson)=> {
-        let match = JSON.parse(matchJson.body);
-        let users = match.users;
-        let roomId = match.roomId;
-        if (users && users.includes(userId)) {
-            fetch(`/api/waiting-list`, {
-                method: "DELETE",
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
-                }
-            }).catch(error=>{
-                //do nothing!
-            });
-            window.location.replace(`${window.location.origin}/competition?roomId=${roomId}&userId=${userId}`);
-        }
     });
     
     fetch(`api/get-match-info/${roomId}`).then(response=>{

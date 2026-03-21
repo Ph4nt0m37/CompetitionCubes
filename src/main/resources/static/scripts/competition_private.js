@@ -1,9 +1,8 @@
 //export let roomId = Math.floor(Math.random()*100000)
 export let roomId = new URLSearchParams(window.location.search).get("roomId");
-export let userId = sessionStorage.getItem("userId");
-sessionStorage.removeItem("userId");
-import { connectPrivateReceiver } from "./private_match_receiver.js";
-import { setTimerEnabled } from "./timer.js";
+export let userId = undefined
+import { connectPrivateReceiver, stompClient } from "./private_match_receiver.js";
+import { setTimerEnabled, createNotification } from "./timer_private.js";
 
 let scrambleText = document.getElementById("scramble-text");
 
@@ -25,35 +24,43 @@ export let currentScramble = "";
 
 export let oppId = null;
 
+export let userSettings = undefined;
+
+let user = undefined;
+
 let matchWinner = null;
+const matchJoinAudio = document.getElementById("match-join-audio");
 
-let userElo = -1;
-let oppElo = -1;
+await fetch(`/api/get-user-data`).then((response)=> {
+    return response.json();
+}).then(function(data) {
+    userId = data['userId'];
+    usernameText.textContent=data.username;
+    user = data;
+    let userSettings = null;
+    fetch(`/api/get-user-settings/${userId}`).then((resp)=>{
+        if (resp.ok)
+            return resp.json();
+        createNotification("Something went wrong loading your settings, so some things may not work as expected.");
+    }).then(settings=>{
+        userSettings = settings;
+        if (userSettings['inspectionAudio']) {
+            matchJoinAudio.play();
+        }
+    }); 
+}).catch(function(err) {
+    console.log('Failed to fetch!', err);
+});
 
-const searchingUsersText = document.getElementById("searching-users-text");
+const rematchButton = document.getElementById("rematch-button");
+const rematchText = document.getElementById("rematch-text");
 
 export function setScramble(scramble) {
     if (!matchWinner) {
         if (scramble!=="Waiting for Opponent to solve..." && scramble!=="Waiting for Opponent to confirm solve...") {
             currentScramble = scramble;
-            fetch("/api/reset-inactivity-timer", {
-                method: "POST",
-                body: JSON.stringify({
-                    userId: userId,
-                    maxTime: 120
-                }),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
-                }
-            });
         }else{
             currentScramble = "";
-            fetch(`/api/remove-inactivity-timer`, {
-                method: "DELETE",
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
-                }
-            });
         }
         scrambleText.textContent = scramble;
     }
@@ -69,20 +76,12 @@ fetch(`api/get-match-info/${roomId}`).then(response=>{
         }else if (matchJson.users[1]==userId) {
             oppId = matchJson.users[0];
         }
-        //getting elos
-        fetch(`/api/public/get-user-data-by-id/${userId}`).then((response)=> {
-            return response.json();
-            }).then(function(data) {
-                userElo=data.elos[matchData.event];
-                usernameText.textContent=data.username;
-            }).catch(function(err) {
-                console.log('Failed to fetch!', err);
-            });
+
+        console.log(userId+" | "+oppId);
 
         fetch(`/api/public/get-user-data-by-id/${oppId}`).then((response)=> {
             return response.json();
             }).then(function(data) {
-                oppElo=data.elos[matchData.event];
                 oppUsernameText.textContent=data.username;
             }).catch(function(err) {
                 console.log('Failed to fetch!', err);
@@ -94,9 +93,10 @@ export function setMatchData(data) {
 }
 
 export function setWins(winData) {
-    for (var user in winData) {
-        if (user==userId) {
-            let newWinCount = winData[user];
+    console.log(winData);
+    for (var userWin in winData) {
+        if (userWin==userId) {
+            let newWinCount = winData[userWin];
             if (newWinCount>numWins) {
                 userWins.classList.toggle("wonRound");
                 setTimeout(() => {
@@ -111,7 +111,7 @@ export function setWins(winData) {
             numWins = newWinCount;
             userWins.textContent=`Wins: ${numWins}`;
         }else {
-            let newWinCount = winData[user];
+            let newWinCount = winData[userWin];
             if (newWinCount>Number(oppWins.textContent.substring(6))) {
                 oppWins.classList.toggle("wonRound");
                 setTimeout(() => {
@@ -123,7 +123,7 @@ export function setWins(winData) {
                     oppWins.classList.toggle("lostRound");
                 }, 10);
             }
-            oppWins.textContent = `Wins: ${winData[user]}`;
+            oppWins.textContent = `Wins: ${newWinCount}`;
         }  
     }
 }
@@ -131,7 +131,6 @@ export function setWins(winData) {
 export function endMatch(matchData) {
     setTimerEnabled(false);
     let winner = matchData.winner['username'];
-    let eloChange = matchData.eloChange;
     if (matchData.quitUser) {
         scrambleText.innerHTML = `${matchData.quitUser['username']} forfeit the match!<br>${winner} has won the match!`
     }else {
@@ -148,28 +147,35 @@ export function endMatch(matchData) {
     homeButton.classList.add("fade-in-element");
     footerDiv.style.display="flex";
     footerDiv.classList.add("fade-in-element");
-    getWaitingUserCount()
-    setInterval(getWaitingUserCount,10000);
-    let eloChangeText = document.getElementById("elo-change-text");
-    let oppEloChangeText = document.getElementById("opp-elo-change-text");
     matchWinner=matchData.winner;
-    if (matchData.winner['userId']==userId) {
-        eloChangeText.innerHTML=`ELO: ${userElo}<span style="color:rgb(0,255,0)">>></span>${userElo+eloChange}`;
-        oppEloChangeText.innerHTML=`ELO: ${oppElo}<span style="color:rgb(255,0,0)">>></span>${oppElo-eloChange}`;
-    }else {
-        eloChangeText.innerHTML=`ELO: ${userElo}<span style="color:rgb(255,0,0)">>></span>${userElo-eloChange}`;
-        oppEloChangeText.innerHTML=`ELO: ${oppElo}<span style="color:rgb(0,255,0)">>></span>${oppElo+eloChange}`;
-    }
     connectPrivateReceiver();
+
+    rematchButton.addEventListener("click",()=>{
+        stompClient.publish({
+            destination: `/app/rematch/${roomId}`,
+            body: JSON.stringify({
+                'userId':userId,
+                'oppId':oppId,
+                'event':matchData['event']
+            }),
+            headers: {
+                receipt: "rematch_sent"
+            }
+        });
+        rematchButton.textContent="Sent ✅";
+        rematchButton.disabled = true;
+        rematchText.textContent = "Successfully sent rematch request.";
+        rematchText.style.display = "block";
+    });
 }
 
 export function setAo5s(ao5Json) {
-    for (var user in ao5Json) {
-        if (ao5Json[user]) {
-            if (user==userId) {
-                userao5.textContent = `ao5: ${ao5Json[user]}`;
+    for (var ao5UserId in ao5Json) {
+        if (ao5Json[ao5UserId]) {
+            if (ao5UserId==userId) {
+                userao5.textContent = `ao5: ${ao5Json[ao5UserId]}`;
             }else {
-                oppao5.textContent = `ao5: ${ao5Json[user]}`;
+                oppao5.textContent = `ao5: ${ao5Json[ao5UserId]}`;
             }
         }
     }
@@ -196,14 +202,3 @@ function timeToFloat(time) {
         return parseFloat(times[0]);
     }
 }*/
-
-function getWaitingUserCount() {
-    fetch("/api/waiting-list/3x3").then((response)=>{
-        return response.json();
-    }).then((numSearching)=>{
-        let userWord = "users";
-        if (numSearching==1) userWord = "user";
-        searchingUsersText.textContent=`${numSearching} ${userWord} searching for match...`;
-    });
-}
-

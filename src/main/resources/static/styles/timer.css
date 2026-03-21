@@ -200,26 +200,11 @@ button {
     flex-grow: 1;
 }
 
-#search-button {
-    border: none;
-    color: white;
-    border-radius: 17.5px;
-    font-size: 2rem;
-    padding: 10px 20px;
-    font-weight: bold;
-    background-color: var(--green-button);
-    padding: 15px 30px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-#search-button:hover {
-    background-color: var(--green-button-hover);
-}
-
-#search-button:active {
-    transform: scale(0.97);
+#searching-private-div {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    align-items: center;
 }
 
 #searching-text {
@@ -658,4 +643,100 @@ button {
     color: var(--success-color);
     margin-top: 3px;
     font-weight: 700;
+}
+
+.challenge-req {
+  background-color: var(--blue-button);
+}
+
+.req-notif-text {
+  margin: 0;
+}
+
+.req-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.req-buttons > p {
+  margin: 5px;
+  margin: 5px 30px;
+}
+
+.accept-req-button {
+  cursor: pointer;
+  color: var(--dark-green-button);
+  text-decoration: underline;
+}
+
+.accept-req-button:hover {
+  color: var(--dark-green-button-hover);
+}
+
+.decline-req-button {
+  cursor: pointer;
+  color: var(--dark-red-button);
+  text-decoration: underline;
+}
+
+.decline-req-button:hover {
+  color: var(--dark-red-button-hover);
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; 
+       display: flex;
+    }
+  100% { opacity: 1; }
+}
+
+.fade-out { animation: fadeOut 2.5s; }
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+#rematch-text {
+    font-size: 1.15rem;
+    color: var(--success-color);
+    margin-top: 3px;
+    font-weight: 700;
+    display: none;
+}
+
+.end-match-button {
+    border: none;
+    color: white;
+    border-radius: 17.5px;
+    font-size: 2rem;
+    padding: 10px 20px;
+    font-weight: bold;
+    background-color: var(--green-button);
+    padding: 15px 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 18rem;
+}
+
+.end-match-button:hover {
+    background-color: var(--green-button-hover);
+}
+
+.end-match-button:active {
+    transform: scale(0.97);
+}
+
+button:disabled {
+    background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
+    cursor: not-allowed;
+    color: #999999;
+}
+
+button:disabled:hover {
+    background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
+    cursor: not-allowed;
+    color: #999999;
 }

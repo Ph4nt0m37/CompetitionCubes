@@ -170,7 +170,7 @@ public class DBController {
                 settingsStatement.executeUpdate();
 
                 //adding user to userList
-                userList.put(userId, new User(userId,username,userWcaId,0,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),new Integer[0],0,0,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), 0, 0, new UserSettings(true, true)));
+                userList.put(userId, new User(userId,username,userWcaId,0,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),new Integer[0],0,0,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), 0, 0, new UserSettings()));
 
                 return true;
             }
@@ -1538,7 +1538,8 @@ public class DBController {
             if (results.next()) {
                 boolean inspectionAudio = results.getBoolean("inspection_audio");
                 boolean matchSounds = results.getBoolean("match_sounds");
-                return new UserSettings(inspectionAudio, matchSounds);
+                boolean acceptsChallengeRequests = results.getBoolean("accepts_challenge_requests");
+                return new UserSettings(inspectionAudio, matchSounds, acceptsChallengeRequests);
             }else {
                 return null;
             }
@@ -1553,17 +1554,18 @@ public class DBController {
         try (Connection conn = dataSource.getConnection();) {
 
             //checking for userSecret
-            String findUserSecretQuery = "UPDATE user_settings SET inspection_audio=?, match_sounds=? WHERE id=?";
+            String findUserSecretQuery = "UPDATE user_settings SET inspection_audio=?, match_sounds=?, accepts_challenge_requests=? WHERE id=?";
             PreparedStatement userSecretStatement = conn.prepareStatement(findUserSecretQuery);
             userSecretStatement.setBoolean(1, userSettingsReq.isInspectionAudio());
             userSecretStatement.setBoolean(2, userSettingsReq.isMatchSounds());
-            userSecretStatement.setInt(3, user.getUserId());
+            userSecretStatement.setBoolean(3, userSettingsReq.acceptsChallengeRequests());
+            userSecretStatement.setInt(4, user.getUserId());
 
             //getting resultset
             int rowsChanged = userSecretStatement.executeUpdate();
 
             if (user!=null) {
-                user.setUserSettings(new UserSettings(userSettingsReq.isInspectionAudio(), userSettingsReq.isMatchSounds()));
+                user.setUserSettings(new UserSettings(userSettingsReq.isInspectionAudio(), userSettingsReq.isMatchSounds(), userSettingsReq.acceptsChallengeRequests()));
             }
 
             if (rowsChanged>0) {

@@ -22,7 +22,7 @@ h1 {
 }
 
 h2 {
-    font-size: 2.25rem;
+    font-size: 2rem;
     margin: 5px;
 }
 
@@ -30,4 +30,29 @@ h3 {
     font-size: 1.5rem;
     margin: 75px;
     color:rgb(18, 13, 29);
+}
+
+@media screen and (max-width: 800px) {
+    html body {
+        overflow-y: hidden;
+    }
+    h1 {
+        margin: 5px;
+        font-size: 4rem;
+    }
+
+    #error-joke {
+        margin-bottom: 40px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+        margin: 5px;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+        margin: 40px;
+        color:rgb(18, 13, 29);
+    }
 }

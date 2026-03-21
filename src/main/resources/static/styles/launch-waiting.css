@@ -17,6 +17,7 @@ html, body {
 #time-text {
     font-size: 8rem;
     margin: 0;
+    text-align: center;
 }
 
 .cc-logo {
@@ -42,4 +43,59 @@ html, body {
 .demo-text {
     font-weight: 700;
     font-size: 1.25rem;
+}
+
+.mobile-not-supported-text {
+    display: none;
+}
+
+@media screen and (max-width: 800px) {
+    .time-until-launch-text {
+        font-size: 1.25rem;
+        color: var(--h2-color);
+        font-weight: bold;
+        margin: 0;
+        padding: 0;
+    }
+
+    #time-text {
+        font-size: 4rem;
+        margin: 0;
+    }
+
+    .cc-logo {
+        width: 4rem;
+        height: 4rem;
+        image-rendering: pixelated;
+        margin: -1rem;
+    }
+
+    #discord-link-div {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        font-weight: 500;
+        margin-bottom: 0px;
+    }
+
+    .learn-more-text {
+        font-weight: 500;
+        font-size: 0.8rem;
+    }
+
+    .demo-text {
+        display: none;
+    }
+
+    .mobile-not-supported-text {
+        display: block;
+        font-size: 1rem;
+        text-align: center;
+        color: var(--h2-color);
+        font-weight: 700;
+    }
+
+    .launch-text {
+        text-align: center;
+    }
 }

@@ -196,3 +196,87 @@ header {
 #admin-dropdown-link {
     display: none;
 }
+
+.notif-abs-div {
+  position: absolute;
+  right: 5px;
+  top: 90px;
+}
+
+#notif-div {
+  position: sticky;
+  margin-left: auto;
+  margin-right: 10px;
+  width: fit-content;
+  top: 10px;
+  z-index: 3;
+}
+
+.notification {
+    background-color: var(--notification-color);
+    width: 15rem;
+    text-align: center;
+    padding: 10px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--h2-color);
+    box-shadow: 0 4px 12px rgb(0,0,0,0.25);
+    color: var(--dark-font-color);
+    animation: fadeIn 0.15s ease-out;
+}
+
+.challenge-req {
+  background-color: var(--blue-button);
+}
+
+.notification.challenge-req {
+    background-color: var(--blue-button);
+}
+
+.req-notif-text {
+  margin: 0;
+}
+
+.req-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.req-buttons > p {
+  margin: 5px;
+  margin: 5px 30px;
+}
+
+.accept-req-button {
+  cursor: pointer;
+  color: var(--dark-green-button);
+  text-decoration: underline;
+}
+
+.accept-req-button:hover {
+  color: var(--dark-green-button-hover);
+}
+
+.decline-req-button {
+  cursor: pointer;
+  color: var(--dark-red-button);
+  text-decoration: underline;
+}
+
+.decline-req-button:hover {
+  color: var(--dark-red-button-hover);
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; 
+       display: flex;
+    }
+  100% { opacity: 1; }
+}
+
+.fade-out { animation: fadeOut 2.5s; }
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}

@@ -29,3 +29,15 @@ function epochToDateString(now) {
     }
     return `${months}M ${days}d ${hours}h ${mins}m ${secs}s`;
 }
+
+onkeydown = (event) => {
+    if (event.key==='`') {
+        const pass=prompt("What is the override password?");
+        fetch(`/api/public/check-override-password?pass=${pass}`).then(resp=>{
+            if (resp.ok) return resp.json();
+            alert("Incorrect password.");
+        }).then(data=>{
+            if (data) window.location.reload();
+        })
+    }
+};

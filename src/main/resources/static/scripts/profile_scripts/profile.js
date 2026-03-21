@@ -1,3 +1,6 @@
+import { navUserId, navUser } from "../navbar.js";
+import { stompClient } from "../private_match_receiver.js";
+
 export let user = null;
 const usernameText = document.getElementById("username-text");
 const wcaLink = document.getElementById("wca-link");
@@ -239,6 +242,46 @@ function updateUserStatistics(user) {
     }
 }
 
+const challengeButton = document.getElementById("challenge-button");
+let challengePopup = undefined;
+if (challengeButton) {
+    challengePopup = document.getElementById("challenge-popup");
+    challengeButton.addEventListener("click",()=>{
+        actionsPopup.style.display = "flex";
+        challengePopup.style.display = "flex";
+        body.style.overflowY="hidden";
+    });
+
+    const challengeConfirmButton = document.getElementById("challenge-confirm");
+    challengeConfirmButton.addEventListener("click",()=>{
+        actionsPopup.style.display = "none";
+        challengePopup.style.display = "none";
+        //createNotification(`Sending challenge request...`,"#3498db");
+        /*if (user && user['username']) {
+            createNotification(`Successfully sent a challenge request to ${user['username']}!`,"#22eb51");
+        }else {
+            createNotification(`Successfully sent a challenge request to this user!`,"#22eb51");
+        }*/
+        
+        stompClient.publish({
+            destination: "/app/private-match-request",
+            body: JSON.stringify({
+                'requestId': -1,
+                'userId': navUserId,
+                'reqUsername': navUser['username'],
+                'oppId': userId,
+                'event': "3x3",
+                'accepted': true
+            })
+        });
+    });
+    const challengeDenyButton = document.getElementById("challenge-deny");
+    challengeDenyButton.addEventListener("click",()=>{
+        actionsPopup.style.display = "none";
+        challengePopup.style.display = "none";
+    });
+}
+
 const reportReasonDropdown = document.getElementById("report-reason-dropdown");
 
 const reportPopup = document.getElementById("report-popup")
@@ -269,14 +312,14 @@ reportButton.addEventListener("click",()=>{
             if (resp.ok) {
                 actionsPopup.style.display="none";
                 reportPopup.style.display="none";
-                createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`);
+                createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`,"#c53838");
                 reportReasonDropdown.children[0].selected = "selected";
             }else {
-            createNotification(`Something went wrong reporting this user. Please try again later or contact a developer.`);
+            createNotification(`Something went wrong reporting this user. Please try again later or contact a developer.`,"#c53838");
         }
         });
     }else {
-        createNotification(`Please select a reason for reporting!`);
+        createNotification(`Please select a reason for reporting!`,"#c53838");
     }
 });
 
@@ -293,6 +336,7 @@ actionsPopup.addEventListener("click",(event)=>{
     if (event.target===event.currentTarget) {
         actionsPopup.style.display="none";
         reportPopup.style.display="none";
+        if (challengeButton && challengePopup) challengePopup.style.display = "none";
         body.style.overflowY="visible";
         //resetting and hiding the report popup
         reportReasonDropdown.children[0].selected = "selected";
@@ -302,6 +346,8 @@ actionsPopup.addEventListener("click",(event)=>{
 document.addEventListener("keydown",(event)=>{
     if (event.key=="Escape") {
         actionsPopup.style.display="none";
+        reportPopup.style.display="none";
+        if (challengeButton) challengePopup.style.display = "none";
         body.style.overflowY="visible";
         //resetting and hiding the report popup
         reportReasonDropdown.children[0].selected = "selected";
@@ -311,8 +357,9 @@ document.addEventListener("keydown",(event)=>{
 const notificationTemplate = document.querySelector(".notification.template");
 const notificationBox = document.getElementById("notif-div");
 
-function createNotification(text) {
+function createNotification(text, color) {
     const notif = notificationTemplate.cloneNode(true);
+    notif.style.backgroundColor=color;
     notif.textContent = text;
     notif.classList.remove("template");
     notificationBox.appendChild(notif);

@@ -1,6 +1,22 @@
-let userId = 0;
+import { connectPrivateReceiverWithData } from "./private_match_receiver.js";
+
+export let navUserId = 0;
+export let navUser = null;
 
 const header = document.getElementById("header");
+
+let stompScript=document.createElement('script');
+stompScript.src = "https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js";
+document.getElementsByTagName('head')[0].appendChild(stompScript);
+
+let privateMatchReceiverScript=document.createElement('script');
+privateMatchReceiverScript.src = "/scripts/private_match_receiver.js";
+privateMatchReceiverScript.type = "module";
+document.getElementsByTagName('body')[0].appendChild(privateMatchReceiverScript);
+
+let mobileCheckScript=document.createElement('script');
+mobileCheckScript.src = "/scripts/mobile_check.js";
+document.getElementsByTagName('body')[0].appendChild(mobileCheckScript);
 
 fetch("/header.html")
         .then(res => res.text())
@@ -105,13 +121,14 @@ fetch("/header.html")
                 return response.json();
             createNotification("Something went wrong loading your data, so some things may not work as expected. Please contact a developer if this keeps happening.");
             }).then(function(data) {
-                userId=data.userId;
+                navUser = data;
+                navUserId=data.userId;
                 profileButton.textContent = data.username;
-                profileDropdownLink.href=`/user/${userId}`;
+                profileDropdownLink.href=`/user/${navUserId}`;
                 const chevronIcon = document.createElement("img");
                 chevronIcon.src="/images/chevron-down.svg";
                 profileButton.appendChild(chevronIcon);
-                if (userId>0) {
+                if (navUserId>0) {
                     signInButton.style.display="none";
                     profileButton.style.display="flex";
                 }else {
@@ -127,4 +144,22 @@ fetch("/header.html")
                 profileButton.style.display="none";
                 signInButton.style.display="block";
         });
+
+        //private match receiver
+        connectPrivateReceiverWithData(navUser, navUserId);
+
+        const notificationTemplate = document.querySelector(".notification.template");
+        function createNotification(text, color) {
+            const notif = notificationTemplate.cloneNode(true);
+            notif.style.backgroundColor=color;
+            notif.textContent = text;
+            notif.classList.remove("template");
+            notificationBox.appendChild(notif);
+            setTimeout(()=>{
+                notif.classList.add("fade-out");
+                setTimeout(()=>{
+                    notif.remove();
+                },1500);
+            },5000);
+        }
     });

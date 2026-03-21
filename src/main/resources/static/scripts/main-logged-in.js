@@ -57,7 +57,8 @@ onload = (event)=>{
             const stompClient = new StompJs.Client({
                 brokerURL: `wss://${window.location.host}/user-connect`,
                 connectHeaders: {
-                    user_id: String(userId)
+                    user_id: String(userId),
+                    do_disconnect: true
                 }
             });
 
