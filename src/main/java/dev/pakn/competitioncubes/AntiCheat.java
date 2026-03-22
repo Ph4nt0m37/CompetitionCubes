@@ -489,7 +489,8 @@ public class AntiCheat {
         //idk why i did the bans differently than this, but whatever
         //O(n^2), but users can only really have 5 active warnings until they're permanently banned, so worst case is 5n
         for (int userId:DBController.getUsers().keySet()) {
-            for (UserWarning warning:DBController.getUserByIDList(userId).getUserWarnings()) {
+            ArrayList<UserWarning> userWarnings = DBController.getUserByIDList(userId).getUserWarnings();
+            for (UserWarning warning:userWarnings) {
                 if (warning.getExpirationDate()>=0 && currTimeMillis>warning.getExpirationDate()) {
                     //will only remove them from database!
                     DBController.removeUserWarning(userId, warning);

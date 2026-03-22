@@ -68,7 +68,9 @@ export function setScramble(scramble) {
 
 
 fetch(`api/get-match-info/${roomId}`).then(response=>{
-        return response.json()
+        if (response.ok) return response.json();
+        createNotification("Something went wrong with this match. Redirecting back to main page...");
+        setTimeout(window.location.replace("/"),3000);
     }).then(matchJson=>{
         setMatchData(matchJson);
         if (matchJson.users[0]==userId) {
