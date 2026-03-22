@@ -45,7 +45,7 @@ public class LinkMappings {
             return "launch-waiting.html";
         }
         User user = DBController.getUserBySecret(userSecret);
-        if (user.getCurrentMatch().isPrivate()) {
+        if (user.getCurrentMatch()!=null && user.getCurrentMatch().isPrivate()) {
             return "comp_private.html";
         }
         for (Match match:MatchController.getMatches()) {

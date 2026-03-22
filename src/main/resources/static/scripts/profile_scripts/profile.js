@@ -311,6 +311,7 @@ reportButton.addEventListener("click",()=>{
         }).then((resp)=>{
             if (resp.ok) {
                 actionsPopup.style.display="none";
+                body.style.overflowY="visible";
                 reportPopup.style.display="none";
                 createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`,"#c53838");
                 reportReasonDropdown.children[0].selected = "selected";
