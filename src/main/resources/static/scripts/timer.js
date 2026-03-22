@@ -416,7 +416,7 @@ window.onload = ()=>{
 const notificationTemplate = document.querySelector(".notification.template");
 const notificationBox = document.getElementById("notif-div");
 
-function createNotification(text) {
+export function createNotification(text) {
     const notif = notificationTemplate.cloneNode(true);
     notif.textContent = text;
     notif.classList.remove("template");

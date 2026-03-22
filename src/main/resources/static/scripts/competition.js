@@ -3,8 +3,7 @@ export let roomId = new URLSearchParams(window.location.search).get("roomId");
 export let userId = sessionStorage.getItem("userId");
 sessionStorage.removeItem("userId");
 import { connectPrivateReceiver } from "./private_match_receiver.js";
-import { setTimerEnabled } from "./timer.js";
-import { createNotification } from "./timer_private.js";
+import { setTimerEnabled, createNotification } from "./timer.js";
 
 let scrambleText = document.getElementById("scramble-text");
 
