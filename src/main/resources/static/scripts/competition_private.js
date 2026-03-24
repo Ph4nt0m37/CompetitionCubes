@@ -36,6 +36,7 @@ await fetch(`/api/get-user-data`).then((response)=> {
 }).then(function(data) {
     userId = data['userId'];
     usernameText.textContent=data.username;
+    usernameText.title = data.username;
     user = data;
     let userSettings = null;
     fetch(`/api/get-user-settings/${userId}`).then((resp)=>{
@@ -84,7 +85,8 @@ fetch(`api/get-match-info/${roomId}`).then(response=>{
         fetch(`/api/public/get-user-data-by-id/${oppId}`).then((response)=> {
             return response.json();
             }).then(function(data) {
-                oppUsernameText.textContent=data.username;
+                oppUsernameText.textContent = data.username;
+                oppUsernameText.title = data.username;
             }).catch(function(err) {
                 console.log('Failed to fetch!', err);
             });

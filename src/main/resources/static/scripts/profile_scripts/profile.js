@@ -115,6 +115,7 @@ fetch(`/api/public/get-user-data-by-id/${userId}`).then((response)=> {
     }).then(function(data) {
         user = data;
         usernameText.textContent=user.username;
+        usernameText.title=user.username;
         wcaLink.href=`https://www.worldcubeassociation.org/persons/${user["wcaId"]}`;
         wcaLink.target="_blank";
         let badgesDiv = document.getElementById("badges-div");

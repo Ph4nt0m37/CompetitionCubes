@@ -111,7 +111,6 @@ header {
     background-color: var(--blue-button);
     border-radius: 5px;
     padding: 12px 8px;
-    margin-right: 16px;
     max-width: 150px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.1s ease;
@@ -127,7 +126,7 @@ header {
 
 .header-username-text {
     font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
-    max-width: 150px;
+    width: 150px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

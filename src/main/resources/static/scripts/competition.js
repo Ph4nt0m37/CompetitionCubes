@@ -77,6 +77,7 @@ fetch(`api/get-match-info/${roomId}`).then(response=>{
             }).then(function(data) {
                 userElo=data.elos[matchData.event];
                 usernameText.textContent=data.username;
+                usernameText.title = data.username;
             }).catch(function(err) {
                 console.log('Failed to fetch!', err);
             });
@@ -86,6 +87,7 @@ fetch(`api/get-match-info/${roomId}`).then(response=>{
             }).then(function(data) {
                 oppElo=data.elos[matchData.event];
                 oppUsernameText.textContent=data.username;
+                oppUsernameText.title = data.username;
             }).catch(function(err) {
                 console.log('Failed to fetch!', err);
             });
