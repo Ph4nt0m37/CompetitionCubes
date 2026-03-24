@@ -15,7 +15,9 @@ html, body {
     display: flex;
     align-items: center;
     flex-direction: column;
-    min-width: 50rem;
+    min-width: 25rem;
+    width: 100%;
+    max-width: 50rem;
     padding: 8px 20px;
     margin: 20px;
     background-color: var(--popup-color);
@@ -48,7 +50,12 @@ html, body {
 }
 
 .result-text {
-    width: 100%;
+    width: 97.5%;
+    margin-right: 2.5%;
+    max-width: 400px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 #no-res-found {

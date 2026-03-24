@@ -40,7 +40,9 @@ button {
     position: relative;
     display: flex;
     flex-direction: column;
-    min-width: 50rem;
+    min-width: 38.5rem;
+    width: 100%;
+    max-width: 50rem;
     padding: 8px 20px;
     margin: 20px;
     background-color: var(--popup-color);
@@ -111,6 +113,7 @@ button {
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-width: 38.5rem;
   margin-bottom: 20px;
 }
 
@@ -326,6 +329,10 @@ button {
 
 #username-text {
   margin: 3px;
+  max-width: 35rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .username-div {

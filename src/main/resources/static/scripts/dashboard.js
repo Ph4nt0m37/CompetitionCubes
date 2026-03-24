@@ -334,6 +334,7 @@ function getInvalidTimes() {
                 const user = solves[i]['username'];
                 const timeString = solves[i]['timeString'];
                 solve.querySelector(".solve-user-link").textContent = user;
+                solve.querySelector(".solve-user-link").title = user;
                 solve.querySelector(".solve-user-link").href = `/user/${solves[i]['userId']}`;
                 solve.querySelector(".solve-time").textContent = `${type}: ${timeString}`;
                 solve.querySelector(".wca-pb").textContent = `WCA Single: ${solves[i]['wcasingle']} | WCA Average: ${solves[i]['wcaaverage']}`;
@@ -402,6 +403,7 @@ function getReportedUsers() {
                 const info = users[i]['info'];
                 console.log(users[i]);
                 user.querySelector(".solve-user-link").textContent = username;
+                user.querySelector(".solve-user-link").title = username;
                 user.querySelector(".solve-user-link").href = `/user/${users[i]['userId']}`;
                 user.querySelector(".report-reason").textContent = `Reason: ${String(reason).charAt(0).toUpperCase() + String(reason).slice(1)}`;
                 if (reason==="time-wasting") {

@@ -169,8 +169,14 @@ input:checked + .slider:before {
     background-color: var(--blue-button-hover);
 }
 
-#save-button:active {
+#save-button:active:not(:disabled) {
     transform: scale(0.97);
+}
+
+#save-button:disabled:hover {
+    background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
+    cursor: not-allowed;
+    color: #999999;
 }
 
 .notif-abs-div {

@@ -123,7 +123,7 @@ fetch("/header.html")
             }).then(function(data) {
                 navUser = data;
                 navUserId=data.userId;
-                profileButton.textContent = data.username;
+                profileButton.querySelector(".header-username-text").textContent = data.username;
                 profileDropdownLink.href=`/user/${navUserId}`;
                 const chevronIcon = document.createElement("img");
                 chevronIcon.src="/images/chevron-down.svg";

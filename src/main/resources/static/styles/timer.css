@@ -99,6 +99,9 @@ h1 {
     color: var(--dark-blue-color);
     margin-bottom: 1.5vh;
     padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 #penalties-div {
@@ -198,6 +201,7 @@ button {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    justify-content: center;
 }
 
 #searching-private-div {

@@ -136,3 +136,15 @@ p {
   0% { opacity: 1; }
   100% { opacity: 0; }
 }
+
+button:disabled {
+    background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
+    cursor: not-allowed;
+    color: #999999;
+}
+
+button:disabled:hover {
+    background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
+    cursor: not-allowed;
+    color: #999999;
+}

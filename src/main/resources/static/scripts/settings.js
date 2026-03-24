@@ -76,6 +76,8 @@ saveButton.addEventListener("click",()=>{
     }
 
     if (success) {
+        saveButton.textContent = "Saving...";
+        saveButton.disabled = true;
         createNotification("Successfully saved settings. Reloading page...","#22eb51");
         setTimeout(()=>{location.reload()}, reloadTime);
     }else {

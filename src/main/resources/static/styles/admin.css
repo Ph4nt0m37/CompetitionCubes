@@ -266,6 +266,9 @@ h1 {
 .solve-user {
     margin: 0px;
     color: #484a67;
+    min-width: 5rem;
+    width: 100%;
+    max-width: 20rem;
 }
 
 .solve-time {
@@ -362,7 +365,15 @@ button {
 }
 
 .solve-user-link {
+    display: inline-block;
     text-decoration: underline;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 5rem;
+    width: 100%;
+    max-width: 20rem;
+    cursor: pointer;
 }
 
 @keyframes fadeIn {
