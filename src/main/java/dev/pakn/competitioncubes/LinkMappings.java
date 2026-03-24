@@ -110,7 +110,7 @@ public class LinkMappings {
             if (user == null) {
                 return "forward:/profile_pages/profile_unauthed.html";
             }else {
-                if (user.getPermissionLevel().hasBanAccess())
+                if (user.getPermissionLevel().hasBanAccess() && user.getUserId()!=userId)
                     return "forward:/profile_pages/profile_admin.html";
                 if (user.getPermissionLevel().hasUserInfoAccess() || user.getUserId()==userId)
                     return "forward:/profile_pages/profile_user.html";

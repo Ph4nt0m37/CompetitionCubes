@@ -53,6 +53,7 @@ public class ServerInfo {
 
     private static final File serverInfoFile = new File(System.getProperty("user.dir")+"\\src\\main\\resources\\server_info.json".replace("\\", File.separator));
 
+    //TODO: Move this to app.prop as an environment variable (or just delete it)
     private static final String overridePassword = "0v3rR1de";
 
     @PostConstruct
