@@ -1352,7 +1352,8 @@ public class DBController {
             statement.executeUpdate();
 
             bannedUserList.remove(userId);
-            userList.get(userId).setUserBan(null);
+            if (userList.get(userId)!=null)
+                userList.get(userId).setUserBan(null);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

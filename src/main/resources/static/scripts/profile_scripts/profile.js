@@ -283,78 +283,80 @@ if (challengeButton) {
     });
 }
 
-const reportReasonDropdown = document.getElementById("report-reason-dropdown");
-
-const reportPopup = document.getElementById("report-popup")
-
-const closeReportButton = document.getElementById("close-report-button");
-closeReportButton.addEventListener("click",()=>{
-    actionsPopup.style.display="none";
-    reportPopup.style.display="none";
-    body.style.overflowY="visible";
-    //resetting and hiding the report popup
-    reportReasonDropdown.children[0].selected = "selected";
-});
-
-const reportButton = document.getElementById("confirm-report-button");
-reportButton.addEventListener("click",()=>{
-    const reportReason = reportReasonDropdown.value;
-    if (reportReason!=="default") {
-        fetch("/api/report-user", {
-            method: "POST",
-            body: JSON.stringify({
-                userId: userId,
-                reason: reportReasonDropdown.value,
-            }),
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            }
-        }).then((resp)=>{
-            if (resp.ok) {
-                actionsPopup.style.display="none";
-                body.style.overflowY="visible";
-                reportPopup.style.display="none";
-                createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`,"#c53838");
-                reportReasonDropdown.children[0].selected = "selected";
-            }else {
-            createNotification(`Something went wrong reporting this user. Please try again later or contact a developer.`,"#c53838");
-        }
-        });
-    }else {
-        createNotification(`Please select a reason for reporting!`,"#c53838");
-    }
-});
-
 const flagButton = document.getElementById("report-flag");
 const actionsPopup = document.getElementById("background-overlay");
 const body = document.getElementsByTagName("body")[0];
-flagButton.addEventListener("click",()=>{
-    actionsPopup.style.display="grid";
-    reportPopup.style.display = "flex";
-    body.style.overflowY="hidden";
-});
+if (flagButton!=null) {
+    const reportReasonDropdown = document.getElementById("report-reason-dropdown");
 
-actionsPopup.addEventListener("click",(event)=>{
-    if (event.target===event.currentTarget) {
+    const reportPopup = document.getElementById("report-popup")
+
+    const closeReportButton = document.getElementById("close-report-button");
+    closeReportButton.addEventListener("click",()=>{
         actionsPopup.style.display="none";
         reportPopup.style.display="none";
-        if (challengeButton && challengePopup) challengePopup.style.display = "none";
         body.style.overflowY="visible";
         //resetting and hiding the report popup
         reportReasonDropdown.children[0].selected = "selected";
-    }
-});
+    });
 
-document.addEventListener("keydown",(event)=>{
-    if (event.key=="Escape") {
-        actionsPopup.style.display="none";
-        reportPopup.style.display="none";
-        if (challengeButton) challengePopup.style.display = "none";
-        body.style.overflowY="visible";
-        //resetting and hiding the report popup
-        reportReasonDropdown.children[0].selected = "selected";
-    }
-});
+    const reportButton = document.getElementById("confirm-report-button");
+    reportButton.addEventListener("click",()=>{
+        const reportReason = reportReasonDropdown.value;
+        if (reportReason!=="default") {
+            fetch("/api/report-user", {
+                method: "POST",
+                body: JSON.stringify({
+                    userId: userId,
+                    reason: reportReasonDropdown.value,
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            }).then((resp)=>{
+                if (resp.ok) {
+                    actionsPopup.style.display="none";
+                    body.style.overflowY="visible";
+                    reportPopup.style.display="none";
+                    createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`,"#c53838");
+                    reportReasonDropdown.children[0].selected = "selected";
+                }else {
+                createNotification(`Something went wrong reporting this user. Please try again later or contact a developer.`,"#c53838");
+            }
+            });
+        }else {
+            createNotification(`Please select a reason for reporting!`,"#c53838");
+        }
+    });
+
+    flagButton.addEventListener("click",()=>{
+        actionsPopup.style.display="grid";
+        reportPopup.style.display = "flex";
+        body.style.overflowY="hidden";
+    });
+
+    actionsPopup.addEventListener("click",(event)=>{
+        if (event.target===event.currentTarget) {
+            actionsPopup.style.display="none";
+            reportPopup.style.display="none";
+            if (challengeButton && challengePopup) challengePopup.style.display = "none";
+            body.style.overflowY="visible";
+            //resetting and hiding the report popup
+            reportReasonDropdown.children[0].selected = "selected";
+        }
+    });
+
+    document.addEventListener("keydown",(event)=>{
+        if (event.key=="Escape") {
+            actionsPopup.style.display="none";
+            reportPopup.style.display="none";
+            if (challengeButton) challengePopup.style.display = "none";
+            body.style.overflowY="visible";
+            //resetting and hiding the report popup
+            reportReasonDropdown.children[0].selected = "selected";
+        }
+    });   
+}
 
 const notificationTemplate = document.querySelector(".notification.template");
 const notificationBox = document.getElementById("notif-div");

@@ -297,6 +297,7 @@ public class AntiCheat {
     @PostMapping("/api/report-user")
     public ResponseEntity<String> reportUser(@RequestBody PostRequestClass.UserReport userReport) {
         try {
+            logger.info("report received: "+userReport.toString());
             DBController.addUserReport(userReport.getUserId(), userReport.getReason(), userReport.getInfo());
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e) {
@@ -471,7 +472,8 @@ public class AntiCheat {
     //Checks durations for warnings and bans
     //This method is primarily for redundancy, as if a user never searches for a match, their ban/warning will never be removed from the database. this method will ensure they are removed from the database
     //This method also reloads the user bans directly from the database in case I added from there
-    @Scheduled(fixedRate = 60000) //1 hour
+    //This method also has an initial delay of 1 second to ensure the database can finish its init() function
+    @Scheduled(initialDelay = 1000, fixedRate = 3600000) //1 hour
     private void checkDurations() {
         //refresh from db
         DBController.loadUserBans();

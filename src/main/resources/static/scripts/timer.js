@@ -61,15 +61,17 @@ window.onload = ()=>{
     });
 
     const reportButton = document.getElementById("confirm-report-button");
-    reportButton.addEventListener("click",()=>{
+    reportButton.addEventListener("click",async ()=>{
         const reportReason = reportReasonDropdown.value;
         if (reportReason!=="default") {
             if (reportReason!=="time-wasting") {
+                if (reportReason=="default") return;
                 fetch("/api/report-user", {
                     method: "POST",
                     body: JSON.stringify({
                         userId: oppId,
                         reason: reportReasonDropdown.value,
+                        info: null
                     }),
                     headers: {
                         "Content-type": "application/json; charset=UTF-8"
@@ -84,6 +86,42 @@ window.onload = ()=>{
                         createNotification(`Something went wrong reporting this user. Please try again later or contact a developer.`);
                     }
                 });
+            }else {
+                if (reportReason=="default") createNotification(`Please select a reason for reporting!`);
+                let oppInactivityTime = await fetch(`/api/get-inactivity-time/${oppId}`)
+                .then((resp)=>{
+                    if (resp.ok) return resp.json();
+                    if (resp.status==404) throw new Error("NOT_ALLOWED");
+                    throw new Error("ERROR");
+                }).then((data)=>{
+                    return data['time'];
+                }).catch((err)=>{
+                    if (err.message==="NOT_ALLOWED") createNotification("You are not allowed to do this as your opponent is not timing at the moment.");
+                    if (err.message==="ERROR") createNotification("Something went wrong reporting this user. Please try again later or contact a developer.");
+                    return null;
+                });
+                if (oppInactivityTime!=null) {
+                    fetch("/api/report-user", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            userId: oppId,
+                            reason: reportReasonDropdown.value,
+                            info: String(oppInactivityTime)
+                        }),
+                        headers: {
+                            "Content-type": "application/json; charset=UTF-8"
+                        }
+                    }).then((resp)=>{
+                        if (resp.ok) {
+                            actionsPopup.style.display="none";
+                            reportPopup.style.display="none";
+                            createNotification(`Successfully reported user for "${reportReasonDropdown.value}"`);
+                            reportReasonDropdown.children[0].selected = "selected";
+                        }else {
+                            createNotification(`Something went wrong reporting this user. Please try again later or contact a developer.`);
+                        }
+                    });
+                }
             }
         }else {
             createNotification(`Please select a reason for reporting!`);
@@ -166,59 +204,15 @@ window.onload = ()=>{
     const twelveSecondsAudio = document.getElementById("12s-audio");
 
     okButton.addEventListener("click",()=>{
-        if (timerState===timerStates.STOPPED) {
-            penaltiesDiv.style.display="none";
-            penaltyText.style.display="none";
-            penaltyText.style.color="#242424";
-            publishSolveData("OK");
-        }
+        okSolve();
     });
 
     plusTwoButton.addEventListener("click",()=>{
-        if (timerState===timerStates.STOPPED) {
-            penaltiesDiv.style.display="none";
-            penaltyText.style.display="block";
-            penaltyText.style.color="#d7e233";
-            if (currentPenalty!=Penalty.PLUS_2) {
-                penaltyText.textContent="+2";
-                rawTime+=2000;
-                let ms = Math.floor(((rawTime)/10)%100);
-                let s = Math.floor(((rawTime)/1000)%60);
-                let min = Math.floor((rawTime)/60000);
-
-                if (min) {
-                    time = `${min.toString()}:${s.toString().padStart(2,0)}.${(ms).toString().padStart(2,0)}`;;
-                } else {
-                    time = `${s.toString()}.${(ms).toString().padStart(2,0)}`;
-                }
-                userTimer.textContent = time;
-                publishSolveData("+2");
-            }else {
-                penaltyText.textContent="+4";
-                rawTime+=4000;
-                let ms = Math.floor(((rawTime)/10)%100);
-                let s = Math.floor(((rawTime)/1000)%60);
-                let min = Math.floor((rawTime)/60000);
-
-                if (min) {
-                    time = `${min.toString()}:${s.toString().padStart(2,0)}.${(ms).toString().padStart(2,0)}`;;
-                } else {
-                    time = `${s.toString()}.${(ms).toString().padStart(2,0)}`;
-                }
-                userTimer.textContent = time;
-                publishSolveData("+4");
-            }
-        }
+        plus2Solve();
     });
 
     dnfButton.addEventListener("click",()=>{
-        if (timerState===timerStates.STOPPED) {
-            penaltiesDiv.style.display="none";
-            penaltyText.style.display="block";
-            penaltyText.textContent="DNF";
-            penaltyText.style.color="#e23333";
-            publishSolveData("DNF");
-        }
+        dnfSolve();
     });
 
 
@@ -282,6 +276,8 @@ window.onload = ()=>{
                 setTimerEnabled(false);
             }
         }
+
+        //TODO: Implement key click shortcuts for OK, +2, DNF. Change private_timer.js too
     });
 
     document.addEventListener("keyup", e=>{
@@ -410,6 +406,62 @@ window.onload = ()=>{
                 })
             });
         }, 100);
+    }
+
+    function okSolve() {
+        if (timerState===timerStates.STOPPED) {
+            penaltiesDiv.style.display="none";
+            penaltyText.style.display="none";
+            penaltyText.style.color="#242424";
+            publishSolveData("OK");
+        }
+    }
+
+    function plus2Solve() {
+        if (timerState===timerStates.STOPPED) {
+            penaltiesDiv.style.display="none";
+            penaltyText.style.display="block";
+            penaltyText.style.color="#d7e233";
+            if (currentPenalty!=Penalty.PLUS_2) {
+                penaltyText.textContent="+2";
+                rawTime+=2000;
+                let ms = Math.floor(((rawTime)/10)%100);
+                let s = Math.floor(((rawTime)/1000)%60);
+                let min = Math.floor((rawTime)/60000);
+
+                if (min) {
+                    time = `${min.toString()}:${s.toString().padStart(2,0)}.${(ms).toString().padStart(2,0)}`;;
+                } else {
+                    time = `${s.toString()}.${(ms).toString().padStart(2,0)}`;
+                }
+                userTimer.textContent = time;
+                publishSolveData("+2");
+            }else {
+                penaltyText.textContent="+4";
+                rawTime+=4000;
+                let ms = Math.floor(((rawTime)/10)%100);
+                let s = Math.floor(((rawTime)/1000)%60);
+                let min = Math.floor((rawTime)/60000);
+
+                if (min) {
+                    time = `${min.toString()}:${s.toString().padStart(2,0)}.${(ms).toString().padStart(2,0)}`;;
+                } else {
+                    time = `${s.toString()}.${(ms).toString().padStart(2,0)}`;
+                }
+                userTimer.textContent = time;
+                publishSolveData("+4");
+            }
+        }
+    }
+
+    function dnfSolve() {
+        if (timerState===timerStates.STOPPED) {
+            penaltiesDiv.style.display="none";
+            penaltyText.style.display="block";
+            penaltyText.textContent="DNF";
+            penaltyText.style.color="#e23333";
+            publishSolveData("DNF");
+        }
     }
 }
 

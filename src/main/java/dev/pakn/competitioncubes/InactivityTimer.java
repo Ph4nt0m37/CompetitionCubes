@@ -3,6 +3,8 @@ package dev.pakn.competitioncubes;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class InactivityTimer {
     ArrayList<UserInactivity> userInactivityTimers = new ArrayList<>();
 
+    private static Logger logger = LoggerFactory.getLogger(MatchFinder.class);
+
     @PostMapping("/api/reset-inactivity-timer")
     public ResponseEntity<?> resetInactivityTimer(@AuthenticationPrincipal User user, @RequestBody UserInactivity userInactivity) {
         if (user.getUserId()!=userInactivity.getUserId()) {
@@ -30,8 +34,12 @@ public class InactivityTimer {
                 userInactivityTimers.remove(i);
             }
         }
-        if (user.getCurrentMatch()!=null && !user.getCurrentMatch().isPrivate()) userInactivityTimers.add(userInactivity);
-        return new ResponseEntity<>(HttpStatus.OK);
+        //logger.info(userInactivity.getUserId()+" | "+user.getCurrentMatch());
+        if (user.getCurrentMatch()!=null && !user.getCurrentMatch().isPrivate()) {
+            userInactivityTimers.add(userInactivity);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @DeleteMapping("/api/remove-inactivity-timer")
@@ -46,13 +54,13 @@ public class InactivityTimer {
     }
 
     @GetMapping("/api/get-inactivity-time/{userId}")
-    public UserInactivity getInactivityTimer(@PathVariable int userId) {
+    public ResponseEntity<UserInactivity> getInactivityTimer(@PathVariable int userId) {
         for (int i=0;i<userInactivityTimers.size();i++) {
             if (userInactivityTimers.get(i).getUserId()==userId) {
-                return userInactivityTimers.get(i);
+                return new ResponseEntity<>(userInactivityTimers.get(i),HttpStatus.OK);
             }
         }
-        return null;
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @Scheduled(fixedRate = 1000)

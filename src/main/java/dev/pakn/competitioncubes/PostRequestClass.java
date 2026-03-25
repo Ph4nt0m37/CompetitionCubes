@@ -57,16 +57,10 @@ public class PostRequestClass {
 
         public UserReport() {};
 
-        public UserReport(int userId, String reason) {
+        public UserReport(int userId, String reason, String info) {
             this.userId = userId;
             this.reason = reason;
-            this.info=null;
-        }
-
-        public UserReport(int userId, String reason, int inactivityTime) {
-            this.userId = userId;
-            this.reason = reason;
-            this.info = String.valueOf(inactivityTime);
+            this.info = info;
         }
 
         public int getUserId() {
@@ -91,6 +85,11 @@ public class PostRequestClass {
 
         public void setInfo(String info) {
             this.info = info;
+        }
+
+        @Override
+        public String toString() {
+            return "UserReport [userId=" + userId + ", reason=" + reason + ", info=" + info + "]";
         }
     }
 

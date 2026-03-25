@@ -68,6 +68,7 @@ window.onload = ()=>{
                     body: JSON.stringify({
                         userId: oppId,
                         reason: reportReasonDropdown.value,
+                        info: null
                     }),
                     headers: {
                         "Content-type": "application/json; charset=UTF-8"

@@ -38,18 +38,12 @@ await fetch(`/api/get-user-data`).then((response)=> {
     usernameText.textContent=data.username;
     usernameText.title = data.username;
     user = data;
-    let userSettings = null;
-    fetch(`/api/get-user-settings/${userId}`).then((resp)=>{
-        if (resp.ok)
-            return resp.json();
-        createNotification("Something went wrong loading your settings, so some things may not work as expected.");
-    }).then(settings=>{
-        userSettings = settings;
-        if (userSettings['inspectionAudio']) {
-            matchJoinAudio.play();
-        }
-    }); 
+    userSettings = user['userSettings'];
+    if (userSettings['inspectionAudio']) {
+        matchJoinAudio.play();
+    }
 }).catch(function(err) {
+    createNotification("Something went wrong loading your settings, so some things may not work as expected.");
     console.log('Failed to fetch!', err);
 });
 
