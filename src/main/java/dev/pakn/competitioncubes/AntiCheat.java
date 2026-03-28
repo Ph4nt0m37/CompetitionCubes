@@ -282,7 +282,8 @@ public class AntiCheat {
             Match userMatch = DBController.getUserByIDList(userId).getCurrentMatch();
             ArrayList<SolveData> userSolves = userMatch.getUserSolves().get(userId);
             if (userSolves.size()>0) {
-                userSolves.get(userSolves.size()-1).setValidity(false);
+                userSolves.get(userSolves.size()-1).setFlagged(true);
+                addInvalidSingle(userSolves.get(userSolves.size()-1), TimeConversions.doubleToTime(userMatch.getUserWcaPbSingle(userId)), TimeConversions.doubleToTime(userMatch.getUserWcaPbAvg(userId)));
             }else {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
