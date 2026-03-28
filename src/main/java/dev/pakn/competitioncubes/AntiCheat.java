@@ -350,7 +350,7 @@ public class AntiCheat {
         try {
             PermissionLevel adminPermLevel = admin.getPermissionLevel();
             PermissionLevel userPermLevel = DBController.getUserByIDList(userId).getPermissionLevel();
-            if (adminPermLevel!=PermissionLevel.OWNER && (!adminPermLevel.hasBanAccess() || userPermLevel.getPermissionValue()>adminPermLevel.getPermissionValue() || userId==admin.getUserId())) {
+            if (adminPermLevel!=PermissionLevel.OWNER && (!adminPermLevel.hasBanAccess() || userPermLevel.getPermissionValue()>=adminPermLevel.getPermissionValue() || userId==admin.getUserId())) {
                 return new ResponseEntity<>("You are not allowed to warn this user.",HttpStatus.FORBIDDEN);
             }
             DBController.addUserWarning(userId, expirationDate, reason);
@@ -367,7 +367,7 @@ public class AntiCheat {
         try {
             PermissionLevel adminPermLevel = admin.getPermissionLevel();
             PermissionLevel userPermLevel = DBController.getUserByIDList(userWarnReq.getWarnedId()).getPermissionLevel();
-            if (adminPermLevel!=PermissionLevel.OWNER && (!adminPermLevel.hasBanAccess() || userPermLevel.getPermissionValue()>adminPermLevel.getPermissionValue() || userWarnReq.getWarnedId()==admin.getUserId())) {
+            if (adminPermLevel!=PermissionLevel.OWNER && (!adminPermLevel.hasBanAccess() || userPermLevel.getPermissionValue()>=adminPermLevel.getPermissionValue() || userWarnReq.getWarnedId()==admin.getUserId())) {
                 return new ResponseEntity<>("You are not allowed to change this user's warnings.",HttpStatus.FORBIDDEN);
             }
             DBController.setUserWarnings(userWarnReq.getWarnedId(), userWarnReq.getWarnings());
@@ -392,7 +392,7 @@ public class AntiCheat {
         try {
             PermissionLevel adminPermLevel = admin.getPermissionLevel();
             PermissionLevel bannedPermLevel = DBController.getUserByIDList(bannedId).getPermissionLevel();
-            if (adminPermLevel!=PermissionLevel.OWNER && (!adminPermLevel.hasBanAccess() || bannedPermLevel.getPermissionValue()>adminPermLevel.getPermissionValue() || bannedId==admin.getUserId())) {
+            if (adminPermLevel!=PermissionLevel.OWNER && (!adminPermLevel.hasBanAccess() || bannedPermLevel.getPermissionValue()>=adminPermLevel.getPermissionValue() || bannedId==admin.getUserId())) {
                 return new ResponseEntity<>("You are not allowed to ban this user.",HttpStatus.FORBIDDEN);
             }
             if (duration<0) {
@@ -426,7 +426,7 @@ public class AntiCheat {
         try {
             PermissionLevel adminPermLevel = admin.getPermissionLevel();
             PermissionLevel unBannedPermLevel = DBController.getUserByIDList(userId).getPermissionLevel();
-            if (adminPermLevel!=PermissionLevel.OWNER && (!adminPermLevel.hasBanAccess() || unBannedPermLevel.getPermissionValue()>adminPermLevel.getPermissionValue() || userId==admin.getUserId())) {
+            if (adminPermLevel!=PermissionLevel.OWNER && (!adminPermLevel.hasBanAccess() || unBannedPermLevel.getPermissionValue()>=adminPermLevel.getPermissionValue() || userId==admin.getUserId())) {
                 return new ResponseEntity<>("You are not allowed to unban this user.",HttpStatus.FORBIDDEN);
             }
             DBController.removeBannedUser(userId);
