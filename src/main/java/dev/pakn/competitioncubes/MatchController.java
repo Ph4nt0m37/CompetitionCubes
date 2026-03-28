@@ -64,15 +64,27 @@ public class MatchController {
                 int oppId = oppReq.getUserId();
                 Event event = DBController.stringToEventMap.get(waitlistRequest.getEvent());
                 if (oppReq.getEvent().equals(waitlistRequest.getEvent()) && Math.abs(user.getElo(event)-oppUser.getElo(event))<100) {
-                    //fix
-                    MatchFinder.removeFromWaitingList(user.getUserId());
-                    MatchFinder.removeFromWaitingList(oppId);
-                    logger.info("match found between "+user.getUserId()+" and "+oppId);
-                    Match match = new Match(event,new int[]{user.getUserId(),oppId},(int)(Math.random()*9999999),false);
-                    matches.add(match);
-                    user.setCurrentMatch(match);
-                    oppUser.setCurrentMatch(match);
-                    return match;
+                    //check if user is still in waitlist
+                    //this fix is really, really bad. but it should work so i'll fix it later
+                    ArrayList<WaitlistRequest> newWaitList = (ArrayList<WaitlistRequest>) MatchFinder.getWaitingList().clone();
+                    boolean containsUser = false;
+                    boolean containsOpp = false;
+                    for (WaitlistRequest req:newWaitList) {
+                        if (req.getUserId()==user.getUserId()) containsUser = true;
+                        if (req.getUserId()==oppId) containsOpp = true;
+                    }
+                    if (containsUser && containsOpp) {
+                        MatchFinder.removeFromWaitingList(user.getUserId());
+                        MatchFinder.removeFromWaitingList(oppId);
+                        logger.info("match found between "+user.getUserId()+" and "+oppId);
+                        Match match = new Match(event,new int[]{user.getUserId(),oppId},(int)(Math.random()*9999999),false);
+                        matches.add(match);
+                        user.setCurrentMatch(match);
+                        oppUser.setCurrentMatch(match);
+                        return match;
+                    }else {
+                        return new Match();
+                    }
                 }
             }
             return new Match();
