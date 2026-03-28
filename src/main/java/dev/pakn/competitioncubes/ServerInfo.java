@@ -43,8 +43,7 @@ public class ServerInfo {
     private static Logger logger = LoggerFactory.getLogger(CompetitioncubesApplication.class);
 
 	//public static final long launchEpoch = 0;
-    // public static final long launchEpoch = 1774724400000l;
-    public static final long launchEpoch = System.currentTimeMillis()+60000;
+    public static final long launchEpoch = 1774724400000l;
 
     public static final long badgeAwardDelay = launchEpoch+259200000l;
 
