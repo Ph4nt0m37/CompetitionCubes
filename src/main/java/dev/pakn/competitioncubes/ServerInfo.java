@@ -54,7 +54,7 @@ public class ServerInfo {
     private static final File serverInfoFile = new File(System.getProperty("user.dir")+"\\src\\main\\resources\\server_info.json".replace("\\", File.separator));
 
     //TODO: Move this to app.prop as an environment variable (or just delete it)
-    private static final String overridePassword = "0v3rR1de";
+    public static final String overridePassword = "CcubesOver";
 
     @PostConstruct
     public void init() {
@@ -115,7 +115,7 @@ public class ServerInfo {
     @GetMapping("/api/public/check-override-password")
     public ResponseEntity<Boolean> checkOverridePassword(@RequestParam String pass, HttpServletResponse response) {
         if (pass.equals(overridePassword)) {
-            Cookie overrideCookie = new Cookie("launch_override", "true");
+            Cookie overrideCookie = new Cookie("launch_override", overridePassword);
             overrideCookie.setSecure(true);
             overrideCookie.setHttpOnly(true);
             overrideCookie.setMaxAge(86400);
