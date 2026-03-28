@@ -45,17 +45,21 @@ public class LinkMappings {
             return "launch-waiting.html";
         }
         User user = DBController.getUserBySecret(userSecret);
-        if (user.getCurrentMatch()!=null && user.getCurrentMatch().isPrivate()) {
-            return "comp_private.html";
-        }
-        for (Match match:MatchController.getMatches()) {
-            if (match.getRoomId()==Integer.parseInt(roomIdStr)) {
-                for (int matchUserId:match.getUsers()) {
-                    if (matchUserId==user.getUserId()) {
-                        return "comp.html";
+        if (user!=null) {
+            if (user.getCurrentMatch()!=null && user.getCurrentMatch().isPrivate()) {
+                return "comp_private.html";
+            }
+            for (Match match:MatchController.getMatches()) {
+                if (match.getRoomId()==Integer.parseInt(roomIdStr)) {
+                    for (int matchUserId:match.getUsers()) {
+                        if (matchUserId==user.getUserId()) {
+                            return "comp.html";
+                        }
                     }
                 }
             }
+        }else {
+            throw new HttpInternalServerException();
         }
         throw new HttpForbiddenException();
     }

@@ -113,7 +113,7 @@ function sortBySingle(selectedEvent) {
             for(let i=0;i<(singleSortedUsers.length>100 ? 100 : singleSortedUsers.length);i++) {
                 let userSingle = singleSortedUsers[i]['stat'];
                 optionKeyText.textContent = 'Single';
-                if (userSingle>-1) {
+                if (userSingle>-1 && userSingle<2147483647.00) {
                     let userEntry = userEntryTemplate.cloneNode(true);
                     userEntry.removeAttribute("id");
                     let userRank = i+1;

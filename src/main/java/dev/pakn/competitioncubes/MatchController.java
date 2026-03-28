@@ -3,6 +3,8 @@ package dev.pakn.competitioncubes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -103,13 +105,13 @@ public class MatchController {
     }
 
     @GetMapping("/api/get-match-info/{roomId}")
-    public Match getMatchInfo(@PathVariable int roomId) {
+    public ResponseEntity<Match> getMatchInfo(@PathVariable int roomId) {
         for (Match currMatch:matches) {
             if (currMatch.getRoomId()==roomId) {
-                return currMatch;
+                return new ResponseEntity<>(currMatch,HttpStatus.OK);
             }
         }
-        return null;
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public static ArrayList<Match> getMatches() {

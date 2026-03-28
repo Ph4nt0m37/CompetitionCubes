@@ -91,6 +91,8 @@ fetch(`api/get-match-info/${roomId}`).then(response=>{
             }).catch(function(err) {
                 console.log('Failed to fetch!', err);
             });
+    }).catch(error=>{
+        console.log(error);
     });
 
 export function setMatchData(data) {
