@@ -60,6 +60,23 @@ window.onload = ()=>{
         forfeitPopup.style.display="none";
     });
 
+    const reportSolveButton = document.getElementById("report-solve-button");
+    reportSolveButton.addEventListener("click",()=>{
+        reportSolveButton.blur();
+        fetch(`/api/report-solve?userId=${oppId}`, {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        }).then(resp=>{
+            if (resp.status==200) {
+                createNotification("Successfully reported this solve.");
+            }else {
+                createNotification("Something went wrong reporting this solve!");
+            }
+        });
+    });
+
     const reportButton = document.getElementById("confirm-report-button");
     reportButton.addEventListener("click",async ()=>{
         const reportReason = reportReasonDropdown.value;

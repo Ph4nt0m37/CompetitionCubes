@@ -210,7 +210,7 @@ public class AntiCheat {
         String scramble = dnfTime.getScramble();
         try {
             PermissionLevel adminPermLevel = admin.getPermissionLevel();
-            if (!adminPermLevel.hasAdminDashboardAccess()) {
+            if (!adminPermLevel.hasAdminDashboardAccess() || userId==admin.getUserId()) {
                 return new ResponseEntity<>("You are not allowed to do this.",HttpStatus.FORBIDDEN);
             }
             DBController.removeSingle(userId, Event.valueOf(event), time, scramble);
