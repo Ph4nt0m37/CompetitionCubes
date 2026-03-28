@@ -251,6 +251,8 @@ public class AntiCheat {
                 return new ResponseEntity<>("You are not allowed to do this.",HttpStatus.FORBIDDEN);
             }
             DBController.dnfSingle(userId, Event.valueOf(event), time, scramble);
+            //as of now, dnfing a single won't warn the user since the anticheat has likely already caught it
+            //warnUser(userId, "You have been warned for a suspicious solve.");
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e) {
             e.printStackTrace();
@@ -269,6 +271,8 @@ public class AntiCheat {
                 return new ResponseEntity<>("You are not allowed to do this.",HttpStatus.FORBIDDEN);
             }
             DBController.dnfAverage(userId, Event.valueOf(event), time);
+            //as of now, dnfing an average won't warn the user since the anticheat has likely already caught it
+            //warnUser(userId, "Potentially Invalid Previous Average");
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e) {
             e.printStackTrace();
