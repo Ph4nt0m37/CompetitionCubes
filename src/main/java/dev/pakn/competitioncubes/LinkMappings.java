@@ -46,7 +46,8 @@ public class LinkMappings {
         }
         User user = DBController.getUserBySecret(userSecret);
         if (user!=null) {
-            if (user.getCurrentMatch()!=null && user.getCurrentMatch().isPrivate()) {
+            //logger.info(user.getCurrentMatch().toString());
+            if (user.getCurrentMatch()!=null && user.getCurrentMatch().isPrivate() && user.getCurrentMatch().getRoomId()==Integer.parseInt(roomIdStr)) {
                 return "comp_private.html";
             }
             for (Match match:MatchController.getMatches()) {

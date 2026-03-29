@@ -44,8 +44,14 @@
       // Bind events
       // If you have any js library which support Events, replace this part
       // and remove addEvent function (or use original jQuery version)
-      addEvent(window, 'resize', resizer);
-      addEvent(window, 'orientationchange', resizer);
+      /*addEventListener("resize", ()=>{
+        //for some reason, resizer only resizes a percentage. so I need to run it a couple of times to make it expand to the correct size
+        for (let i=0;i<10;i++) {
+          resizer();
+        }
+      });
+      //addEvent(window, 'resize', resizer);
+      addEvent(window, 'orientationchange', resizer);*/
     };
 
     if (el.length)

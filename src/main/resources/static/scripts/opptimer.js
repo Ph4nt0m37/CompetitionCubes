@@ -49,7 +49,7 @@ export function setTimerState(ts) {
     }
 }
 
-export function setTime(time) {
+export function setOppTime(time) {
     oppTimer.textContent=time;
 }
 

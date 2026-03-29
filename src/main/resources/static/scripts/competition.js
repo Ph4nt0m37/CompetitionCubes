@@ -1,9 +1,9 @@
 //export let roomId = Math.floor(Math.random()*100000)
 export let roomId = new URLSearchParams(window.location.search).get("roomId");
-export let userId = sessionStorage.getItem("userId");
-sessionStorage.removeItem("userId");
+export let userId = undefined;
+import { setOppTime } from "./opptimer.js";
 import { connectPrivateReceiver } from "./private_match_receiver.js";
-import { setTimerEnabled, createNotification } from "./timer.js";
+import { setTimerEnabled, createNotification, setTimerValue } from "./timer.js";
 
 let scrambleText = document.getElementById("scramble-text");
 
@@ -25,27 +25,50 @@ export let currentScramble = "";
 
 export let oppId = null;
 
+export let userSettings = undefined;
+
 let matchWinner = null;
+const matchJoinAudio = document.getElementById("match-join-audio");
+
+let user = undefined;
 
 let userElo = -1;
 let oppElo = -1;
 
 const searchingUsersText = document.getElementById("searching-users-text");
 
+await fetch(`/api/get-user-data`).then((response)=> {
+    return response.json();
+}).then(function(data) {
+    userId = data['userId'];
+    usernameText.textContent=data.username;
+    usernameText.title = data.username;
+    user = data;
+    userSettings = user['userSettings'];
+    if (userSettings['matchSounds']) {
+        matchJoinAudio.play();
+    }
+}).catch(function(err) {
+    createNotification("Something went wrong loading your settings, so some things may not work as expected.");
+    console.log('Failed to fetch!', err);
+});
+
 export function setScramble(scramble) {
     if (!matchWinner) {
         if (scramble!=="Waiting for Opponent to solve..." && scramble!=="Waiting for Opponent to confirm solve...") {
             currentScramble = scramble;
-            fetch("/api/reset-inactivity-timer", {
-                method: "POST",
-                body: JSON.stringify({
-                    userId: userId,
-                    maxTime: 120
-                }),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
-                }
-            });
+            if (!isReload()) {
+                fetch("/api/reset-inactivity-timer", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        userId: userId,
+                        maxTime: 120
+                    }),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8"
+                    }
+                });
+            }
         }else{
             currentScramble = "";
             fetch(`/api/remove-inactivity-timer`, {
@@ -63,25 +86,33 @@ export function setScramble(scramble) {
 fetch(`api/get-match-info/${roomId}`).then(response=>{
         if (response.ok) return response.json();
         createNotification("Something went wrong with this match. Redirecting back to main page...");
-        setTimeout(window.location.replace("/"),3000);
+        setTimeout(()=>{
+            //window.location.replace("/");
+        },3000);
     }).then(matchJson=>{
         setMatchData(matchJson);
+        console.log(matchJson);
+        userElo=user.elos[matchJson.event];
         if (matchJson.users[0]==userId) {
             oppId = matchJson.users[1];
         }else if (matchJson.users[1]==userId) {
             oppId = matchJson.users[0];
         }
-        //getting elos
-        fetch(`/api/public/get-user-data-by-id/${userId}`).then((response)=> {
-            return response.json();
-            }).then(function(data) {
-                userElo=data.elos[matchData.event];
-                usernameText.textContent=data.username;
-                usernameText.title = data.username;
-            }).catch(function(err) {
-                console.log('Failed to fetch!', err);
-            });
 
+        //resetting info if reloaded
+        const userSolves = matchJson['userSolves'][String(userId)];
+        if (userSolves.length>0)
+            setTimerValue((userSolves[userSolves.length-1])['timeString']);
+
+        const oppSolves = matchJson['userSolves'][String(oppId)];
+        if (oppSolves.length>0)
+            setOppTime((oppSolves[oppSolves.length-1])['timeString']);
+
+        userWins.textContent=`Wins: ${matchJson['userScores'][String(userId)]}`;
+        oppWins.textContent=`Wins: ${matchJson['userScores'][String(oppId)]}`;
+        
+
+        //getting opp info
         fetch(`/api/public/get-user-data-by-id/${oppId}`).then((response)=> {
             return response.json();
             }).then(function(data) {
@@ -213,3 +244,28 @@ function getWaitingUserCount() {
     });
 }
 
+//reload detection from https://stackoverflow.com/questions/5004978/check-if-page-gets-reloaded-or-refreshed-in-javascript/53307588#53307588
+// There is one navigation entry per document
+const entry = performance.getEntriesByType('navigation')[0];
+
+function getNavigationType() {
+  if (entry && typeof entry.type === 'string') {
+    // 'navigate' | 'reload' | 'back_forward' | 'prerender'
+    return entry.type;
+  }
+  // Fallback to the deprecated API (values: 0,1,2,255)
+  if (performance.navigation) {
+    const t = performance.navigation.type;
+    return t === 1 ? 'reload'
+         : t === 2 ? 'back_forward'
+         : 'navigate';
+  }
+  return undefined;
+}
+
+function isReload() {
+    const navType = getNavigationType();
+    const isReload = navType === 'reload';
+    const isBackForward = navType === 'back_forward';   
+    return isReload || isBackForward;
+}

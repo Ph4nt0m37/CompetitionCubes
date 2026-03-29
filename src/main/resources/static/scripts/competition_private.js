@@ -1,8 +1,9 @@
 //export let roomId = Math.floor(Math.random()*100000)
 export let roomId = new URLSearchParams(window.location.search).get("roomId");
-export let userId = undefined
+export let userId = undefined;
+import { setOppTime } from "./opptimer_private.js";
 import { connectPrivateReceiver, stompClient } from "./private_match_receiver.js";
-import { setTimerEnabled, createNotification } from "./timer_private.js";
+import { setTimerEnabled, createNotification, setTimerValue } from "./timer_private.js";
 
 let scrambleText = document.getElementById("scramble-text");
 
@@ -39,7 +40,7 @@ await fetch(`/api/get-user-data`).then((response)=> {
     usernameText.title = data.username;
     user = data;
     userSettings = user['userSettings'];
-    if (userSettings['inspectionAudio']) {
+    if (userSettings['matchSounds']) {
         matchJoinAudio.play();
     }
 }).catch(function(err) {
@@ -75,6 +76,18 @@ fetch(`api/get-match-info/${roomId}`).then(response=>{
         }
 
         console.log(userId+" | "+oppId);
+
+        //resetting info if reloaded
+        const userSolves = matchJson['userSolves'][String(userId)];
+        if (userSolves.length>0)
+            setTimerValue((userSolves[userSolves.length-1])['timeString']);
+
+        const oppSolves = matchJson['userSolves'][String(oppId)];
+        if (oppSolves.length>0)
+            setOppTime((oppSolves[oppSolves.length-1])['timeString']);
+
+        userWins.textContent=`Wins: ${matchJson['userScores'][String(userId)]}`;
+        oppWins.textContent=`Wins: ${matchJson['userScores'][String(oppId)]}`;
 
         fetch(`/api/public/get-user-data-by-id/${oppId}`).then((response)=> {
             return response.json();

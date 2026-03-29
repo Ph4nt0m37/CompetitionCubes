@@ -1,6 +1,6 @@
 import { roomId, userId, setScramble, matchData, setMatchData, setWins, endMatch, setAo5s } from "./competition.js";
 import { startMatchSearchClient } from "./next_match_search.js";
-import { setTimerState, setTime, setEarlyTime, setPenalty, clearPenalty } from "./opptimer.js"
+import { setTimerState, setOppTime, setEarlyTime, setPenalty, clearPenalty } from "./opptimer.js"
 import { setTimerEnabled } from "./timer.js";
 
 console.log(sessionStorage.getItem("userId"));
@@ -22,7 +22,7 @@ stompClient.onConnect = (frame)=>{
     stompClient.subscribe(`/room/solves/${roomId}`, (solveJSON) => {
         let solve = JSON.parse(solveJSON.body)
         if (solve.userId!=userId) {
-            setTime(solve.time);
+            setOppTime(solve.time);
             if (solve.penalty!=="OK") setPenalty(solve.penalty);
             stompClient.publish({
                 destination: "/app/scramble/3x3",
@@ -82,39 +82,21 @@ stompClient.onConnect = (frame)=>{
 
         
     });
-
-    stompClient.subscribe('/room/found-match', (matchJson)=> {
-        let match = JSON.parse(matchJson.body);
-        let users = match.users;
-        let roomId = match.roomId;
-        if (users && users.includes(userId)) {
-            fetch(`/api/waiting-list`, {
-                method: "DELETE",
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
-                }
-            }).catch(error=>{
-                //do nothing!
-            });
-            window.location.replace(`${window.location.origin}/competition?roomId=${roomId}&userId=${userId}`);
-        }
-    });
     
     fetch(`api/get-match-info/${roomId}`).then(response=>{
         return response.json()
     }).then(matchJson=>{
         setMatchData(matchJson);
+        if (matchData.currentSolver!=userId) {
+            setScramble("Waiting for Opponent to solve...");
+            setTimerEnabled(false);
+        }else {
+            setScramble(matchData.currentScramble);
+            setTimerEnabled(true);
+        }
     }).catch(function(err) {
         console.log('Failed to fetch!', err);
     });
-
-    if (matchData.currentSolver!=userId) {
-        setScramble("Waiting for Opponent to solve...");
-        setTimerEnabled(false);
-    }else {
-        setScramble(matchData.currentScramble);
-        setTimerEnabled(true);
-    }
 }
 
 stompClient.onDisconnect = (frame)=>{

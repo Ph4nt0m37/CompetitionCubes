@@ -54,9 +54,7 @@ public class User {
         this.strikes = strikes;
         this.bans = bans;
         this.userSettings = userSettings;
-        for (Event event:elos.keySet()) {
-            ranks.put(event, Rank.getRankByElo(elos.get(event)));
-        }
+        calculateRanks();
     }
 
     //should only be used when loading from database
@@ -77,9 +75,7 @@ public class User {
         this.strikes = strikes;
         this.bans = bans;
         this.userSettings = userSettings;
-        for (Event event:elos.keySet()) {
-            ranks.put(event, Rank.getRankByElo(elos.get(event)));
-        }
+        calculateRanks();
     }
 
     public String getUsername() {
@@ -132,6 +128,12 @@ public class User {
 
     public Rank getRank(Event event) {
         return ranks.get(event);
+    }
+
+    public void calculateRanks() {
+        for (Event event:elos.keySet()) {
+            ranks.put(event, Rank.getRankByElo(elos.get(event)));
+        }
     }
 
     public void addSingle(Event event, double single) {

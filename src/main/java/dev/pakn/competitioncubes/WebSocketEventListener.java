@@ -36,8 +36,11 @@ public class WebSocketEventListener {
                 String userIdHeader = headers.getFirstNativeHeader("user_id");
                 if (userIdHeader!=null && !userIdHeader.isEmpty() && !userIdHeader.equals("null")) {
                     int userId = Integer.parseInt(userIdHeader);
-                    sessionUserIdMap.put(headers.getSessionId(), userId);
-                    matchDisconnectTimer.remove(userId);
+                    Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
+                    if (userMatch!=null) {
+                        sessionUserIdMap.put(headers.getSessionId(), userId);
+                        matchDisconnectTimer.remove(userId);
+                    }
                 }
             }catch (NumberFormatException e) {
                 logger.error("wth how did they get a userId that is not a number???",e);
@@ -49,9 +52,9 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketDisconnectListener(final SessionDisconnectEvent event) {
         int userId = sessionUserIdMap.get(event.getSessionId()) != null ? sessionUserIdMap.get(event.getSessionId()) : -1;
+        MatchFinder.removeFromWaitingList(userId);
         if (userId>=0) {
             try {
-                MatchFinder.removeFromWaitingList(userId);
                 //logger.info("removed "+userId+" from waiting list!");
                 Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
                 if (userMatch!=null && userMatch.getWinner()==null) matchDisconnectTimer.put(userId, 3);

@@ -34,7 +34,6 @@ public class InactivityTimer {
                 userInactivityTimers.remove(i);
             }
         }
-        //logger.info(userInactivity.getUserId()+" | "+user.getCurrentMatch());
         if (user.getCurrentMatch()!=null && !user.getCurrentMatch().isPrivate()) {
             userInactivityTimers.add(userInactivity);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -77,10 +76,10 @@ public class InactivityTimer {
                     //gotta subtract i by one to account for the fact that we just removed a user inactivity timer
                     i--;
                     for (int matchUserId:userMatch.getUsers()) {
+                        User user = DBController.getUsers().get(userId);
+                        user.setCurrentMatch(null);
                         if (matchUserId!=(int) userId) {
-                            User quitUser = DBController.getUsers().get(userId);
-                            userMatch.setQuitUser(quitUser);
-                            quitUser.setCurrentMatch(null);
+                            userMatch.setQuitUser(user);
                             userMatch.setWinner(matchUserId);
                             MatchController.sendMatchData(userMatch);
                         }

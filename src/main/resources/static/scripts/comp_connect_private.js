@@ -1,5 +1,5 @@
 import { roomId, userId, setScramble, matchData, setMatchData, setWins, endMatch, setAo5s } from "./competition_private.js";
-import { setTimerState, setTime, setEarlyTime, setPenalty, clearPenalty } from "./opptimer_private.js"
+import { setTimerState, setOppTime, setEarlyTime, setPenalty, clearPenalty } from "./opptimer_private.js"
 import { setTimerEnabled } from "./timer_private.js";
 
 export const stompClient = new StompJs.Client({
@@ -19,7 +19,7 @@ stompClient.onConnect = (frame)=>{
     stompClient.subscribe(`/room/solves/${roomId}`, (solveJSON) => {
         let solve = JSON.parse(solveJSON.body)
         if (solve.userId!=userId) {
-            setTime(solve.time);
+            setOppTime(solve.time);
             if (solve.penalty!=="OK") setPenalty(solve.penalty);
             stompClient.publish({
                 destination: "/app/scramble/3x3",

@@ -31,7 +31,7 @@ export function startMatchSearchClient() {
     //on website loading stuff
     stompClient.onConnect = (frame)=>{
         console.log("connected: "+ frame);
-        stompClient.subscribe('/room/found-match', (matchJSON) => {
+        stompClient.subscribe(`/room/found-match/${userId}`, (matchJSON) => {
             let match = JSON.parse(matchJSON.body)
             let users = match.users;
             let roomId = match.roomId;
@@ -45,7 +45,6 @@ export function startMatchSearchClient() {
                 }).catch(error=>{
                     //do nothing!
                 });
-                sessionStorage.setItem("userId",userId);
                 console.log("redirecting...");
                 window.location.replace(`${window.location.origin}/competition?roomId=${roomId}`);
             }
@@ -105,17 +104,6 @@ function startMatchSearch(stompClient) {
             //searching for user interval. also controls dots
             let dotCount = 1;
             searchInt = setInterval(()=>{
-                //search
-                if (dotCount===3) {
-                    stompClient.publish({
-                        destination: "/app/find-match",
-                        body: JSON.stringify({
-                            'userId':userId,
-                            'event':'3x3'
-                        })
-                    });
-                }
-
                 //dots
                 searchText.textContent = `Searching${".".repeat(dotCount)}`;
                 dotCount++;

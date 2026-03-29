@@ -1,5 +1,5 @@
 import { stompClient } from "./comp_connect.js";
-import { currentScramble, roomId, userId, oppId } from "./competition.js";
+import { currentScramble, roomId, userId, oppId, userSettings } from "./competition.js";
 export const timerStates = {
     TIMING: 0,
     INSPECTION: 1,
@@ -20,8 +20,9 @@ export function setTimerEnabled(enabled) {
 
 const matchJoinAudio = document.getElementById("match-join-audio");
 
+const userTimer = document.getElementById("user-timer");
+
 window.onload = ()=>{
-    const userTimer = document.getElementById("user-timer");
     const okButton = document.getElementById("ok-button");
 
     const penaltiesDiv = document.getElementById("penalties-div");
@@ -144,18 +145,6 @@ window.onload = ()=>{
             createNotification(`Please select a reason for reporting!`);
         }
     });
-
-    let userSettings = null;
-    fetch(`/api/get-user-settings/${userId}`).then((resp)=>{
-        if (resp.ok)
-            return resp.json();
-        createNotification("Something went wrong loading your settings, so some things may not work as expected.");
-    }).then(settings=>{
-        userSettings = settings;
-        if (userSettings['inspectionAudio']) {
-            matchJoinAudio.play();
-        }
-    }); 
 
     actionsPopup.addEventListener("click",(event)=>{
         if (event.target===event.currentTarget && forfeitPopup.style.display==="none") {
@@ -496,4 +485,8 @@ export function createNotification(text) {
             notif.remove();
         },1500);
     },5000);
+}
+
+export function setTimerValue(time) {
+    userTimer.textContent = time;
 }

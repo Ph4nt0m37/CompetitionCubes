@@ -25,6 +25,7 @@ import jakarta.annotation.PostConstruct;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -47,51 +48,6 @@ public class MatchController {
     @PostConstruct
     public void init() {
         staticSimpMessagingTemplate = simpMessagingTemplate;
-    }
-
-    @MessageMapping("/find-match")
-    @SendTo("/room/found-match")
-    public Match findMatch(WaitlistRequest waitlistRequest) {
-        try {
-            //cloning waitlist because we want to ignore userId and if we don't clone it we will accidentally remove userId from actual waitlist
-            ArrayList<WaitlistRequest> waitList = (ArrayList<WaitlistRequest>) MatchFinder.getWaitingList().clone();
-            for (int i=0;i<waitList.size();i++) {
-                if (waitList.get(i).getUserId()==waitlistRequest.getUserId()) waitList.remove(i);
-            }
-            User user = DBController.getUsers().get(waitlistRequest.getUserId());
-            for (WaitlistRequest oppReq:waitList) {
-                User oppUser = DBController.getUsers().get(oppReq.getUserId());
-                int oppId = oppReq.getUserId();
-                Event event = DBController.stringToEventMap.get(waitlistRequest.getEvent());
-                if (oppReq.getEvent().equals(waitlistRequest.getEvent()) && Math.abs(user.getElo(event)-oppUser.getElo(event))<100) {
-                    //check if user is still in waitlist
-                    //this fix is really, really bad. but it should work so i'll fix it later
-                    ArrayList<WaitlistRequest> newWaitList = (ArrayList<WaitlistRequest>) MatchFinder.getWaitingList().clone();
-                    boolean containsUser = false;
-                    boolean containsOpp = false;
-                    for (WaitlistRequest req:newWaitList) {
-                        if (req.getUserId()==user.getUserId()) containsUser = true;
-                        if (req.getUserId()==oppId) containsOpp = true;
-                    }
-                    if (containsUser && containsOpp) {
-                        MatchFinder.removeFromWaitingList(user.getUserId());
-                        MatchFinder.removeFromWaitingList(oppId);
-                        logger.info("match found between "+user.getUserId()+" and "+oppId);
-                        Match match = new Match(event,new int[]{user.getUserId(),oppId},(int)(Math.random()*9999999),false);
-                        matches.add(match);
-                        user.setCurrentMatch(match);
-                        oppUser.setCurrentMatch(match);
-                        return match;
-                    }else {
-                        return new Match();
-                    }
-                }
-            }
-            return new Match();
-        }catch (Exception e) {
-            e.printStackTrace();
-            return new Match();
-        }
     }
 
     @MessageMapping("/update-match")
@@ -253,6 +209,38 @@ public class MatchController {
             if (rematchRoomIds.get(rematchRoom)<0) {
                 rematchRoomIds.remove(rematchRoom);
             }
+        }
+    }
+
+    @Scheduled(fixedRate = 1000)
+    public void findMatches() {
+        try {
+            //cloning waitlist because we want to ignore userId and if we don't clone it we will accidentally remove userId from actual waitlist
+            ArrayList<WaitlistRequest> waitList = (ArrayList<WaitlistRequest>) MatchFinder.getWaitingList().clone();
+            //O(n^2) :barf:
+            for (WaitlistRequest userReq:waitList) {
+                User user = DBController.getUserByIDList(userReq.getUserId());
+                //ideally waitlists would be a hashmap with events and their waitlists, but i'll sort this out later
+                Event event = DBController.stringToEventMap.get(userReq.getEvent());
+                for (WaitlistRequest oppReq:waitList) {
+                    if (oppReq.getUserId()==userReq.getUserId()) continue;
+                    User oppUser = DBController.getUserByIDList(oppReq.getUserId());
+                    if (oppReq.getEvent().equals(userReq.getEvent()) && Math.abs(user.getElo(event)-oppUser.getElo(event))<100 && user.getCurrentMatch()==null && oppUser.getCurrentMatch()==null) {
+                        MatchFinder.removeFromWaitingList(user.getUserId());
+                        MatchFinder.removeFromWaitingList(oppUser.getUserId());
+                        logger.info("match found between "+user.getUserId()+" and "+oppUser.getUserId());
+                        Match match = new Match(event,new int[]{user.getUserId(),oppUser.getUserId()},(int)(Math.random()*9999999),false);
+                        matches.add(match);
+                        user.setCurrentMatch(match);
+                        oppUser.setCurrentMatch(match);
+                        simpMessagingTemplate.convertAndSend("/room/found-match/"+user.getUserId(),match);
+                        simpMessagingTemplate.convertAndSend("/room/found-match/"+oppUser.getUserId(),match);
+                    }
+                }
+            }
+
+        }catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

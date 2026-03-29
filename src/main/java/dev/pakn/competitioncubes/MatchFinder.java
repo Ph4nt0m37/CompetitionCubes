@@ -54,7 +54,7 @@ public class MatchFinder {
             }
             for (WaitlistRequest req:waitingList) {
                 if (req.getUserId()==userId) {
-                    return new WaitlistResult(WaitlistCode.IN_MATCH);
+                    removeFromWaitingList(userId);
                 }
             }
             waitingList.add(new WaitlistRequest(userId, event));

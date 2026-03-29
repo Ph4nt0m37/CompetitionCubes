@@ -117,7 +117,10 @@ public class DBController {
 
             if (accessToken!=null) {
                 String userWcaId = AuthController.getWCAId(accessToken);
-                if (userWcaId==null || getUserDataByWCAId(userWcaId)!=null) return false;
+                if (getUserDataByWCAId(userWcaId)!=null) {
+                    logger.error("User already exists with wcaid "+userWcaId+" for login.");
+                    return false;
+                }
                 String username = validateUsername(new JSONObject(userDataJSON).getString("username"));
             
                 //creating sql query
@@ -176,7 +179,7 @@ public class DBController {
                 return true;
             }
 
-            
+            logger.error("User secret is missing for login!");
             return false;
         }catch (Exception e) {
             logger.error("Failed to connect to db!", e);
@@ -871,11 +874,13 @@ public class DBController {
             //getting resultset
             ResultSet sortedUsersDB = usersQueryStatement.executeQuery();
             while (sortedUsersDB.next()) {
-                int userId = sortedUsersDB.getInt("userid");
-                String username = userList.get(userId).getUsername();
                 double userSingle = sortedUsersDB.getDouble("single");
-                String singleString = TimeConversions.doubleToTime(userSingle);
-                singleSortedUsers.add(new LeaderboardEntry(userId, username, event, userSingle, singleString));
+                if (userSingle>=0) {
+                    int userId = sortedUsersDB.getInt("userid");
+                    String username = userList.get(userId).getUsername();
+                    String singleString = TimeConversions.doubleToTime(userSingle);
+                    singleSortedUsers.add(new LeaderboardEntry(userId, username, event, userSingle, singleString));
+                }
             }
             return singleSortedUsers;
         }catch (Exception e) {
@@ -928,11 +933,13 @@ public class DBController {
             ResultSet sortedUsersDB = usersQueryStatement.executeQuery();
             ArrayList<LeaderboardEntry> averageSortedUsers = new ArrayList<>();
             while (sortedUsersDB.next()) {
-                int userId = sortedUsersDB.getInt("userid");
-                String username = userList.get(userId).getUsername();
                 double userAvg = sortedUsersDB.getDouble("average");
-                String avgString = TimeConversions.doubleToTime(userAvg);
-                averageSortedUsers.add(new LeaderboardEntry(userId, username, event, userAvg, avgString));
+                if (userAvg>=0) {
+                    int userId = sortedUsersDB.getInt("userid");
+                    String username = userList.get(userId).getUsername();
+                    String avgString = TimeConversions.doubleToTime(userAvg);
+                    averageSortedUsers.add(new LeaderboardEntry(userId, username, event, userAvg, avgString));   
+                }
             }
             return averageSortedUsers;
         }catch (Exception e) {

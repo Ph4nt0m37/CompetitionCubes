@@ -395,3 +395,7 @@ export function createNotification(text) {
         },1500);
     },5000);
 }
+
+export function setTimerValue(time) {
+    userTimer.textContent = time;
+}

@@ -75,7 +75,7 @@ onload = (event)=>{
 
             stompClient.onConnect = (frame)=>{
                 console.log("connected: "+ frame);
-                stompClient.subscribe('/room/found-match', (matchJSON) => {
+                stompClient.subscribe(`/room/found-match/${userId}`, (matchJSON) => {
                     let match = JSON.parse(matchJSON.body)
                     let users = match.users;
                     let roomId = match.roomId;
@@ -95,7 +95,7 @@ onload = (event)=>{
 
                 stompClient.subscribe('/room/under-maintenance', (maintenance) =>{
                     if (maintenance) {
-                        searchText.textContent = `Competing is currently in maintenance! Please come back later.`;
+                        searchText.textContent = `Competing is currently in maintenance! It should come back soon.`;
                     }else {
                         searchText.textContent="Searching...";
                         searchText.style.display="none";
@@ -171,17 +171,6 @@ function startMatchSearch(stompClient) {
             //searching for user interval. also controls dots
             let dotCount = 1;
             searchInt = setInterval(()=>{
-                //search
-                if (dotCount===3) {
-                    stompClient.publish({
-                        destination: "/app/find-match",
-                        body: JSON.stringify({
-                            'userId':userId,
-                            'event':'3x3'
-                        })
-                    });
-                }
-
                 //dots
                 searchText.textContent = `Searching${".".repeat(dotCount)}`;
                 dotCount++;
@@ -203,7 +192,7 @@ function startMatchSearch(stompClient) {
             }else if (waitlistCode==="ERROR") {
                 searchText.textContent = `Something went wrong trying to find a match. Please try again later, sorry!`;
             }else if (waitlistCode==="MAINTENANCE") {
-                searchText.textContent = `Competing is currently in maintenance! Please come back later.`;
+                searchText.textContent = `Competing is currently in maintenance!  It should come back soon.`;
             }
             return;
         }
