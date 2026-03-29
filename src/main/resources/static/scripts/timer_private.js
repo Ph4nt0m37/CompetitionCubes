@@ -377,6 +377,7 @@ window.onload = ()=>{
                 })
             });
         }, 100);
+        currentPenalty = Penalty.OK;
     }
 }
 

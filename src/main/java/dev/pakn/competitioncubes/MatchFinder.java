@@ -57,7 +57,10 @@ public class MatchFinder {
                     removeFromWaitingList(userId);
                 }
             }
-            waitingList.add(new WaitlistRequest(userId, event));
+            WaitlistRequest request = new WaitlistRequest(userId, event);
+            if (waitingList.contains(request)) 
+                removeFromWaitingList(request.getUserId());
+            waitingList.add(request);
             logger.debug("added "+userId+" to waiting list");
             return new WaitlistResult(WaitlistCode.SUCCESS);
         }catch (Exception e) {
@@ -89,6 +92,7 @@ public class MatchFinder {
         for (int i=0;i<waitingList.size();i++) {
             if (waitingList.get(i).getUserId()==userId) {
                 waitingList.remove(i);
+                i--;
                 removed = true;
             }
         }

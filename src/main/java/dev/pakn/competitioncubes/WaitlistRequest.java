@@ -25,4 +25,11 @@ public class WaitlistRequest {
         event=newEvent;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this==o) return true;
+        WaitlistRequest otherReq = (WaitlistRequest) o;
+        if (this.userId == otherReq.userId) return true;
+        return false;
+    }
 }

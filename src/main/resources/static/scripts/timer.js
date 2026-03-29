@@ -412,6 +412,7 @@ window.onload = ()=>{
                 })
             });
         }, 100);
+        currentPenalty = Penalty.OK;
     }
 
     function okSolve() {
