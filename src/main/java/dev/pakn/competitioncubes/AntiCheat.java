@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,8 @@ public class AntiCheat {
                         return -1;
                     }
                 }
+            }catch (JSONException e) {
+                return -1;
             }catch (Exception e) {
                 logger.error("Something went wrong with the request! ",e);
                 return -1;
@@ -79,6 +82,8 @@ public class AntiCheat {
                         return -1;
                     }
                 }
+            }catch (JSONException e) {
+                return -1;
             }catch (Exception e) {
                 logger.error("Something went wrong with the request! ",e);
                 return -1;
@@ -125,6 +130,8 @@ public class AntiCheat {
 
                     return pbs;
                 }
+            }catch (JSONException e) {
+                return new double[]{-1,-1};
             }catch (Exception e) {
                 logger.error("Something went wrong with the request! ",e);
                 return new double[]{-1,-1};

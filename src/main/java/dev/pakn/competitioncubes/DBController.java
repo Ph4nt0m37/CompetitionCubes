@@ -112,14 +112,14 @@ public class DBController {
     }
     
     @PostMapping("/api/create-user")
-    public boolean createUser(@RequestBody String userDataJSON, @CookieValue(value="wca_access_token", required = false) String accessToken, @CookieValue(value="user_secret", required = false) String userSecret) {
+    public ResponseEntity<?> createUser(@RequestBody String userDataJSON, @CookieValue(value="wca_access_token", required = false) String accessToken, @CookieValue(value="user_secret", required = false) String userSecret) {
         try (Connection conn = dataSource.getConnection();) {
 
             if (accessToken!=null) {
                 String userWcaId = AuthController.getWCAId(accessToken);
-                if (getUserDataByWCAId(userWcaId)!=null) {
+                if (userWcaId==null || getUserDataByWCAId(userWcaId)!=null) {
                     logger.error("User already exists with wcaid "+userWcaId+" for login.");
-                    return false;
+                    return new ResponseEntity<>(HttpStatus.FORBIDDEN);
                 }
                 String username = validateUsername(new JSONObject(userDataJSON).getString("username"));
             
@@ -176,14 +176,14 @@ public class DBController {
                 //adding user to userList
                 userList.put(userId, new User(userId,username,userWcaId,0,getElosByUserId(userId,conn),getSinglesByUserId(userId, conn),getAveragesByUserId(userId, conn),new Integer[0],0,0,null,getPrevSinglesByUserId(userId, conn),getPrevAveragesByUserId(userId, conn), 0, 0, new UserSettings()));
 
-                return true;
+                return new ResponseEntity<>(HttpStatus.OK);
             }
 
             logger.error("User secret is missing for login!");
-            return false;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }catch (Exception e) {
             logger.error("Failed to connect to db!", e);
-            return false;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
