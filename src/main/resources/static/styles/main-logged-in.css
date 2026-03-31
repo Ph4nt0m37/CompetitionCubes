@@ -141,3 +141,7 @@ button {
     font-size: 0.85rem;
     color: var(--dark-font)
 }
+
+.top-text {
+    color: var(--error-color);
+}
