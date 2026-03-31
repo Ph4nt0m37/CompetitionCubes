@@ -55,6 +55,10 @@ h1 {
     flex-grow: 1;
 }
 
+.timer-april-fools {
+    background-image: url("https://media.tenor.com/nlEH9PLmNVcAAAAM/my-hacker-screen-i-actualy-hacked.gif");
+}
+
 .timer {
     font-size: min(7.8vw,8.55rem);
     /*border: 10px solid black;*/
