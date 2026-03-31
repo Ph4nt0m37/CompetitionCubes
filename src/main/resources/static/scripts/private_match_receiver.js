@@ -82,6 +82,25 @@ export async function connectPrivateReceiver() {
                         createNotification("Successfully sent challenge request.","#22eb51");
                 }
             });
+
+            stompClient.publish({
+                destination: `/app/pong/${userId}`,
+                body: "false"
+            });
+        
+            stompClient.subscribe('/room/ping', (data) =>{
+                stompClient.publish({
+                    destination: `/app/pong/${userId}`,
+                    body: "false"
+                });
+            });
+        
+            stompClient.subscribe(`/room/ping/${userId}`, (data) =>{
+                stompClient.publish({
+                    destination: `/app/pong/${userId}`,
+                    body: "false"
+                });
+            });
         }
     },200); //add a little timeout to MAKE SURE it connects
     const notificationTemplate = document.querySelector(".notification.template");

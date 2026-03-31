@@ -50,6 +50,25 @@ export function startMatchSearchClient() {
                 window.location.replace(`${window.location.origin}/competition?roomId=${roomId}`);
             }
         });
+
+        stompClient.publish({
+            destination: `/app/pong/${userId}`,
+            body: "false"
+        });
+
+        stompClient.subscribe('/room/ping', (data) =>{
+            stompClient.publish({
+                destination: `/app/pong/${userId}`,
+                body: "false"
+            });
+        });
+
+        stompClient.subscribe(`/room/ping/${userId}`, (data) =>{
+            stompClient.publish({
+                destination: `/app/pong/${userId}`,
+                body: "false"
+            });
+        });
     }
 
     stompClient.onDisconnect = (frame)=>{
@@ -83,7 +102,7 @@ function startMatchSearch(stompClient) {
         method: "POST",
         body: JSON.stringify({
             'userId': userId,
-            'event':'3x3',
+            'event':'333',
             //'sessionId':
         }),
         headers: {

@@ -45,6 +45,8 @@ public class MatchController {
 
     private HashMap<Integer, Integer> rematchRoomIds = new HashMap<>();
 
+    private ArrayList<Match> prototypeMatches = new ArrayList<>();
+
     @PostConstruct
     public void init() {
         staticSimpMessagingTemplate = simpMessagingTemplate;
@@ -215,6 +217,45 @@ public class MatchController {
     @Scheduled(fixedRate = 1000)
     public void findMatches() {
         try {
+            for (Match match:prototypeMatches) {
+                //go through prototype matches and check if users pinged back
+                int userId1 = match.getUsers()[0];
+                int userId2 = match.getUsers()[1];
+                boolean user1Confirmed = HeartbeatHandler.getCurrentConnections().containsKey(userId1);
+                boolean user2Confirmed = HeartbeatHandler.getCurrentConnections().containsKey(userId2);
+                User user = DBController.getUserByIDList(userId1);
+                User oppUser = DBController.getUserByIDList(userId2);
+                if (user1Confirmed && user2Confirmed) {
+                    logger.info("match created between "+userId1+" and "+userId2);
+                    matches.add(match);
+                    user.setCurrentMatch(match);
+                    oppUser.setCurrentMatch(match);
+                    simpMessagingTemplate.convertAndSend("/room/found-match/"+userId1,match);
+                    simpMessagingTemplate.convertAndSend("/room/found-match/"+userId2,match);
+                }else {
+                    //this can only happen if at least one user didnt confirm. Thus, for the user that did confirm, we add them back to the waiting list
+                    if (user1Confirmed) {
+                        WaitlistRequest request = new WaitlistRequest(userId1, match.getEvent().getEventId());
+                        MatchFinder.getWaitingList().add(request);
+                    }else {
+                        //Remove user for redundancy (although these should both already be null)
+                        MatchFinder.removeFromWaitingList(userId1);
+                        user.setCurrentMatch(null);
+                    }
+                    if (user2Confirmed) {
+                        WaitlistRequest request = new WaitlistRequest(userId2, match.getEvent().getEventId());
+                        MatchFinder.getWaitingList().add(request);
+                    }
+                    else {
+                        //Remove user for redundancy (although these should both already be null)
+                        MatchFinder.removeFromWaitingList(userId2);
+                        oppUser.setCurrentMatch(null);
+                    }
+                }
+            }
+            prototypeMatches.clear();
+
+
             //cloning waitlist because we want to ignore userId and if we don't clone it we will accidentally remove userId from actual waitlist
             ArrayList<WaitlistRequest> waitList = (ArrayList<WaitlistRequest>) MatchFinder.getWaitingList().clone();
             //O(n^2) :barf:
@@ -225,20 +266,17 @@ public class MatchController {
                 for (WaitlistRequest oppReq:waitList) {
                     if (oppReq.getUserId()==userReq.getUserId()) continue;
                     User oppUser = DBController.getUserByIDList(oppReq.getUserId());
-                    if (oppReq.getEvent().equals(userReq.getEvent()) && Math.abs(user.getElo(event)-oppUser.getElo(event))<100 && user.getCurrentMatch()==null && oppUser.getCurrentMatch()==null) {
+                    if (oppReq.getEvent().equals(userReq.getEvent()) && Math.abs(user.getElo(event)-oppUser.getElo(event))<100 && MatchFinder.getWaitingList().contains(userReq) && MatchFinder.getWaitingList().contains(oppReq)) {
+                        HeartbeatHandler.checkHeartbeat(user.getUserId(), 900);
+                        HeartbeatHandler.checkHeartbeat(oppUser.getUserId(), 900);
                         MatchFinder.removeFromWaitingList(user.getUserId());
                         MatchFinder.removeFromWaitingList(oppUser.getUserId());
-                        logger.info("match found between "+user.getUserId()+" and "+oppUser.getUserId());
+                        logger.info("match made. pinging "+user.getUserId()+" and "+oppUser.getUserId());
                         Match match = new Match(event,new int[]{user.getUserId(),oppUser.getUserId()},(int)(Math.random()*9999999),false);
-                        matches.add(match);
-                        user.setCurrentMatch(match);
-                        oppUser.setCurrentMatch(match);
-                        simpMessagingTemplate.convertAndSend("/room/found-match/"+user.getUserId(),match);
-                        simpMessagingTemplate.convertAndSend("/room/found-match/"+oppUser.getUserId(),match);
+                        prototypeMatches.add(match);
                     }
                 }
             }
-
         }catch (Exception e) {
             e.printStackTrace();
         }

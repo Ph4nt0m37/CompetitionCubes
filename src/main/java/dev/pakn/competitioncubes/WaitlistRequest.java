@@ -32,4 +32,9 @@ public class WaitlistRequest {
         if (this.userId == otherReq.userId) return true;
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "WaitlistRequest [userId=" + userId + ", event=" + event + "]";
+    }
 }

@@ -78,7 +78,7 @@ public class DBController {
         staticDataSource = dataSource;
 
         eventDBNames.put(Event.THREE_BY_THREE, "threestats");
-        stringToEventMap.put("3x3", Event.THREE_BY_THREE);
+        stringToEventMap.put("333", Event.THREE_BY_THREE);
 
         try (Connection conn = dataSource.getConnection();) {
             loadUserBans(conn);

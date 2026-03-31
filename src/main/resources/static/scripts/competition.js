@@ -235,7 +235,7 @@ function timeToFloat(time) {
 }*/
 
 function getWaitingUserCount() {
-    fetch("/api/waiting-list/3x3").then((response)=>{
+    fetch("/api/waiting-list/333").then((response)=>{
         return response.json();
     }).then((numSearching)=>{
         let userWord = "users";

@@ -75,6 +75,10 @@ onload = (event)=>{
 
             stompClient.onConnect = (frame)=>{
                 console.log("connected: "+ frame);
+                stompClient.publish({
+                    destination: `/app/pong/${userId}`,
+                    body: "false"
+                });
                 stompClient.subscribe(`/room/found-match/${userId}`, (matchJSON) => {
                     let match = JSON.parse(matchJSON.body)
                     let users = match.users;
@@ -100,6 +104,20 @@ onload = (event)=>{
                         searchText.textContent="Searching...";
                         searchText.style.display="none";
                     }
+                });
+
+                stompClient.subscribe('/room/ping', (data) =>{
+                    stompClient.publish({
+                        destination: `/app/pong/${userId}`,
+                        body: "false"
+                    });
+                });
+
+                stompClient.subscribe(`/room/ping/${userId}`, (data) =>{
+                    stompClient.publish({
+                        destination: `/app/pong/${userId}`,
+                        body: "false"
+                    });
                 });
             }
 
@@ -132,7 +150,7 @@ onload = (event)=>{
 }
 
 function getWaitingUserCount() {
-    fetch("/api/waiting-list/3x3").then((response)=>{
+    fetch("/api/waiting-list/333").then((response)=>{
         return response.json();
     }).then((numSearching)=>{
         let userWord = "users";
@@ -147,7 +165,7 @@ function startMatchSearch(stompClient) {
         method: "POST",
         body: JSON.stringify({
             'userId': userId,
-            'event':'3x3',
+            'event':'333',
             //'sessionId':
         }),
         headers: {
