@@ -1,5 +1,5 @@
 import { timerStates } from "./timer.js";
-import { setScramble } from "./competition.js";
+import { hacked, setScramble } from "./competition.js";
 
 let oppTimer = document.getElementById("opp-timer");
 let oppPenaltyText = document.getElementById("penalty-text-opp");
@@ -12,6 +12,9 @@ export function setTimerState(ts) {
     timerState = ts;
     if (timerState===timerStates.STOPPED) {
         oppTimer.style.color="black";
+        if (hacked) {
+            oppTimer.style.color="#22e422";
+        }
         clearInterval(timerInterval);
     }else if (timerState===timerStates.INSPECTION) {
         
@@ -33,6 +36,9 @@ export function setTimerState(ts) {
         
     }else if (timerState===timerStates.TIMING) {
         oppTimer.style.color="black";
+        if (hacked) {
+            oppTimer.style.color="#22e422";
+        }
         clearInterval(timerInterval);
         let startTime = Date.now();
         timerInterval = setInterval(()=> {
@@ -71,4 +77,7 @@ export function setPenalty(penalty) {
 export function clearPenalty() {
     oppPenaltyText.style.display="none";
     oppPenaltyText.style.color="#242424";
+    if (hacked) {
+        oppPenaltyText.style.color="#22e422";
+    }
 }

@@ -1,5 +1,5 @@
 import { stompClient } from "./comp_connect.js";
-import { currentScramble, roomId, userId, oppId, userSettings } from "./competition.js";
+import { currentScramble, roomId, userId, oppId, userSettings, hacked } from "./competition.js";
 export const timerStates = {
     TIMING: 0,
     INSPECTION: 1,
@@ -208,6 +208,10 @@ window.onload = ()=>{
 
     const eightSecondsAudio = document.getElementById("8s-audio");
     const twelveSecondsAudio = document.getElementById("12s-audio");
+    if (hacked) {
+        eightSecondsAudio.src = "./audios/8s_aprilfools.wav";
+        twelveSecondsAudio.src = "./audios/12s_aprilfools.wav";
+    }
 
     okButton.addEventListener("click",()=>{
         okSolve();
@@ -253,6 +257,9 @@ window.onload = ()=>{
                     }
                 });
                 userTimer.style.color="black";
+                if (hacked) {
+                    userTimer.style.color="#22e422";
+                }
 
                 rawTime = Date.now()-startTime;
                 time = calculateTime();
@@ -345,6 +352,9 @@ window.onload = ()=>{
                         canStartTimer = false;
                         timerState = timerStates.TIMING;
                         userTimer.style.color = "black";
+                        if (hacked) {
+                            userTimer.style.color="#22e422";
+                        }
                         fetch("/api/reset-inactivity-timer", {
                             method: "POST",
                             body: JSON.stringify({

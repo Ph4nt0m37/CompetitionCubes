@@ -111,6 +111,7 @@ public class MatchController {
                         return ogReq;
                     }
                     Event event = DBController.stringToEventMap.get(ogReq.getEvent());
+                    logger.info(ogReq.getEvent());
                     MatchFinder.removeFromWaitingList(userId);
                     MatchFinder.removeFromWaitingList(oppId);
                     logger.info("private match created between "+userId+" and "+oppId);
@@ -177,7 +178,7 @@ public class MatchController {
             int userId = rematchRequest.getUserId();
             int oppId = rematchRequest.getOppId();
             User opp = DBController.getUserByIDList(rematchRequest.getOppId());
-            Event event = Event.eventIdToEvent(rematchRequest.getEvent());
+            Event event = DBController.stringToEventMap.get(rematchRequest.getEvent());
             logger.info("private match created between "+userId+" and "+oppId);
             PrivateMatch match = new PrivateMatch(event,new int[]{userId,oppId},(int)(Math.random()*9999999));
             PrivateMatchRequest pMatchRequest = new PrivateMatchRequest(-1,userId,user.getUsername(),oppId,event.getEventId(),true);

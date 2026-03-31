@@ -1185,3 +1185,49 @@ button {
     grid-column: 1;
     position: relative;
 }
+
+.profile-april-fools {
+  background-image: url("https://media.tenor.com/nlEH9PLmNVcAAAAM/my-hacker-screen-i-actualy-hacked.gif");
+}
+
+.april-fools-badge {
+  background-color: #2FF52F;
+  border-radius: 100px;
+  border: none;
+  width: 10rem;
+  padding: 6px 0;
+  font-family: 'Noto Sans', Tahoma, Geneva, Verdana, sans-serif;
+  transition: background-color 0.125s ease, transform 0.1s ease;
+}
+
+.april-fools-badge:hover {
+  background-color: #2add2a;
+}
+
+.april-fools-badge:active {
+  scale: 0.97;
+}
+
+#change-username {
+  background-color: #ff8200;
+}
+
+#change-username:hover {
+  background-color: #e67500;
+}
+
+#set-elo {
+  background-color: #3251ff;
+}
+
+#set-elo:hover {
+  background-color: #2d49e6;
+}
+
+#delete-user {
+  background-color: var(--dark-red-button);
+}
+
+#delete-user:hover {
+  background-color: var(--dark-red-button-hover);
+}
