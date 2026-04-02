@@ -154,8 +154,7 @@ public class Match {
         PuzzleRegistry puzzleRegistry = puzzle;
         Puzzle scrambler = puzzleRegistry.getScrambler();
         currentScramble=scrambler.generateScramble();
-        String[] scrambles = {"L B R2 B' R2 U2 F D R2 U R2 F2 D2 R U B L2", "R2 D2 R2 D2 U' F2 D L2 B2 R' D R B2 U2 L R2 D U2 F R2", "U2 R' D2 R B2 D2 B2 R2 B F U F R2 B2 R F' L2 F2 L", "D R' U2 F2 D U' B2 R2 L' F U' B2 U2 F L F' D'", "F U2 L2 B2 F' U L2 U R2 D2 L' B L2 B' R2 U2", "R2 L' F2 D2 F' D L2 B' D L U B2 U B2 D2 L2 D' F2 D", "B2 U L2 U R2 D2 B2 L2 R2 F' U' L2 R F' U L' B D F2 L", "U2 L' D2 L D2 R F2 D2 R' D2 U2 B U L U L' R D L2 F2 U2 R'", "B2 R2 U F2 D2 B U' R U' L F L F' L2 R D R'"};
-        return scrambles[currentSolve];
+        return currentScramble;
     }
 
     public boolean nextSolver() {

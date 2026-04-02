@@ -57,8 +57,8 @@ public class HeartbeatHandler {
                 connectedMap.remove(userId);
                 MatchFinder.removeFromWaitingList(connection.getUserId());
                 User disconnectedUser = DBController.getUserByIDList(connection.getUserId());
-                if (connection.isMatchConnection()) {
-                    Match match = disconnectedUser.getCurrentMatch();
+                Match match = disconnectedUser.getCurrentMatch();
+                if (match!=null) {
                     if (match!=null) {
                         match.setQuitUser(disconnectedUser);
                         for (int matchUserId:match.getUsers()) {

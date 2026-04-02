@@ -177,7 +177,7 @@ public class MatchController {
             int userId = rematchRequest.getUserId();
             int oppId = rematchRequest.getOppId();
             User opp = DBController.getUserByIDList(rematchRequest.getOppId());
-            Event event = Event.eventIdToEvent(rematchRequest.getEvent());
+            Event event = DBController.stringToEventMap.get(rematchRequest.getEvent());
             logger.info("private match created between "+userId+" and "+oppId);
             PrivateMatch match = new PrivateMatch(event,new int[]{userId,oppId},(int)(Math.random()*9999999));
             PrivateMatchRequest pMatchRequest = new PrivateMatchRequest(-1,userId,user.getUsername(),oppId,event.getEventId(),true);
@@ -257,11 +257,12 @@ public class MatchController {
 
 
             //cloning waitlist because we want to ignore userId and if we don't clone it we will accidentally remove userId from actual waitlist
-            ArrayList<WaitlistRequest> waitList = (ArrayList<WaitlistRequest>) MatchFinder.getWaitingList().clone();
+            ArrayList<WaitlistRequest> waitList = new ArrayList<>(MatchFinder.getWaitingList());
             //O(n^2) :barf:
+            //TODO: sort requests by ELO, then just check adjacent users
             for (WaitlistRequest userReq:waitList) {
                 User user = DBController.getUserByIDList(userReq.getUserId());
-                //ideally waitlists would be a hashmap with events and their waitlists, but i'll sort this out later
+                //ideally waitlists would be a hashmap with events and their waitlists, but there's only one event so far so i'll sort this out later
                 Event event = DBController.stringToEventMap.get(userReq.getEvent());
                 for (WaitlistRequest oppReq:waitList) {
                     if (oppReq.getUserId()==userReq.getUserId()) continue;
@@ -278,7 +279,7 @@ public class MatchController {
                 }
             }
         }catch (Exception e) {
-            e.printStackTrace();
+            logger.error("find matches error!", e);
         }
     }
 }

@@ -83,11 +83,6 @@ stompClient.onConnect = (frame)=>{
         
     });
 
-    stompClient.publish({
-        destination: `/app/pong/${userId}`,
-        body: "true"
-    });
-
     stompClient.subscribe('/room/ping', (data) =>{
         stompClient.publish({
             destination: `/app/pong/${userId}`,

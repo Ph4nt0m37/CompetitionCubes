@@ -75,10 +75,6 @@ onload = (event)=>{
 
             stompClient.onConnect = (frame)=>{
                 console.log("connected: "+ frame);
-                stompClient.publish({
-                    destination: `/app/pong/${userId}`,
-                    body: "false"
-                });
                 stompClient.subscribe(`/room/found-match/${userId}`, (matchJSON) => {
                     let match = JSON.parse(matchJSON.body)
                     let users = match.users;

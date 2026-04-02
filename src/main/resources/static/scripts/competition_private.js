@@ -2,7 +2,7 @@
 export let roomId = new URLSearchParams(window.location.search).get("roomId");
 export let userId = undefined;
 import { setOppTime } from "./opptimer_private.js";
-import { connectPrivateReceiver, stompClient } from "./private_match_receiver.js";
+import { connectPrivateReceiver } from "./private_match_receiver.js";
 import { setTimerEnabled, createNotification, setTimerValue } from "./timer_private.js";
 
 let scrambleText = document.getElementById("scramble-text");
