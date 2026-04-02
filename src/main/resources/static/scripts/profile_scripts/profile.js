@@ -232,9 +232,9 @@ function updateUserStatistics(user) {
     const matchesLost = user.matchesLost;
     const matchesPlayed = matchesWon+matchesLost;
 
-    matchesPlayedText.textContent=`Hacking Attempts: ${matchesPlayed}`;
-    matchesWonText.textContent=`Successful Hacks: ${matchesWon}`;
-    matchesLostText.textContent=`Times Hacked: ${matchesLost}`;
+    matchesPlayedText.textContent=`Matches Played: ${matchesPlayed}`;
+    matchesWonText.textContent=`Matches Won: ${matchesWon}`;
+    matchesLostText.textContent=`Matches Lost: ${matchesLost}`;
     const winLoss = (matchesWon/(matchesPlayed))*100;
     if (matchesPlayed>0) {
         winLossText.textContent=`Win-Loss %: ${Math.round((winLoss+Number.EPSILON) * 100) / 100}%`;
@@ -271,7 +271,7 @@ if (challengeButton) {
                 'userId': navUserId,
                 'reqUsername': navUser['username'],
                 'oppId': userId,
-                'event': "333",
+                'event': "3x3",
                 'accepted': true
             })
         });
@@ -374,82 +374,3 @@ function createNotification(text, color) {
         },1500);
     },5000);
 }
-
-
-
-
-
-
-
-//April Fools stuff
-const terminalButtons = document.getElementById("terminal-buttons");
-
-const hackUserButton = document.querySelector(".april-fools-badge");
-hackUserButton.addEventListener("click",()=>{
-    const code = Math.floor((Math.random()*999)+1);
-    let guess = prompt("What is the security code? (1-999)");
-    while (guess!=code) {
-        if (guess.length==0) {
-            return;
-        }else {
-            try {
-                guess=Number(guess);
-                if (guess > code) {
-                    guess = prompt("This code is too high! Please try again.\nWhat is the security code? (1-999)");
-                }else if (guess < code) {
-                    guess = prompt("This code is too low! Please try again.\nWhat is the security code? (1-999)");
-                }
-            }catch(e) {
-                guess = prompt("That's not a valid security code! Please try again.\nWhat is the security code? (1-999)");
-            }
-        }
-    }
-    document.querySelector("body").style.backgroundImage = "url(\"https://media.tenor.com/nlEH9PLmNVcAAAAM/my-hacker-screen-i-actualy-hacked.gif\")";
-    alert(`Correct! Hacking user...\n> ssh user${userId}@compcube.pakn.dev\n> Password: \${SECURITY_CODE_TO_PASSWORD(${code})}\n> Log in successful!`);
-    hackUserButton.style.display = "none";
-    terminalButtons.style.display = "block";
-});
-
-const changeUsernameButton = document.getElementById("change-username");
-changeUsernameButton.addEventListener("click",()=>{
-    let newName = prompt("Please enter new username:");
-    usernameText.textContent = newName;
-    alert(`Changing name to: ${newName}\n> sudo usermod -l ${newName} ${user.username}\n> Successfully renamed ${user.username} to ${newName}`);
-});
-
-const setEloButton = document.getElementById("set-elo");
-setEloButton.addEventListener("click",()=>{
-    let newElo = prompt("Please enter the new ELO amount:");
-    document.getElementsByClassName("elo-text")[2].textContent = newElo;
-    alert(`Changing ELO to: ${newElo}\n> sudo chelo ${newElo}\n> Successfully changed ELO to ${newElo}`);
-});
-
-const deleteUserButton = document.getElementById("delete-user");
-deleteUserButton.addEventListener("click",()=>{
-    let confirm = prompt("Are you sure you want to delete this user? (Y/N)");
-    if (confirm.toUpperCase()==="Y") {
-        setTimeout(()=>{
-            usernameText.textContent="[DELETED]";
-            setTimeout(()=>{
-                const badgesDiv = document.getElementById("badges-div");
-                badgesDiv.innerText="[DELETED]";
-                setTimeout(()=>{
-                    const userStatsDiv = document.getElementById("user-stats-div");
-                    userStatsDiv.innerText="[DELETED]";
-                    setTimeout(()=>{
-                        terminalButtons.innerText="[DELETED]";
-                        setTimeout(()=>{
-                            const rankingsDiv = document.getElementById("rankings-div");
-                            rankingsDiv.innerText="[DELETED]";
-                            setTimeout(()=>{
-                                const body = document.getElementById("leaderboard-div");
-                                body.innerText = "[DELETED]";
-                                body.style.height="100vh";
-                            },1000);
-                        },1000);
-                    },1000);
-                },1000);
-            },1000);
-        },1000);
-    }
-});

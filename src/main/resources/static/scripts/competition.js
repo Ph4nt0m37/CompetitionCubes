@@ -37,18 +37,6 @@ let oppElo = -1;
 
 const searchingUsersText = document.getElementById("searching-users-text");
 
-export let hacked = false;
-
-if (Math.floor(Math.random()*3)==0) {
-    const timers = document.querySelectorAll(".timer-div");
-    for (const timer of timers) {
-        timer.classList.add("timer-april-fools");
-        hacked = true;
-    }
-    document.querySelector("body").style.backgroundColor = "#151414";
-    document.documentElement.style.setProperty("--timer-color","#22e422");
-}
-
 await fetch(`/api/get-user-data`).then((response)=> {
     return response.json();
 }).then(function(data) {

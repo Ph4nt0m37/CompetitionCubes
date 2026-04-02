@@ -84,20 +84,20 @@ export async function connectPrivateReceiver() {
             });
 
             stompClient.publish({
-                destination: `/app/pong/${navUserId}`,
+                destination: `/app/pong/${userId}`,
                 body: "false"
             });
         
             stompClient.subscribe('/room/ping', (data) =>{
                 stompClient.publish({
-                    destination: `/app/pong/${navUserId}`,
+                    destination: `/app/pong/${userId}`,
                     body: "false"
                 });
             });
         
-            stompClient.subscribe(`/room/ping/${navUserId}`, (data) =>{
+            stompClient.subscribe(`/room/ping/${userId}`, (data) =>{
                 stompClient.publish({
-                    destination: `/app/pong/${navUserId}`,
+                    destination: `/app/pong/${userId}`,
                     body: "false"
                 });
             });
@@ -135,7 +135,7 @@ export async function connectPrivateReceiver() {
                     'userId': navUserId,
                     'reqUsername': navUser['username'],
                     'oppId': navUserId,
-                    'event': "333",
+                    'event': "3x3",
                     'accepted': true
                 })
             });
@@ -153,7 +153,7 @@ export async function connectPrivateReceiver() {
                     'userId': navUserId,
                     'reqUsername': navUser['username'],
                     'oppId': navUserId,
-                    'event': "333",
+                    'event': "3x3",
                     'accepted': false
                 })
             });

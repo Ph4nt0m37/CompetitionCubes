@@ -1,5 +1,5 @@
 import { stompClient } from "./comp_connect_private.js";
-import { currentScramble, roomId, userId, oppId, userSettings, hacked } from "./competition_private.js";
+import { currentScramble, roomId, userId, oppId, userSettings } from "./competition_private.js";
 export const timerStates = {
     TIMING: 0,
     INSPECTION: 1,
@@ -151,19 +151,12 @@ window.onload = ()=>{
 
     const eightSecondsAudio = document.getElementById("8s-audio");
     const twelveSecondsAudio = document.getElementById("12s-audio");
-    if (hacked) {
-        eightSecondsAudio.src = "./audios/8s_aprilfools.wav";
-        twelveSecondsAudio.src = "./audios/12s_aprilfools.wav";
-    }
 
     okButton.addEventListener("click",()=>{
         if (timerState===timerStates.STOPPED) {
             penaltiesDiv.style.display="none";
             penaltyText.style.display="none";
             penaltyText.style.color="#242424";
-            if (hacked) {
-                penaltyText.style.color="#22e422";
-            }
             publishSolveData("OK");
         }
     });
@@ -237,9 +230,6 @@ window.onload = ()=>{
             if (timerState===timerStates.TIMING) {
                 clearInterval(timerInterval);
                 userTimer.style.color="black";
-                if (hacked) {
-                    userTimer.style.color="#22e422";
-                }
 
                 rawTime = Date.now()-startTime;
                 time = calculateTime();
