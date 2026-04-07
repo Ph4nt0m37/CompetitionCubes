@@ -7,6 +7,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class User {
     private int userId;
     private String wcaId;
@@ -106,15 +109,22 @@ public class User {
         return ranks;
     }
 
+    @JsonIgnore
     public String getWcaId() {
-        if (!userSettings.hideWCAProfile())
+        return wcaId;
+    }
+
+    @JsonIgnore
+    public String getWcaId(User admin) {
+        if (admin.getPermissionLevel().hasUserInfoAccess())
             return wcaId;
 
         return null;
     }
 
-    public String getWcaId(User admin) {
-        if (admin.getPermissionLevel().hasUserInfoAccess())
+    @JsonProperty("wcaId")
+    public String getSerializationWcaId() {
+        if (!userSettings.hideWCAProfile())
             return wcaId;
 
         return null;
