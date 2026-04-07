@@ -325,6 +325,7 @@ button {
   text-decoration: underline;
   font-size: 0.9rem;
   text-align: center;
+  visibility: hidden;
 }
 
 #username-text {

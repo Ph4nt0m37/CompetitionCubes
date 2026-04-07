@@ -173,6 +173,7 @@ public class PostRequestClass {
         private boolean inspectionAudio = true;
         private boolean matchSounds = true;
         private boolean acceptsChallengeRequests;
+        private boolean hideWCAProfile;
 
         public UserSettingsReq() {}
         

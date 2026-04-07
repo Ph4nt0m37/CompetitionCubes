@@ -11,14 +11,18 @@ public class UserSettings {
     //private matches
     private boolean acceptsChallengeRequests = true;
 
+    //privacy
+    private boolean hideWCAProfile = false;
+
     public UserSettings() {
         
     }
 
-    public UserSettings(boolean inspectionAudio, boolean matchSounds, boolean acceptsChallengeRequests) {
+    public UserSettings(boolean inspectionAudio, boolean matchSounds, boolean acceptsChallengeRequests, boolean hideWCAProfile) {
         this.inspectionAudio = inspectionAudio;
         this.matchSounds = matchSounds;
         this.acceptsChallengeRequests = acceptsChallengeRequests;
+        this.hideWCAProfile = hideWCAProfile;
     }
 
     @JsonProperty("inspectionAudio")
@@ -46,5 +50,14 @@ public class UserSettings {
 
     public void setAcceptsChallengeRequests(boolean acceptsChallengeRequests) {
         this.acceptsChallengeRequests = acceptsChallengeRequests;
-    }    
+    }   
+    
+    @JsonProperty("hideWCAProfile")
+    public boolean hideWCAProfile() {
+        return hideWCAProfile;
+    }
+
+    public void setHideWCAProfile(boolean hideWCAProfile) {
+        this.hideWCAProfile = hideWCAProfile;
+    }
 }

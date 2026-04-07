@@ -9,6 +9,7 @@ const changeUsernameText = document.getElementById("change-username-text");
 const inspectionAudioToggle = document.getElementById("inspection-audio-toggle");
 const matchSoundsToggle = document.getElementById("match-sounds-toggle");
 const challengeReqToggle = document.getElementById("challenge-req-toggle");
+const hideWcaToggle = document.getElementById("hide-wca-toggle");
 
 let user = null;
 let userId = null;
@@ -21,7 +22,6 @@ await fetch(`/api/get-user-data`).then(async (response)=> {
     user = data;
     userId=data.userId;
     usernameBox.value = user['username'];
-    console.log(user);
     const userWarnings = user['userWarnings'];
     for (const warning of userWarnings) {
         if (warning['reason']==="username") {
@@ -36,6 +36,7 @@ await fetch(`/api/get-user-data`).then(async (response)=> {
     inspectionAudioToggle.checked = settings['inspectionAudio'];
     matchSoundsToggle.checked = settings['matchSounds'];
     challengeReqToggle.checked = settings['acceptsChallengeRequests'];
+    hideWcaToggle.checked = settings['hideWCAProfile'];
     return;
 });
 
@@ -47,7 +48,8 @@ saveButton.addEventListener("click",()=>{
         body: JSON.stringify({
             inspectionAudio: inspectionAudioToggle.checked,
             matchSounds: matchSoundsToggle.checked,
-            acceptsChallengeRequests: challengeReqToggle.checked
+            acceptsChallengeRequests: challengeReqToggle.checked,
+            hideWCAProfile: hideWcaToggle.checked
         }),
         headers: {
             "Content-type": "application/json; charset=UTF-8"

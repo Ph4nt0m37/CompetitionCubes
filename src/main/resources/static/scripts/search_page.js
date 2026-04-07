@@ -17,7 +17,10 @@ fetch(`/api/public/search/${query}`).then((result)=>{
             searchResult.removeAttribute("id");
             searchResult.children[0].innerHTML = `<a href=/user/${data[i]['userId']}>${data[i]['username']}</a>`;
             searchResult.children[0].title = data[i]['username'];
-            searchResult.children[1].innerHTML = `<a href=https://www.worldcubeassociation.org/persons/${data[i]['wcaId']} target="_blank">${data[i]['wcaId']}</a>`;
+            if (data[i]['wcaId']) {
+                searchResult.children[1].innerHTML = `<a href=https://www.worldcubeassociation.org/persons/${data[i]['wcaId']} target="_blank">${data[i]['wcaId']}</a>`;
+                searchResult.children[1].style.visibility = "visible";
+            }
             searchResult.children[2].textContent = data[i]['userId'];
             resultsDiv.appendChild(searchResult);
         }

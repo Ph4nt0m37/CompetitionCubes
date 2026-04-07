@@ -11,6 +11,12 @@ public class SearchResult {
         this.wcaId=wcaId;
     }
 
+    SearchResult(int id, String username) {
+        this.username = username;
+        this.userId = id;
+        this.wcaId=null;
+    }
+
     public int getUserId() {
         return userId;
     }

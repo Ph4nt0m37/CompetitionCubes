@@ -107,7 +107,17 @@ public class User {
     }
 
     public String getWcaId() {
-        return wcaId;
+        if (!userSettings.hideWCAProfile())
+            return wcaId;
+
+        return null;
+    }
+
+    public String getWcaId(User admin) {
+        if (admin.getPermissionLevel().hasUserInfoAccess())
+            return wcaId;
+
+        return null;
     }
 
     public HashMap<Event, Double> getSingles() {

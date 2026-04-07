@@ -52,23 +52,29 @@ public class HeartbeatHandler {
         Integer[] connectedUserIds = connectedMap.keySet().toArray(new Integer[0]);
         for (int i=0;i<connectedUserIds.length;i++) {
             Integer userId = connectedUserIds[i];
+            if (userId==null) {
+                connectedMap.remove(null);
+                continue;
+            }
             UserWebSocketConnection connection = connectedMap.get(userId);
             if (currentTime - connection.getLastSeen() > connection.getDisconnectTime()) { //default: 1 ping
                 connectedMap.remove(userId);
                 MatchFinder.removeFromWaitingList(connection.getUserId());
                 User disconnectedUser = DBController.getUserByIDList(connection.getUserId());
-                Match match = disconnectedUser.getCurrentMatch();
-                if (match!=null) {
+                if (userId!=null) {
+                    Match match = disconnectedUser.getCurrentMatch();
                     if (match!=null) {
-                        match.setQuitUser(disconnectedUser);
-                        for (int matchUserId:match.getUsers()) {
-                            if (matchUserId!=userId)
-                                match.setWinner(matchUserId);
+                        if (match!=null) {
+                            match.setQuitUser(disconnectedUser);
+                            for (int matchUserId:match.getUsers()) {
+                                if (matchUserId!=userId)
+                                    match.setWinner(matchUserId);
+                            }
+                            MatchController.sendMatchData(match);
                         }
-                        MatchController.sendMatchData(match);
                     }
+                    disconnectedUser.setCurrentMatch(null);
                 }
-                disconnectedUser.setCurrentMatch(null);
             }
         }
     }

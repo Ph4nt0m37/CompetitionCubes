@@ -1,4 +1,14 @@
-import { user } from "./profile.js";
+import { user, userId } from "./profile.js";
+
+const wcaLink = document.getElementById("wca-link");
+fetch(`/api/get-wca-id/${userId}`).then((resp)=>{
+    if (resp.ok) return resp.text();
+    createNotification("Something went wrong loading this user's WCA ID. Please try again later or contact a developer.");
+}).then((wcaId)=>{
+    console.log(wcaId);
+    wcaLink.href=`https://www.worldcubeassociation.org/persons/${wcaId}`;
+    wcaLink.style.visibility = "visible";
+});
 
 const notificationTemplate = document.querySelector(".notification.template");
 const notificationBox = document.getElementById("notif-div");

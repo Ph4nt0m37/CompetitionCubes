@@ -954,24 +954,30 @@ public class DBController {
             ArrayList<SearchResult> searchResults = new ArrayList<>();
 
             //search results by userId
+            String idStatementString = "SELECT * FROM users WHERE userid=? OR levenshtein(username,?) <=3 ORDER BY levenshtein(username, ?)";
+            PreparedStatement idStatement = conn.prepareStatement(idStatementString);
             try {
-                String idStatementString = "SELECT * FROM users WHERE userid=?";
-                PreparedStatement idStatement = conn.prepareStatement(idStatementString);
                 idStatement.setInt(1,Integer.parseInt(queryStr));
-                ResultSet idResults = idStatement.executeQuery();
-
-                while (idResults.next()) {
-                    int userId = idResults.getInt("userid");
-                    String username = idResults.getString("username");
-                    String wcaId = idResults.getString("wcaid");
-                    SearchResult result = new SearchResult(userId, username, wcaId);
-                    searchResults.add(result);
-                }
             }catch (NumberFormatException e) {
-                //do nothing. this just means the search query wasn't a pure number
+                idStatement.setInt(1,-1);
+            }
+            idStatement.setString(2, queryStr);
+            idStatement.setString(3, queryStr);
+            ResultSet idResults = idStatement.executeQuery();
+
+            while (idResults.next()) {
+                int userId = idResults.getInt("userid");
+                String username = idResults.getString("username");
+                String wcaId = null;
+                UserSettings settings = userList.get(userId).getUserSettings();
+                if (settings != null && !settings.hideWCAProfile()) {
+                    idResults.getString("wcaid");
+                }
+                SearchResult result = new SearchResult(userId, username, wcaId);
+                searchResults.add(result);
             }
 
-            //search results by userId
+            //search results by wcaId. has to be different so these wca id results don't get added
             String wcaIdStatementString = "SELECT * FROM users WHERE wcaid=?";
             PreparedStatement wcaIdStatement = conn.prepareStatement(wcaIdStatementString);
             wcaIdStatement.setString(1, queryStr.toUpperCase());
@@ -981,24 +987,13 @@ public class DBController {
                 int userId = wcaIdResults.getInt("userid");
                 String username = wcaIdResults.getString("username");
                 String wcaId = wcaIdResults.getString("wcaid");
-                SearchResult result = new SearchResult(userId, username, wcaId);
-                searchResults.add(result);
+                UserSettings settings = userList.get(userId).getUserSettings();
+                if (settings != null && !settings.hideWCAProfile()) {
+                    SearchResult result = new SearchResult(userId, username, wcaId);
+                    searchResults.add(result);
+                }
             }
-
-            //searching by levenshtein. I'm not using OR here because lvenshtein needs to be ordered by the distance - wcaid and id do not
-            String levStatementString = "SELECT * FROM users WHERE levenshtein(username,?) <=3 ORDER BY levenshtein(username, ?)";
-            PreparedStatement levStatement = conn.prepareStatement(levStatementString);
-            levStatement.setString(1, queryStr);
-            levStatement.setString(2, queryStr);
-            ResultSet levResults = levStatement.executeQuery();
-
-            while (levResults.next()) {
-                int userId = levResults.getInt("userid");
-                String username = levResults.getString("username");
-                String wcaId = levResults.getString("wcaid");
-                SearchResult result = new SearchResult(userId, username, wcaId);
-                searchResults.add(result);
-            }
+            
             return searchResults;
         }catch(SQLException e) {
             e.printStackTrace();
@@ -1548,7 +1543,8 @@ public class DBController {
                 boolean inspectionAudio = results.getBoolean("inspection_audio");
                 boolean matchSounds = results.getBoolean("match_sounds");
                 boolean acceptsChallengeRequests = results.getBoolean("accepts_challenge_requests");
-                return new UserSettings(inspectionAudio, matchSounds, acceptsChallengeRequests);
+                boolean hideWCAProfile = results.getBoolean("hide_wca_profile");
+                return new UserSettings(inspectionAudio, matchSounds, acceptsChallengeRequests, hideWCAProfile);
             }else {
                 return null;
             }
@@ -1559,22 +1555,23 @@ public class DBController {
     }
 
     @PostMapping("/api/save-user-settings")
-    public ResponseEntity<String> saveUserSettings(@AuthenticationPrincipal User user, @RequestBody PostRequestClass.UserSettingsReq userSettingsReq) {
+    public ResponseEntity<String> saveUserSettings(@AuthenticationPrincipal User user, @RequestBody UserSettings userSettingsReq) {
         try (Connection conn = dataSource.getConnection();) {
 
             //checking for userSecret
             String findUserSecretQuery = "UPDATE user_settings SET inspection_audio=?, match_sounds=?, accepts_challenge_requests=? WHERE id=?";
             PreparedStatement userSecretStatement = conn.prepareStatement(findUserSecretQuery);
-            userSecretStatement.setBoolean(1, userSettingsReq.isInspectionAudio());
-            userSecretStatement.setBoolean(2, userSettingsReq.isMatchSounds());
+            userSecretStatement.setBoolean(1, userSettingsReq.hasInspectionAudio());
+            userSecretStatement.setBoolean(2, userSettingsReq.hasMatchSounds());
             userSecretStatement.setBoolean(3, userSettingsReq.acceptsChallengeRequests());
+            userSecretStatement.setBoolean(4, userSettingsReq.hideWCAProfile());
             userSecretStatement.setInt(4, user.getUserId());
 
             //getting resultset
             int rowsChanged = userSecretStatement.executeUpdate();
 
             if (user!=null) {
-                user.setUserSettings(new UserSettings(userSettingsReq.isInspectionAudio(), userSettingsReq.isMatchSounds(), userSettingsReq.acceptsChallengeRequests()));
+                user.setUserSettings(new UserSettings(userSettingsReq.hasInspectionAudio(), userSettingsReq.hasMatchSounds(), userSettingsReq.acceptsChallengeRequests(), userSettingsReq.hideWCAProfile()));
             }
 
             if (rowsChanged>0) {
@@ -1590,6 +1587,17 @@ public class DBController {
     private static String validateUsername(String username) {
         return username.length() > 50 ? username.substring(0,50) : username;
     }
+
+    @GetMapping("/api/get-wca-id/{userId}")
+    public ResponseEntity<String> getUserWcaId(@AuthenticationPrincipal User admin, @PathVariable int userId) {
+        User user = userList.get(userId);
+        if (!admin.getPermissionLevel().hasUserInfoAccess()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (user!=null) {
+            return new ResponseEntity<>(user.getWcaId(admin),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
 
     //TODO: finish donor stuff
     public static boolean addDonor(int userId) {

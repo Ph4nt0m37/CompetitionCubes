@@ -76,7 +76,7 @@ const rankEnumToRankText = {
 }
 
 let pathname = window.location.pathname.split("/");
-let userId = pathname[pathname.length-1];
+export let userId = pathname[pathname.length-1];
 
 //if I switch back to event buttons i'll use this
 /*const button3x3 = document.getElementById("3x3-button");
@@ -116,8 +116,10 @@ fetch(`/api/public/get-user-data-by-id/${userId}`).then((response)=> {
         user = data;
         usernameText.textContent=user.username;
         usernameText.title=user.username;
-        wcaLink.href=`https://www.worldcubeassociation.org/persons/${user["wcaId"]}`;
-        wcaLink.target="_blank";
+        if (user["wcaId"]) {
+            wcaLink.href=`https://www.worldcubeassociation.org/persons/${user["wcaId"]}`;
+            wcaLink.style.visibility = "visible";  
+        }
         let badgesDiv = document.getElementById("badges-div");
         for (let i=0;i<user.badges.length;i++) {
             let clonedBadge = badgesDiv.children[user.badges[i]].cloneNode(true);
