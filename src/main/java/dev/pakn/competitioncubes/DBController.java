@@ -1559,13 +1559,13 @@ public class DBController {
         try (Connection conn = dataSource.getConnection();) {
 
             //checking for userSecret
-            String findUserSecretQuery = "UPDATE user_settings SET inspection_audio=?, match_sounds=?, accepts_challenge_requests=? WHERE id=?";
+            String findUserSecretQuery = "UPDATE user_settings SET inspection_audio=?, match_sounds=?, accepts_challenge_requests=?, hide_wca_profile=? WHERE id=?";
             PreparedStatement userSecretStatement = conn.prepareStatement(findUserSecretQuery);
             userSecretStatement.setBoolean(1, userSettingsReq.hasInspectionAudio());
             userSecretStatement.setBoolean(2, userSettingsReq.hasMatchSounds());
             userSecretStatement.setBoolean(3, userSettingsReq.acceptsChallengeRequests());
             userSecretStatement.setBoolean(4, userSettingsReq.hideWCAProfile());
-            userSecretStatement.setInt(4, user.getUserId());
+            userSecretStatement.setInt(5, user.getUserId());
 
             //getting resultset
             int rowsChanged = userSecretStatement.executeUpdate();
