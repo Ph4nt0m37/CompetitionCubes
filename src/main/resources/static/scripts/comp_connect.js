@@ -3,12 +3,12 @@ import { startMatchSearchClient } from "./next_match_search.js";
 import { setTimerState, setOppTime, setEarlyTime, setPenalty, clearPenalty } from "./opptimer.js"
 import { setTimerEnabled } from "./timer.js";
 
-console.log(sessionStorage.getItem("userId"));
+console.log(userId);
 
 export const stompClient = new StompJs.Client({
     brokerURL: `wss://${window.location.host}/user-connect`,
     connectHeaders: {
-        user_id: sessionStorage.getItem("userId"),
+        user_id: userId,
         do_disconnect: true
     }
 });

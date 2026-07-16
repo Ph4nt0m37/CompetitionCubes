@@ -88,7 +88,6 @@ onload = (event)=>{
                         }).catch(error=>{
                             //do nothing!
                         });
-                        sessionStorage.setItem("userId",userId);
                         window.location.replace(`${window.location.origin}/competition?roomId=${roomId}`);
                     }
                 });

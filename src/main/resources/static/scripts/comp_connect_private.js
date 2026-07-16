@@ -5,7 +5,7 @@ import { setTimerEnabled } from "./timer_private.js";
 export const stompClient = new StompJs.Client({
     brokerURL: `wss://${window.location.host}/user-connect`,
     connectHeaders: {
-        user_id: sessionStorage.getItem("userId"),
+        user_id: userId,
         do_disconnect: true
     }
 });

@@ -45,7 +45,6 @@ export function startMatchSearchClient() {
                 }).catch(error=>{
                     //do nothing!
                 });
-                sessionStorage.setItem("userId",userId);
                 console.log("redirecting...");
                 window.location.replace(`${window.location.origin}/competition?roomId=${roomId}`);
             }

@@ -54,7 +54,6 @@ export async function connectPrivateReceiver() {
                     }
                     //unnecessary timeout, just figured it would look better when a user accepted to have a little delay instead of immediately redirecting
                     setTimeout(()=>{
-                        sessionStorage.setItem("userId",navUserId);
                         window.location.replace(`${window.location.origin}/competition?roomId=${match['roomId']}`);
                     },1500);
                 }
