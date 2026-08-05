@@ -58,7 +58,6 @@ onload = (event)=>{
                 brokerURL: `wss://${window.location.host}/user-connect`,
                 connectHeaders: {
                     user_id: String(userId),
-                    do_disconnect: true
                 }
             });
 
@@ -88,7 +87,6 @@ onload = (event)=>{
                         }).catch(error=>{
                             //do nothing!
                         });
-                        sessionStorage.setItem("userId",userId);
                         window.location.replace(`${window.location.origin}/competition?roomId=${roomId}`);
                     }
                 });
@@ -105,14 +103,14 @@ onload = (event)=>{
                 stompClient.subscribe('/room/ping', (data) =>{
                     stompClient.publish({
                         destination: `/app/pong/${userId}`,
-                        body: "false"
+                        body: "-1"
                     });
                 });
 
                 stompClient.subscribe(`/room/ping/${userId}`, (data) =>{
                     stompClient.publish({
                         destination: `/app/pong/${userId}`,
-                        body: "false"
+                        body: "-1"
                     });
                 });
             }

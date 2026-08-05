@@ -1,5 +1,7 @@
-import { userId } from "./competition.js";
+import { userIdPromise } from "./get_user_id.js";
 //export let userId = Math.floor(Math.random()*100000);
+
+let userId = await userIdPromise;
 
 const searchText = document.getElementById("searching-text");
 
@@ -12,7 +14,6 @@ export function startMatchSearchClient() {
         brokerURL: `wss://${window.location.host}/user-connect`,
         connectHeaders: {
             user_id: String(userId),
-            do_disconnect: true
         }
     });
 
@@ -45,7 +46,6 @@ export function startMatchSearchClient() {
                 }).catch(error=>{
                     //do nothing!
                 });
-                sessionStorage.setItem("userId",userId);
                 console.log("redirecting...");
                 window.location.replace(`${window.location.origin}/competition?roomId=${roomId}`);
             }
@@ -53,20 +53,20 @@ export function startMatchSearchClient() {
 
         stompClient.publish({
             destination: `/app/pong/${userId}`,
-            body: "false"
+            body: "-1"
         });
 
         stompClient.subscribe('/room/ping', (data) =>{
             stompClient.publish({
                 destination: `/app/pong/${userId}`,
-                body: "false"
+                body: "-1"
             });
         });
 
         stompClient.subscribe(`/room/ping/${userId}`, (data) =>{
             stompClient.publish({
                 destination: `/app/pong/${userId}`,
-                body: "false"
+                body: "-1"
             });
         });
     }

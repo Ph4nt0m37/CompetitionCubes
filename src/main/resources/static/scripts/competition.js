@@ -1,9 +1,11 @@
 //export let roomId = Math.floor(Math.random()*100000)
 export let roomId = new URLSearchParams(window.location.search).get("roomId");
-export let userId = undefined;
+import { userIdPromise } from "./get_user_id.js";
 import { setOppTime } from "./opptimer.js";
 import { connectPrivateReceiver } from "./private_match_receiver.js";
 import { setTimerEnabled, createNotification, setTimerValue } from "./timer.js";
+
+let userId = await userIdPromise;
 
 let scrambleText = document.getElementById("scramble-text");
 

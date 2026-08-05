@@ -380,4 +380,17 @@ public class User {
     public void setUserSettings(UserSettings userSettings) {
         this.userSettings = userSettings;
     }
+
+    @Override
+    public String toString() {
+        return "User [userId=" + userId + ", wcaId=" + wcaId + ", username=" + username + ", wcaName=" + wcaName
+                + ", matchesWon=" + matchesWon + ", matchesLost=" + matchesLost + ", isDonor=" + isDonor + ", elos="
+                + elos + ", pbSingles=" + pbSingles + ", pbAverages=" + pbAverages + ", prevPbSingles=" + prevPbSingles
+                + ", prevPbAverages=" + prevPbAverages + ", ranks=" + ranks + ", badges=" + badges + ", last10Matches="
+                + last10Matches + ", strikes=" + strikes + ", bans=" + bans + ", warnings=" + warnings + ", ban=" + ban
+                + ", permissionLevel=" + permissionLevel + ", currMatch=" + currMatch + ", userSettings=" + userSettings
+                + "]";
+    }
+
+    
 }

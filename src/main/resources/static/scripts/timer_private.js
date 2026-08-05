@@ -1,5 +1,9 @@
 import { stompClient } from "./comp_connect_private.js";
-import { currentScramble, roomId, userId, oppId, userSettings } from "./competition_private.js";
+import { currentScramble, roomId, oppId, userSettings } from "./competition_private.js";
+import { userIdPromise } from "./get_user_id.js";
+
+let userId = await userIdPromise;
+
 export const timerStates = {
     TIMING: 0,
     INSPECTION: 1,
