@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @RestController
 public class MatchController {
@@ -39,13 +41,13 @@ public class MatchController {
 
     private static SimpMessagingTemplate staticSimpMessagingTemplate;
 
-    private static ArrayList<Match> matches = new ArrayList<>();
+    private static CopyOnWriteArrayList<Match> matches = new CopyOnWriteArrayList<>();
 
-    private static HashMap<PrivateMatchRequest, Integer> privateMatchRequests = new HashMap<>();
+    private static ConcurrentHashMap <PrivateMatchRequest, Integer> privateMatchRequests = new ConcurrentHashMap<>();
 
     private HashMap<Integer, Integer> rematchRoomIds = new HashMap<>();
 
-    private ArrayList<Match> prototypeMatches = new ArrayList<>();
+    private CopyOnWriteArrayList<Match> prototypeMatches = new CopyOnWriteArrayList<>();
 
     @PostConstruct
     public void init() {
@@ -81,10 +83,10 @@ public class MatchController {
                 return new ResponseEntity<>(currMatch,HttpStatus.OK);
             }
         }
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    public static ArrayList<Match> getMatches() {
+    public static CopyOnWriteArrayList<Match> getMatches() {
         return matches;
     }
 
@@ -268,8 +270,8 @@ public class MatchController {
                     if (oppReq.getUserId()==userReq.getUserId()) continue;
                     User oppUser = DBController.getUserByIDList(oppReq.getUserId());
                     if (oppReq.getEvent().equals(userReq.getEvent()) && Math.abs(user.getElo(event)-oppUser.getElo(event))<100 && MatchFinder.getWaitingList().contains(userReq) && MatchFinder.getWaitingList().contains(oppReq)) {
-                        HeartbeatHandler.checkHeartbeat(user.getUserId(), 900);
-                        HeartbeatHandler.checkHeartbeat(oppUser.getUserId(), 900);
+                        HeartbeatHandler.checkHeartbeat(user.getUserId(), 990);
+                        HeartbeatHandler.checkHeartbeat(oppUser.getUserId(), 990);
                         MatchFinder.removeFromWaitingList(user.getUserId());
                         MatchFinder.removeFromWaitingList(oppUser.getUserId());
                         logger.info("match made. pinging "+user.getUserId()+" and "+oppUser.getUserId());

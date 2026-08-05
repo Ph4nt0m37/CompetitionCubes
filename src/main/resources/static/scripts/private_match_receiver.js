@@ -22,7 +22,6 @@ export async function connectPrivateReceiver() {
             brokerURL: `wss://${window.location.host}/header-connect`,
             connectHeaders: {
                 user_id: String(navUserId),
-                do_disconnect: false
             }
         });
 
@@ -84,20 +83,20 @@ export async function connectPrivateReceiver() {
 
             stompClient.publish({
                 destination: `/app/pong/${navUserId}`,
-                body: "false"
+                body: "-1"
             });
         
             stompClient.subscribe('/room/ping', (data) =>{
                 stompClient.publish({
                     destination: `/app/pong/${navUserId}`,
-                    body: "false"
+                    body: "-1"
                 });
             });
         
             stompClient.subscribe(`/room/ping/${navUserId}`, (data) =>{
                 stompClient.publish({
                     destination: `/app/pong/${navUserId}`,
-                    body: "false"
+                    body: "-1"
                 });
             });
         }

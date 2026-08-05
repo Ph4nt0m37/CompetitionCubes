@@ -2,6 +2,7 @@ package dev.pakn.competitioncubes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -21,7 +22,7 @@ public class SolveController {
     @MessageMapping("/solveData")
     public void sendSolveData(SentSolveData data) {
         try {
-            ArrayList<Match> matches = MatchController.getMatches();
+            CopyOnWriteArrayList<Match> matches = MatchController.getMatches();
             for (Match currMatch:matches) {
                 if (currMatch.getRoomId()==data.getRoomId()) {
                     SolveData solveData = new SolveData(currMatch.getEvent(),data.getTime(),data.getScramble(),Penalty.stringToPenalty(data.getPenalty()),data.getUserId());

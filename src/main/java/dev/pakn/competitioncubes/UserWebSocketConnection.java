@@ -5,20 +5,20 @@ public class UserWebSocketConnection {
     private String sessionId;
     private long lastSeen = System.currentTimeMillis();
     private int disconnectTime = 5000;
-    private boolean matchConnection = false;
+    private int roomId = -1;
     
-    public UserWebSocketConnection(int userId, String sessionId, int disconnectTime, boolean matchConnection) {
+    public UserWebSocketConnection(int userId, String sessionId, int disconnectTime, int roomId) {
         this.userId = userId;
         this.sessionId = sessionId;
         this.disconnectTime = disconnectTime;
-        this.matchConnection = matchConnection;
+        this.roomId = roomId;
     }
 
     public UserWebSocketConnection(int userId) {
         this.userId = userId;
         this.sessionId = null;
         this.disconnectTime = 0;
-        this.matchConnection = false;
+        this.roomId = -1;
     }
 
     public int getUserId() {
@@ -29,8 +29,8 @@ public class UserWebSocketConnection {
         return sessionId;
     }
 
-    public boolean isMatchConnection() {
-        return matchConnection;
+    public int getRoomId() {
+        return roomId;
     }
 
     public int getDisconnectTime() {
@@ -73,6 +73,6 @@ public class UserWebSocketConnection {
     @Override
     public String toString() {
         return "UserWebSocketConnection [userId=" + userId + ", sessionId=" + sessionId + ", disconnectTime="
-                + disconnectTime + ", matchConnection=" + matchConnection + "]";
+                + disconnectTime + ", roomId=" + roomId + "]";
     }
 }

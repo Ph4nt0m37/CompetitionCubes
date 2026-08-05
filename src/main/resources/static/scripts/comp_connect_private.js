@@ -1,12 +1,14 @@
-import { roomId, userId, setScramble, matchData, setMatchData, setWins, endMatch, setAo5s } from "./competition_private.js";
+import { roomId, setScramble, matchData, setMatchData, setWins, endMatch, setAo5s } from "./competition_private.js";
 import { setTimerState, setOppTime, setEarlyTime, setPenalty, clearPenalty } from "./opptimer_private.js"
 import { setTimerEnabled } from "./timer_private.js";
+import { userIdPromise } from "./get_user_id.js";
+
+let userId = await userIdPromise;
 
 export const stompClient = new StompJs.Client({
     brokerURL: `wss://${window.location.host}/user-connect`,
     connectHeaders: {
         user_id: userId,
-        do_disconnect: true
     }
 });
 
@@ -27,6 +29,11 @@ stompClient.onConnect = (frame)=>{
             });
         }
     });
+
+    stompClient.publish({
+            destination: `/app/pong/${userId}`,
+            body: roomId
+        });
 
     stompClient.subscribe(`/room/solveCompleted/${roomId}`, (solveJSON) => {
         let solve = JSON.parse(solveJSON.body)
@@ -86,14 +93,14 @@ stompClient.onConnect = (frame)=>{
     stompClient.subscribe('/room/ping', (data) =>{
         stompClient.publish({
             destination: `/app/pong/${userId}`,
-            body: "true"
+            body: roomId
         });
     });
 
     stompClient.subscribe(`/room/ping/${userId}`, (data) =>{
         stompClient.publish({
             destination: `/app/pong/${userId}`,
-            body: "true"
+            body: roomId
         });
     });
     

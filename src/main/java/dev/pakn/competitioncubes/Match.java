@@ -240,9 +240,9 @@ public class Match {
                     int loserElo = loser.getElo(event);
                     if (loserElo>0 && Math.abs(winnerElo-loserElo)>75) {
                         if (winnerElo<loserElo) {
-                            eloChange=(Math.abs(winnerElo-loserElo)/4)*(loserElo/winnerElo);
+                            eloChange=(Math.abs(winnerElo-loserElo)/4)*(loserElo/Math.max(winnerElo,1));
                         }else {
-                            eloChange=(int)((Math.abs(winnerElo-loserElo)/4)*(loserElo/Math.pow(winnerElo,1.325)));
+                            eloChange=(int)((Math.abs(winnerElo-loserElo)/4)*(loserElo/Math.pow(Math.max(winnerElo,1),1.325)));
                         }
                         eloChange=Math.abs(Math.max(5,Math.min(100, eloChange)));
                     }
@@ -277,4 +277,16 @@ public class Match {
         }
         MatchController.getMatches().remove(this);
     }
+
+    @Override
+    public String toString() {
+        return "Match [users=" + Arrays.toString(users) + ", roomId=" + roomId + ", event=" + event + ", currentSolver="
+                + currentSolver + ", solverIndex=" + solverIndex + ", currentSolve=" + currentSolve
+                + ", currentScramble=" + currentScramble + ", userSolves=" + userSolves + ", userAo5s=" + userAo5s
+                + ", userScores=" + userScores + ", userWcaSinglePbs=" + userWcaSinglePbs + ", userWcaAveragePbs="
+                + userWcaAveragePbs + ", winner=" + winner + ", eloChange=" + eloChange + ", quitUser=" + quitUser
+                + ", isPrivate=" + isPrivate + "]";
+    }
+
+    
 }

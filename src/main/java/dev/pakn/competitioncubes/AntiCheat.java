@@ -28,7 +28,7 @@ public class AntiCheat {
     private static Logger logger = LoggerFactory.getLogger(AntiCheat.class);
 
     public static double getWCASingle(String wcaId, Event event) {
-        if (!wcaId.isEmpty() && wcaId!=null) {
+        if (wcaId!=null && !wcaId.isEmpty()) {
             try {
                 HttpResponse<String> response = WebRequests.sendGetRequest("https://www.worldcubeassociation.org/api/v0/persons/"+wcaId);
                 if (response.statusCode()!=HttpStatus.OK.value()) {
@@ -61,7 +61,7 @@ public class AntiCheat {
     }
 
     public static double getWCAAverage(String wcaId, Event event) {
-        if (!wcaId.isEmpty() && wcaId!=null) {
+        if (wcaId!=null && !wcaId.isEmpty()) {
             try {
                 HttpResponse<String> response = WebRequests.sendGetRequest("https://www.worldcubeassociation.org/api/v0/persons/"+wcaId);
                 if (response.statusCode()!=HttpStatus.OK.value()) {
@@ -96,7 +96,7 @@ public class AntiCheat {
     //saves 1 GET request
     public static double[] getWCAPbs(String wcaId, Event event) {
         double[] pbs = new double[2];
-        if (!wcaId.isEmpty() && wcaId!=null) {
+        if (wcaId!=null && !wcaId.isEmpty()) {
             try {
                 HttpResponse<String> response = WebRequests.sendGetRequest("https://www.worldcubeassociation.org/api/v0/persons/"+wcaId);
                 if (response.statusCode()!=HttpStatus.OK.value()) {
