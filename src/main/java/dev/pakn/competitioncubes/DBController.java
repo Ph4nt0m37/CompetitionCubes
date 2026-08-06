@@ -683,21 +683,24 @@ public class DBController {
             //for (Event event: Event.values()) {
             Event event = Event.THREE_BY_THREE;
                 ArrayList<LeaderboardEntry> users = getSortedUsersBySingleList(event);
+                logger.info(users.toString());
                 for (int i=1;i<=users.size();i++) {
                     LeaderboardEntry entry = users.get(i-1);
                     int entryUserId = entry.getUserId();
                     if (entryUserId==userId) {
                         int rank = i+1;
                         int dbRankCheckIndex = i-1;
-                        while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getStat()<=entry.getStat()) {
+                        while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getStat()>=entry.getStat()) {
                             dbRankCheckIndex--;
                             rank=dbRankCheckIndex+2;
                         }
+                        logger.info(String.valueOf(rank));
                         userRanks.put(event, rank);
                         break;
                     }
                 }
             //}
+            logger.info(userRanks.toString());
             return userRanks;
         }catch (Exception e) {
             e.printStackTrace();
@@ -715,7 +718,7 @@ public class DBController {
                 if (entryUserId==userId) {
                     int rank = i+1;
                     int dbRankCheckIndex = i-1;
-                    while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getStat()<=entry.getStat()) {
+                    while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getStat()>=entry.getStat()) {
                         dbRankCheckIndex--;
                         rank=dbRankCheckIndex+2;
                     }
@@ -743,7 +746,7 @@ public class DBController {
                     if (entryUserId==userId) {
                         int rank = i+1;
                         int dbRankCheckIndex = i-1;
-                        while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getStat()<=entry.getStat()) {
+                        while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getStat()>=entry.getStat()) {
                             dbRankCheckIndex--;
                             rank=dbRankCheckIndex+2;
                         }
@@ -769,7 +772,7 @@ public class DBController {
                 if (entryUserId==userId) {
                     int rank = i+1;
                     int dbRankCheckIndex = i-1;
-                    while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getStat()<=entry.getStat()) {
+                    while (dbRankCheckIndex>=0 && users.get(dbRankCheckIndex).getStat()>=entry.getStat()) {
                         dbRankCheckIndex--;
                         rank=dbRankCheckIndex+2;
                     }
