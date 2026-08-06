@@ -136,6 +136,13 @@ public class Match {
         return isPrivate;
     }
 
+    public boolean containsUser(int userId) {
+        for (int userLoopId : users) {
+            if (userLoopId == userId) return true;
+        }
+        return false;
+    }
+
     public boolean addSolve(int userId, SolveData solve) {
         if (!isPrivate) {
             boolean isValidSolve = AntiCheat.validateSolve(solve, getUserWcaPbAvg(solve.getUserId()), getUserWcaPbSingle(solve.getUserId()));
@@ -286,6 +293,28 @@ public class Match {
                 + ", userScores=" + userScores + ", userWcaSinglePbs=" + userWcaSinglePbs + ", userWcaAveragePbs="
                 + userWcaAveragePbs + ", winner=" + winner + ", eloChange=" + eloChange + ", quitUser=" + quitUser
                 + ", isPrivate=" + isPrivate + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + roomId;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Match other = (Match) obj;
+        if (roomId != other.roomId)
+            return false;
+        return true;
     }
 
     

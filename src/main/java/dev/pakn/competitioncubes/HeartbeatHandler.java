@@ -47,7 +47,7 @@ public class HeartbeatHandler {
             @DestinationVariable int userId, int roomId) {
         if (connectedMap.get(userId) != null && connectedMap.get(userId).getRoomId() >= 0) {
             if (roomId < 0 || connectedMap.get(userId).getRoomId() != (int) roomId) {
-                setMatchForfeit(userId);
+                setMatchForfeit(userId, roomId);
             }
         }
         connectedMap.put(userId, new UserWebSocketConnection(userId, sessionId, 5000, roomId));
@@ -91,7 +91,7 @@ public class HeartbeatHandler {
         if (currentTime - userConnection.getLastSeen() >= userConnection.getDisconnectTime()) { // default: 1 ping
             connectedMap.remove(userId);
             MatchFinder.removeFromWaitingList(userConnection.getUserId());
-            setMatchForfeit(userConnection.getUserId());
+            setUserMatchForfeit(userConnection.getUserId());
             return;
         }
     }
@@ -100,11 +100,27 @@ public class HeartbeatHandler {
         staticSimpMessagingTemplate.convertAndSend("/room/ping/" + userId, "");
     }
 
-    private static void setMatchForfeit(int userId) {
+    private static void setUserMatchForfeit(int userId) {
         User disconnectedUser = DBController.getUserByIDList(userId);
         if (disconnectedUser != null) {
             Match match = disconnectedUser.getCurrentMatch();
             if (match != null) {
+                match.setQuitUser(disconnectedUser);
+                for (int matchUserId : match.getUsers()) {
+                    if (matchUserId != userId)
+                        match.setWinner(matchUserId);
+                }
+                MatchController.sendMatchData(match);
+            }
+            disconnectedUser.setCurrentMatch(null);
+        }
+    }
+
+    private static void setMatchForfeit(int userId, int roomId) {
+        User disconnectedUser = DBController.getUserByIDList(userId);
+        if (disconnectedUser != null) {
+            Match match = MatchController.getMatches().get(roomId);
+            if (match != null && match.containsUser(userId)) {
                 match.setQuitUser(disconnectedUser);
                 for (int matchUserId : match.getUsers()) {
                     if (matchUserId != userId)

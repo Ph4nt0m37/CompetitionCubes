@@ -181,7 +181,7 @@ fetch(`/api/public/get-user-data-by-id/${userId}`).then((response)=> {
 function sortByRankList(rankList) {
     //for (let i=0;i<EVENTS.length;i++) {
     for (let i=1;i<=1;i++) {
-        document.getElementsByClassName("world-rank-text")[i+1].textContent = String(rankList[EVENTS[i]]);
+        document.getElementsByClassName("world-rank-text")[i+1].textContent = String(rankList[EVENTS[i]] ?? "N/A");
     }
 }
 

@@ -49,7 +49,7 @@ public class MatchFinder {
             }
             
             Match userMatch = DBController.getUsers().get(userId).getCurrentMatch();
-            if (userMatch!=null) {
+            if (userMatch!=null || waitingList.contains(new WaitlistRequest(userId, event))) {
                 return new WaitlistResult(WaitlistCode.IN_MATCH);
             }
             removeFromWaitingList(userId);

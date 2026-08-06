@@ -33,4 +33,12 @@ public class LeaderboardEntry {
     public String getStatString() {
         return statString;
     }
+
+    @Override
+    public String toString() {
+        return "LeaderboardEntry [userId=" + userId + ", username=" + username + ", event=" + event + ", stat=" + stat
+                + ", statString=" + statString + "]";
+    }
+
+    
 }
