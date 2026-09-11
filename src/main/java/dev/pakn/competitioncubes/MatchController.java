@@ -112,7 +112,7 @@ public class MatchController {
                         ogReq.setPrivateRequestCode(PrivateRequestCode.OPP_IN_MATCH);
                         return ogReq;
                     }
-                    Event event = DBController.stringToEventMap.get(ogReq.getEvent());
+                    Event event = Event.eventIdToEvent(ogReq.getEvent());
                     MatchFinder.removeFromWaitingList(userId);
                     MatchFinder.removeFromWaitingList(oppId);
                     logger.info("private match created between "+userId+" and "+oppId);
@@ -179,7 +179,7 @@ public class MatchController {
             int userId = rematchRequest.getUserId();
             int oppId = rematchRequest.getOppId();
             User opp = DBController.getUserByIDList(rematchRequest.getOppId());
-            Event event = DBController.stringToEventMap.get(rematchRequest.getEvent());
+            Event event = Event.eventIdToEvent(rematchRequest.getEvent());
             logger.info("private match created between "+userId+" and "+oppId);
             PrivateMatch match = new PrivateMatch(event,new int[]{userId,oppId},(int)(Math.random()*9999999));
             PrivateMatchRequest pMatchRequest = new PrivateMatchRequest(-1,userId,user.getUsername(),oppId,event.getEventId(),true);
@@ -265,7 +265,7 @@ public class MatchController {
             for (WaitlistRequest userReq:waitList) {
                 User user = DBController.getUserByIDList(userReq.getUserId());
                 //ideally waitlists would be a hashmap with events and their waitlists, but there's only one event so far so i'll sort this out later
-                Event event = DBController.stringToEventMap.get(userReq.getEvent());
+                Event event = Event.eventIdToEvent(userReq.getEvent());
                 for (WaitlistRequest oppReq:waitList) {
                     if (oppReq.getUserId()==userReq.getUserId()) continue;
                     User oppUser = DBController.getUserByIDList(oppReq.getUserId());

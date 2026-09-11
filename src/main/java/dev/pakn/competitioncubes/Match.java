@@ -194,7 +194,7 @@ public class Match {
                         return true;
                     }
                 }
-                generateNewScramble(PuzzleRegistry.THREE);
+                generateNewScramble(EventToPuzzle.eventToPuzzle(event));
                 currentSolve++;
             }
             return false;

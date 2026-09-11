@@ -10,6 +10,8 @@ const tutorialButton = document.getElementById("tutorial-accept-button");
 
 const searchingUsersText = document.getElementById("searching-users-text");
 
+const tempEventDropdown = document.getElementById("temp-event-dropdown");
+
 let searchInt = null;
 
 onload = (event)=>{
@@ -144,7 +146,7 @@ onload = (event)=>{
 }
 
 function getWaitingUserCount() {
-    fetch("/api/waiting-list/333").then((response)=>{
+    fetch(`/api/waiting-list/${tempEventDropdown.value}`).then((response)=>{
         return response.json();
     }).then((numSearching)=>{
         let userWord = "users";
@@ -159,7 +161,7 @@ function startMatchSearch(stompClient) {
         method: "POST",
         body: JSON.stringify({
             'userId': userId,
-            'event':'333',
+            'event':tempEventDropdown.value,
             //'sessionId':
         }),
         headers: {

@@ -1,4 +1,5 @@
 import { userIdPromise } from "./get_user_id.js";
+import { matchData } from "./competition.js";
 //export let userId = Math.floor(Math.random()*100000);
 
 let userId = await userIdPromise;
@@ -102,7 +103,7 @@ function startMatchSearch(stompClient) {
         method: "POST",
         body: JSON.stringify({
             'userId': userId,
-            'event':'333',
+            'event': matchData.event,
             //'sessionId':
         }),
         headers: {

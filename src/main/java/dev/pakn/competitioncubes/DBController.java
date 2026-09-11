@@ -67,7 +67,6 @@ public class DBController {
     private static HashMap<Integer, UserBan> bannedUserList = new HashMap<>();
 
     private static HashMap<Event, String> eventDBNames = new HashMap<>();
-    public static HashMap<String, Event> stringToEventMap = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -78,7 +77,7 @@ public class DBController {
         staticDataSource = dataSource;
 
         eventDBNames.put(Event.THREE_BY_THREE, "threestats");
-        stringToEventMap.put("333", Event.THREE_BY_THREE);
+        eventDBNames.put(Event.TWO_BY_TWO, "twostats");
 
         try (Connection conn = dataSource.getConnection();) {
             loadUserBans(conn);
@@ -619,16 +618,16 @@ public class DBController {
 
     @GetMapping("/api/public/get-sorted-users-by-elo/{event}")
     public ArrayList<LeaderboardEntry> getEloSortedListRequest(@PathVariable String event) {
-        return getSortedUsersByEloList(stringToEventMap.get(event),100);
+        return getSortedUsersByEloList(Event.eventIdToEvent(event),100);
     }
 
     @GetMapping("/api/public/get-user-elo-ranks/{userId}")
     public static HashMap<Event, Integer> getUserEloRanks(@PathVariable int userId) {
         try {
             HashMap<Event, Integer> userRanks = new HashMap<>();
-            //for (Event event: Event.values()) {
-            Event event = Event.THREE_BY_THREE;
+            for (Event event: Event.values()) {
                 ArrayList<LeaderboardEntry> users = getSortedUsersByEloList(event);
+                if (users == null) continue;
                 for (int i=1;i<=users.size();i++) {
                     LeaderboardEntry entry = users.get(i-1);
                     int entryUserId = entry.getUserId();
@@ -643,7 +642,7 @@ public class DBController {
                         break;
                     }
                 }
-            //}
+            }
             return userRanks;
         }catch (Exception e) {
             e.printStackTrace();
@@ -655,6 +654,7 @@ public class DBController {
         try {
             int userRank = -1;
             ArrayList<LeaderboardEntry> users = getSortedUsersByEloList(event);
+            if (users == null) return -1;
             for (int i=1;i<=users.size();i++) {
                 LeaderboardEntry entry = users.get(i-1);
                 int entryUserId = entry.getUserId();
@@ -680,10 +680,9 @@ public class DBController {
     public static HashMap<Event, Integer> getUserSingleRanks(@PathVariable int userId) {
         try {
             HashMap<Event, Integer> userRanks = new HashMap<>();
-            //for (Event event: Event.values()) {
-            Event event = Event.THREE_BY_THREE;
+            for (Event event: Event.values()) {
                 ArrayList<LeaderboardEntry> users = getSortedUsersBySingleList(event);
-                logger.info(users.toString());
+                if (users == null) continue;
                 for (int i=1;i<=users.size();i++) {
                     LeaderboardEntry entry = users.get(i-1);
                     int entryUserId = entry.getUserId();
@@ -699,7 +698,7 @@ public class DBController {
                         break;
                     }
                 }
-            //}
+            }
             logger.info(userRanks.toString());
             return userRanks;
         }catch (Exception e) {
@@ -712,6 +711,7 @@ public class DBController {
         try {
             int userRank = -1;
             ArrayList<LeaderboardEntry> users = getSortedUsersBySingleList(event);
+            if (users == null) return -1;
             for (int i=1;i<=users.size();i++) {
                 LeaderboardEntry entry = users.get(i-1);
                 int entryUserId = entry.getUserId();
@@ -737,9 +737,9 @@ public class DBController {
     public static HashMap<Event, Integer> getUserAverageRanks(@PathVariable int userId) {
         try {
             HashMap<Event, Integer> userRanks = new HashMap<>();
-            //for (Event event: Event.values()) {
-            Event event = Event.THREE_BY_THREE;
+            for (Event event: Event.values()) {
                 ArrayList<LeaderboardEntry> users = getSortedUsersByAverageList(event);
+                if (users == null) continue;
                 for (int i=1;i<=users.size();i++) {
                     LeaderboardEntry entry = users.get(i-1);
                     int entryUserId = entry.getUserId();
@@ -754,7 +754,7 @@ public class DBController {
                         break;
                     }
                 }
-            //}
+            }
             return userRanks;
         }catch (Exception e) {
             e.printStackTrace();
@@ -766,6 +766,7 @@ public class DBController {
         try {
             int userRank = -1;
             ArrayList<LeaderboardEntry> users = getSortedUsersByAverageList(event);
+            if (users == null) return -1;
             for (int i=1;i<=users.size();i++) {
                 LeaderboardEntry entry = users.get(i-1);
                 int entryUserId = entry.getUserId();
@@ -788,7 +789,9 @@ public class DBController {
     }
 
     public static ArrayList<LeaderboardEntry> getSortedUsersByEloList(Event event, int resultLimit) {
-        try (Connection conn = staticDataSource.getConnection();) {
+        //ensure database name exists
+        if (eventDBNames.get(event) == null) return null;
+        try (Connection conn = staticDataSource.getConnection()) {
             ArrayList<LeaderboardEntry> eloSortedUsers = new ArrayList<>();
             //checking for userId
             String findUsersQuery = "SELECT * FROM "+eventDBNames.get(event)+" ORDER BY elo DESC;";
@@ -813,6 +816,9 @@ public class DBController {
     }
 
     public static ArrayList<LeaderboardEntry> getSortedUsersByEloList(Event event) {
+        //ensure database name exists
+        if (eventDBNames.get(event) == null) return null;
+
         try (Connection conn = staticDataSource.getConnection();) {
             ArrayList<LeaderboardEntry> eloSortedUsers = new ArrayList<>();
             //checking for userId
@@ -835,10 +841,13 @@ public class DBController {
 
     @GetMapping("/api/public/get-sorted-users-by-single/{event}")
     public ArrayList<LeaderboardEntry> getSingleSortedListRequest(@PathVariable String event) {
-        return getSortedUsersBySingleList(stringToEventMap.get(event),100);
+        return getSortedUsersBySingleList(Event.eventIdToEvent(event),100);
     }
 
     public static ArrayList<LeaderboardEntry> getSortedUsersBySingleList(Event event, int resultLimit) {
+        //ensure database name exists
+        if (eventDBNames.get(event) == null) return null;
+
         try (Connection conn = staticDataSource.getConnection();) {
             ArrayList<LeaderboardEntry> singleSortedUsers = new ArrayList<>();
 
@@ -867,6 +876,9 @@ public class DBController {
     }
 
     public static ArrayList<LeaderboardEntry> getSortedUsersBySingleList(Event event) {
+        //ensure database name exists
+        if (eventDBNames.get(event) == null) return null;
+
         try (Connection conn = staticDataSource.getConnection();) {
             ArrayList<LeaderboardEntry> singleSortedUsers = new ArrayList<>();
 
@@ -894,10 +906,13 @@ public class DBController {
 
     @GetMapping("/api/public/get-sorted-users-by-average/{event}")
     public ArrayList<LeaderboardEntry> getSortedAverageListRequest(@PathVariable String event) {
-        return getSortedUsersByAverageList(stringToEventMap.get(event),100);
+        return getSortedUsersByAverageList(Event.eventIdToEvent(event),100);
     }
 
     public static ArrayList<LeaderboardEntry> getSortedUsersByAverageList(Event event, int resultLimit) {
+        //ensure database name exists
+        if (eventDBNames.get(event) == null) return null;
+
         try (Connection conn = staticDataSource.getConnection();) {
 
             //checking for userId
@@ -926,9 +941,10 @@ public class DBController {
     }
 
     public static ArrayList<LeaderboardEntry> getSortedUsersByAverageList(Event event) {
-        try (Connection conn = staticDataSource.getConnection();) {
+        //ensure database name exists
+        if (eventDBNames.get(event) == null) return null;
 
-            //checking for userId
+        try (Connection conn = staticDataSource.getConnection();) {
             String findUsersQuery = "SELECT * FROM "+eventDBNames.get(event)+" ORDER BY average;";
             PreparedStatement usersQueryStatement = conn.prepareStatement(findUsersQuery);
 

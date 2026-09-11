@@ -55,7 +55,7 @@ public class MatchFinder {
             removeFromWaitingList(userId);
             WaitlistRequest request = new WaitlistRequest(userId, event);
             waitingList.add(request);
-            logger.debug("added "+userId+" to waiting list");
+            logger.debug("added "+userId+" to waiting list for "+event);
             return new WaitlistResult(WaitlistCode.SUCCESS);
         }catch (Exception e) {
             e.printStackTrace();

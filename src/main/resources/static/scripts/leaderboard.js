@@ -12,10 +12,6 @@ const averageButton = document.getElementById("avg-button");
 
 const optionKeyText = document.getElementsByClassName("leaderboard-key elo-text")[0];
 
-const eventMap = {
-    "3x3":"THREE_BY_THREE"
-};
-
 const sortingMethodMap = {
     ELO: 1,
     SINGLE: 2,

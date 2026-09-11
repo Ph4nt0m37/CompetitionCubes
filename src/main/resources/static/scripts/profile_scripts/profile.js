@@ -9,17 +9,17 @@ const eloText = document.getElementById("elo-text");
 const EVENTS = [
     "TWO_BY_TWO",
     "THREE_BY_THREE",
-    "FOUR_BY_FOUR",
-    "FIVE_BY_FIVE",
-    "SIX_BY_SIX",
-    "SEVEN_BY_SEVEN",
-    "CLOCK",
-    "SQUARE_ONE",
-    "SKEWB",
-    "PYRAMINX",
-    "MEGAMINX",
-    "THREE_OH",
-    "THREE_BLD"
+    // "FOUR_BY_FOUR",
+    // "FIVE_BY_FIVE",
+    // "SIX_BY_SIX",
+    // "SEVEN_BY_SEVEN",
+    // "CLOCK",
+    // "SQUARE_ONE",
+    // "SKEWB",
+    // "PYRAMINX",
+    // "MEGAMINX",
+    // "THREE_OH",
+    // "THREE_BLD"
 ]
 const eventsToText = {
     "TWO_BY_TWO":"2x2",
@@ -133,30 +133,28 @@ fetch(`/api/public/get-user-data-by-id/${userId}`).then((response)=> {
             rankList.elo = worldRanks;
             let rankingsDiv = document.getElementById("rankings-div");
             let eventTemplate = document.getElementById("event-entry-template");
-            // v this loop is for all of the events
-            //for (let i=0;i<EVENTS.length;i++) {
-            for (let i=1;i<=1;i++) {
+            for (let i=0;i<EVENTS.length;i++) {
                 let clonedEvent = eventTemplate.cloneNode(true);
                 clonedEvent.id="";
                 clonedEvent.style.display="flex";
                 rankingsDiv.appendChild(clonedEvent);
                 //i+2 because we already have two of each ...-text for the key and template
                 //CHANGE ALL OF THE i+1 TO i+2 WHEN GOING BACK TO THE TOP IF STATEMENT
-                document.getElementsByClassName("event-text")[i+1].textContent = eventsToText[EVENTS[i]];
-                document.getElementsByClassName("elo-text")[i+1].textContent = user.elos[EVENTS[i]];
-                document.getElementsByClassName("rank-text")[i+1].children[0].textContent = rankEnumToRankText[user.ranks[EVENTS[i]]];
-                document.getElementsByClassName("rank-text")[i+1].children[0].classList.add(rankToClassName[user.ranks[EVENTS[i]]])
+                document.getElementsByClassName("event-text")[i+2].textContent = eventsToText[EVENTS[i]];
+                document.getElementsByClassName("elo-text")[i+2].textContent = user.elos[EVENTS[i]];
+                document.getElementsByClassName("rank-text")[i+2].children[0].textContent = rankEnumToRankText[user.ranks[EVENTS[i]]];
+                document.getElementsByClassName("rank-text")[i+2].children[0].classList.add(rankToClassName[user.ranks[EVENTS[i]]])
                 const single = user.singles[EVENTS[i]];
-                if (single===-1 || single===2147483647.00) {
-                    document.getElementsByClassName("single-text")[i+1].textContent = "N/A";
+                if (single===-1 || single===2147483647.00 || !single) {
+                    document.getElementsByClassName("single-text")[i+2].textContent = "N/A";
                 }else{
-                    document.getElementsByClassName("single-text")[i+1].textContent = single.toFixed(2);
+                    document.getElementsByClassName("single-text")[i+2].textContent = single.toFixed(2);
                 }
                 const average = user.averages[EVENTS[i]];
-                if (average===-1 || average===2147483647.00) {
-                    document.getElementsByClassName("avg-text")[i+1].textContent = "N/A";
+                if (average===-1 || average===2147483647.00 || !single) {
+                    document.getElementsByClassName("avg-text")[i+2].textContent = "N/A";
                 }else{
-                    document.getElementsByClassName("avg-text")[i+1].textContent = average.toFixed(2);
+                    document.getElementsByClassName("avg-text")[i+2].textContent = average.toFixed(2);
                 }
             }
             sortByRankList(rankList.elo);
@@ -179,9 +177,8 @@ fetch(`/api/public/get-user-data-by-id/${userId}`).then((response)=> {
     });
 
 function sortByRankList(rankList) {
-    //for (let i=0;i<EVENTS.length;i++) {
-    for (let i=1;i<=1;i++) {
-        document.getElementsByClassName("world-rank-text")[i+1].textContent = String(rankList[EVENTS[i]] ?? "N/A");
+    for (let i=0;i<EVENTS.length;i++) {
+        document.getElementsByClassName("world-rank-text")[i+2].textContent = String(rankList[EVENTS[i]] ?? "N/A");
     }
 }
 

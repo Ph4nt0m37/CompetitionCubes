@@ -140,3 +140,85 @@ button {
     font-size: 0.85rem;
     color: var(--dark-font)
 }
+
+.fancy-dropdown {
+    font-weight: 700;
+    border: #555 2px solid;
+    padding: 3px 35px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 5px;
+    color: black;
+    transition: background-color 0.3s ease;
+    margin: 10px 0px;
+}
+
+.fancy-dropdown, ::picker(select) {
+    appearance: base-select;
+}
+
+.fancy-dropdown:hover {
+    background-color: var(--high-defecit-color);
+}
+
+.fancy-dropdown::picker-icon {
+    position: relative;
+    top: 3px;
+    content: url("../images/chevron-down-gray.svg");
+    transform-origin: center 12px;
+    transition: 0.15s rotate;
+    transform: scale(0.85);
+}
+
+.fancy-dropdown:open::picker-icon {
+  rotate: 180deg;
+}
+
+.fancy-dropdown > option {
+    border: 2px solid #555;
+    background-color: var(--defecit-color);
+    font-weight: 100;
+    outline: none;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.fancy-dropdown > option:first-of-type {
+  border-radius: 4px 4px 0 0;
+}
+
+.fancy-dropdown > option:last-of-type {
+  border-radius: 0 0 4px 4px;
+}
+
+::picker(select) {
+  border-radius: 4px;
+  border: none;
+}
+
+.fancy-dropdown > option:not(option:last-of-type) {
+  border-bottom: none;
+}
+
+.fancy-dropdown > option:checked {
+    font-weight: bold;
+}
+
+.fancy-dropdown > option:hover {
+    background-color: var(--high-defecit-color);
+}
+
+.fancy-dropdown > option::checkmark {
+    order: 1;
+    margin-left: auto;
+    content: url("../images/check_gray.svg");
+    scale: 0.85;
+    position: relative;
+    top: 2px;
+}
+
+#temp-event-dropdown {
+    max-width: 8rem;
+}

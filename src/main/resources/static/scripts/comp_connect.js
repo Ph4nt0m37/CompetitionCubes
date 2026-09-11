@@ -24,10 +24,6 @@ stompClient.onConnect = (frame)=>{
         if (solve.userId!=userId) {
             setOppTime(solve.time);
             if (solve.penalty!=="OK") setPenalty(solve.penalty);
-            stompClient.publish({
-                destination: "/app/scramble/3x3",
-                body: roomId
-            });
         }
     });
 

@@ -1186,3 +1186,19 @@ button {
     grid-column: 1;
     position: relative;
 }
+
+#reload-user-button {
+  border: none;
+  border-radius: 5px;
+  background-color: var(--green-button);
+  padding: 6px 6px 4px 6px;
+  display: none;
+}
+
+#reload-user-button:hover {
+  background-color: var(--green-button-hover);
+}
+
+#reload-user-button:active {
+  scale: 0.95;
+}

@@ -265,6 +265,9 @@ actionsPopup.addEventListener("click",(event)=>{
     }
 });
 
+
+const reloadUserButton = document.getElementById("reload-user-button");
+
 document.addEventListener("keydown",(event)=>{
     if (event.key=="Escape") {
         if (banConfirmPopup.style.display==="none" && warnConfirmPopup.style.display==="none") {
@@ -281,6 +284,25 @@ document.addEventListener("keydown",(event)=>{
         otherWarnReasonDiv.style.display = "none";
         resetBanTimeInputs();
     }
+
+    reloadUserButton.style.display = event.shiftKey ? "block" : "none"; 
+});
+
+document.addEventListener("keyup", (event)=>{
+    reloadUserButton.style.display = "none";
+});
+
+reloadUserButton.addEventListener("click",()=>{
+    fetch(`/api/refresh-user/${user['userId']}`).then(resp=>{
+        if (resp.ok) {
+            createNotification(`Successfully refreshed ${user['username']}. Reloading in 3 seconds...`);
+            setTimeout(()=>{window.location.reload()},3000);
+        }else if (resp.status == 403) {
+            createNotification(`You are not allowed to do this.`);
+        }else {
+            createNotification(`Something went wrong with this action. Please DM a developer to resolve it.`);
+        }
+    });
 });
 
 const closeBanButton = document.getElementById("close-ban-button");
