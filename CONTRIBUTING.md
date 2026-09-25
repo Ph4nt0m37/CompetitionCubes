@@ -2,7 +2,7 @@
 Hello! First of all, I want to thank you for your interest in contributing to Competition Cubes. This project is a personal pride of mine, and I'm thrilled to have any help I can get!
 
 ## How to Contribute
-If you want to contribute, first you need clone either the `main` (production) branch or the `test` (testing) branch. Then, you to set up the Development Environment (see [Setting Up Development Environment](#setting-up-development-environment)).
+If you want to contribute, first you need clone either the `main` (production) branch or the `test` (testing) branch. Then, you need to set up the Development Environment (see [Setting Up Development Environment](#setting-up-development-environment)).
 
 Once you have set up the environment and can successfully run Competition Cubes locally, create a new branch with a name that describes the issue you are trying to solve or the feature you are trying to add. Once you have implemented your fix/feature, create a pull request with a descriptive name and description that describes the fix/feature. 
 
